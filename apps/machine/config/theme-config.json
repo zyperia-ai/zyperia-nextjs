@@ -1,6 +1,8 @@
 {
   "crypto": {
     "generation_system_prompt": "You are a crypto expert with 10+ years experience. Write educational articles about cryptocurrency for beginners to intermediate traders. Focus: security, wallets, exchanges, DeFi, staking. CRITICAL: Only cite facts from official sources (CoinMarketCap, Bitcoin.org, Ethereum.org, official exchanges). If unsure, say 'requires verification'.",
+    "transformation_system_prompt": "You are analyzing a top-performing crypto article. Improve it by: (1) Adding newer data (2026 prices, adoption stats, regulatory updates), (2) Expanding on gaps we identified, (3) Adding unique insights from your 10+ years experience, (4) Improving clarity for beginners, (5) Better SEO without keyword stuffing. Cite the original source and explain improvements made. Minimum 30% rewrite.",
+    "aggregation_system_prompt": "You are synthesizing information from 3-5 top crypto articles. Create a 'State of Crypto [Topic]' report that: (1) Identifies common themes, (2) Highlights disagreements/different perspectives, (3) Adds unique insights, (4) Cites all sources transparently. Be clear what's consensus vs opinion.",
     "verification_sources": {
       "exchanges": ["https://coinmarketcap.com", "https://www.kraken.com", "https://www.binance.com"],
       "learning": ["https://bitcoin.org", "https://ethereum.org"],
@@ -12,10 +14,55 @@
       { "name": "Coinbase", "url": "https://coinbase.com/", "commission": "varies", "cookie_window": 30 }
     ],
     "articles_per_day": 4,
-    "publish_times": ["09:00", "12:00", "15:00", "18:00"]
+    "publish_times": ["09:00", "12:00", "15:00", "18:00"],
+    "brutal_system": {
+      "content_mix": {
+        "original": 0.40,
+        "transformed": 0.50,
+        "aggregated": 0.10
+      },
+      "competitive_analysis": {
+        "enabled": true,
+        "run_frequency": "daily",
+        "serp_api_keywords": ["bitcoin", "ethereum", "crypto trading", "defi", "nft", "blockchain", "crypto news", "altcoins"],
+        "max_competitors_to_analyze": 20,
+        "buzzsumo_track": true
+      },
+      "visual_enrichment": {
+        "hero_images": {
+          "enabled": true,
+          "style": "crypto_tech_aesthetic",
+          "dimensions": "1200x630",
+          "model": "stable_diffusion"
+        },
+        "data_visualizations": {
+          "enabled": true,
+          "chart_types": ["line", "bar", "candlestick"],
+          "auto_detect_data": true
+        },
+        "og_images": {
+          "enabled": true,
+          "dimensions": "1200x630",
+          "color_scheme": "crypto_blue"
+        }
+      },
+      "plagiarism_check": {
+        "enabled": true,
+        "api_provider": "copyscape",
+        "min_uniqueness": 70
+      },
+      "eeat_signals": {
+        "cite_official_sources": true,
+        "add_author_expertise": true,
+        "require_external_links": 5,
+        "internal_linking": true
+      }
+    }
   },
   "intelligence": {
     "generation_system_prompt": "You are a business automation expert. Write practical step-by-step guides on using AI tools (Claude, ChatGPT, Gemini) to automate business processes. Target: solopreneurs, SMBs, makers. Focus: time-saving, cost-reduction, real use cases. CRITICAL: Link to official tool documentation.",
+    "transformation_system_prompt": "You are analyzing a top-performing AI/automation article. Improve it by: (1) Adding newer tool features and pricing (2026 updates), (2) Expanding on gaps we identified, (3) Adding real-world examples and step-by-step screenshots, (4) Improving clarity for non-technical users, (5) Better SEO without keyword stuffing. Cite the original source and explain improvements. Minimum 30% rewrite.",
+    "aggregation_system_prompt": "You are synthesizing information from 3-5 top AI automation articles. Create a 'State of [Tool] Automation' report that: (1) Identifies common use cases, (2) Compares different tools/approaches, (3) Highlights trade-offs, (4) Adds unique insights from real projects, (5) Cites all sources transparently. Be clear what's best practice vs opinion.",
     "verification_sources": {
       "tools": ["https://openai.com/docs", "https://www.anthropic.com/docs", "https://support.zapier.com"],
       "news": ["https://www.producthunt.com", "https://techcrunch.com"]
@@ -26,10 +73,55 @@
       { "name": "OpenAI", "url": "https://platform.openai.com/", "commission": "varies", "cookie_window": null }
     ],
     "articles_per_day": 3,
-    "publish_times": ["09:00", "14:00", "18:00"]
+    "publish_times": ["09:00", "14:00", "18:00"],
+    "brutal_system": {
+      "content_mix": {
+        "original": 0.40,
+        "transformed": 0.50,
+        "aggregated": 0.10
+      },
+      "competitive_analysis": {
+        "enabled": true,
+        "run_frequency": "daily",
+        "serp_api_keywords": ["ai automation", "chatgpt business", "zapier tutorial", "make automation", "ai tools", "workflow automation", "claude api", "business automation"],
+        "max_competitors_to_analyze": 20,
+        "buzzsumo_track": true
+      },
+      "visual_enrichment": {
+        "hero_images": {
+          "enabled": true,
+          "style": "tech_minimal_aesthetic",
+          "dimensions": "1200x630",
+          "model": "stable_diffusion"
+        },
+        "data_visualizations": {
+          "enabled": true,
+          "chart_types": ["workflow_diagram", "comparison_table", "timeline"],
+          "auto_detect_data": true
+        },
+        "og_images": {
+          "enabled": true,
+          "dimensions": "1200x630",
+          "color_scheme": "tech_purple"
+        }
+      },
+      "plagiarism_check": {
+        "enabled": true,
+        "api_provider": "copyscape",
+        "min_uniqueness": 70
+      },
+      "eeat_signals": {
+        "cite_official_sources": true,
+        "add_author_expertise": true,
+        "require_external_links": 5,
+        "internal_linking": true
+      }
+    }
   },
   "onlinebiz": {
     "generation_system_prompt": "You are a side-hustle and passive income expert. Write detailed, actionable guides on earning money online. Target: students, freelancers, side-hustlers. Focus: realistic expectations, proven methods, income breakdowns. CRITICAL: Use real case studies and verified income reports. Avoid get-rich-quick.",
+    "transformation_system_prompt": "You are analyzing a top-performing side-hustle article. Improve it by: (1) Adding 2026 income data and platform updates, (2) Expanding on gaps we identified, (3) Adding new case studies and real success stories, (4) Improving step-by-step instructions, (5) Better SEO without hype. Cite the original source and explain improvements. Minimum 30% rewrite.",
+    "aggregation_system_prompt": "You are synthesizing information from 3-5 top earning/side-hustle articles. Create a 'Side Hustle Comparison 2026' report that: (1) Lists top methods with effort vs income, (2) Compares platforms, (3) Identifies best for different skill levels, (4) Highlights emerging opportunities, (5) Cites all sources transparently. Be realistic about income potential.",
     "verification_sources": {
       "case_studies": ["https://www.failory.com", "https://www.indiehackers.com"],
       "tools": ["https://www.producthunt.com", "https://alternativeto.net"]
@@ -40,6 +132,49 @@
       { "name": "Skillshare", "url": "https://skillshare.com/", "commission": "0.10", "cookie_window": 30 }
     ],
     "articles_per_day": 3,
-    "publish_times": ["09:00", "13:00", "18:00"]
+    "publish_times": ["09:00", "13:00", "18:00"],
+    "brutal_system": {
+      "content_mix": {
+        "original": 0.40,
+        "transformed": 0.50,
+        "aggregated": 0.10
+      },
+      "competitive_analysis": {
+        "enabled": true,
+        "run_frequency": "daily",
+        "serp_api_keywords": ["side hustle", "passive income", "how to earn money", "freelance work", "gig economy", "make money online", "online business", "dropshipping"],
+        "max_competitors_to_analyze": 20,
+        "buzzsumo_track": true
+      },
+      "visual_enrichment": {
+        "hero_images": {
+          "enabled": true,
+          "style": "growth_success_aesthetic",
+          "dimensions": "1200x630",
+          "model": "stable_diffusion"
+        },
+        "data_visualizations": {
+          "enabled": true,
+          "chart_types": ["income_chart", "effort_vs_reward", "growth_timeline"],
+          "auto_detect_data": true
+        },
+        "og_images": {
+          "enabled": true,
+          "dimensions": "1200x630",
+          "color_scheme": "success_green"
+        }
+      },
+      "plagiarism_check": {
+        "enabled": true,
+        "api_provider": "copyscape",
+        "min_uniqueness": 70
+      },
+      "eeat_signals": {
+        "cite_official_sources": true,
+        "add_author_expertise": true,
+        "require_external_links": 5,
+        "internal_linking": true
+      }
+    }
   }
 }
