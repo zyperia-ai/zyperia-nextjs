@@ -1,0 +1,44 @@
+{
+  "version": 2,
+  "projects": [
+    {
+      "name": "crypto",
+      "srcDir": "apps/crypto"
+    },
+    {
+      "name": "intelligence",
+      "srcDir": "apps/intelligence"
+    },
+    {
+      "name": "onlinebiz",
+      "srcDir": "apps/onlinebiz"
+    }
+  ],
+  "buildCommand": "pnpm run build",
+  "devCommand": "pnpm run dev",
+  "env": [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "ANTHROPIC_API_KEY",
+    "GOOGLE_API_KEY",
+    "OLLAMA_BASE_URL"
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/research",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/generate",
+      "schedule": "30 1 * * *"
+    },
+    {
+      "path": "/api/cron/verify",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/publish",
+      "schedule": "0 9,14,18 * * *"
+    }
+  ]
+}
