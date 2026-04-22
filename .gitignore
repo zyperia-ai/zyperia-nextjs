@@ -1,0 +1,33 @@
+# Node
+node_modules/
+.pnpm-debug.log
+pnpm-lock.yaml
+
+# Next.js
+.next/
+out/
+dist/
+.turbo
+
+# Env
+.env*.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Optional
+.turbo/

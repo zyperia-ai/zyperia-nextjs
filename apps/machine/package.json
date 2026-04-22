@@ -1,0 +1,26 @@
+{
+  "name": "@zyperia/machine",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "generate": "ts-node scripts/generate-articles.ts",
+    "verify": "ts-node scripts/verify-articles.ts",
+    "publish": "ts-node scripts/publish-articles.ts",
+    "research": "ts-node scripts/research-topics.ts",
+    "test": "echo 'No tests configured yet'"
+  },
+  "dependencies": {
+    "@zyperia/shared-lib": "*",
+    "@zyperia/shared-config": "*",
+    "@anthropic-ai/sdk": "^0.81.0",
+    "@google/generative-ai": "^0.1.0",
+    "@supabase/supabase-js": "^2.101.1",
+    "axios": "^1.6.0",
+    "dotenv": "^16.0.0",
+    "ts-node": "^10.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "typescript": "^5"
+  }
+}

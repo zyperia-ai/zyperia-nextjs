@@ -1,0 +1,16 @@
+{
+  "name": "@zyperia/shared-config",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "build": "echo 'shared-config uses TypeScript only'",
+    "lint": "echo 'Lint shared-config'"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20",
+    "typescript": "^5"
+  }
+}

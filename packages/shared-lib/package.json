@@ -1,0 +1,20 @@
+{
+  "name": "@zyperia/shared-lib",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "build": "echo 'shared-lib uses TypeScript only'",
+    "lint": "echo 'Lint shared-lib'"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.81.0",
+    "@google/generative-ai": "^0.1.0",
+    "@supabase/supabase-js": "^2.101.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "typescript": "^5"
+  }
+}

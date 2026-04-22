@@ -1,0 +1,15 @@
+{
+  "name": "@zyperia/supabase",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "migrate": "supabase migration up",
+    "migrate:new": "supabase migration new"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.101.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20"
+  }
+}

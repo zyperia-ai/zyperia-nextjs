@@ -1,0 +1,22 @@
+{
+  "name": "@zyperia/shared-ui",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "build": "echo 'shared-ui uses TypeScript only'",
+    "lint": "echo 'Lint shared-ui'"
+  },
+  "dependencies": {
+    "lucide-react": "^1.7.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwindcss": "^4"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "typescript": "^5"
+  }
+}
