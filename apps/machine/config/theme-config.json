@@ -1,0 +1,45 @@
+{
+  "crypto": {
+    "generation_system_prompt": "You are a crypto expert with 10+ years experience. Write educational articles about cryptocurrency for beginners to intermediate traders. Focus: security, wallets, exchanges, DeFi, staking. CRITICAL: Only cite facts from official sources (CoinMarketCap, Bitcoin.org, Ethereum.org, official exchanges). If unsure, say 'requires verification'.",
+    "verification_sources": {
+      "exchanges": ["https://coinmarketcap.com", "https://www.kraken.com", "https://www.binance.com"],
+      "learning": ["https://bitcoin.org", "https://ethereum.org"],
+      "news": ["https://cointelegraph.com", "https://theblock.co"]
+    },
+    "affiliate_programs": [
+      { "name": "Kraken", "url": "https://kraken.com/", "commission": "0.25%-0.50%", "cookie_window": 90 },
+      { "name": "Binance", "url": "https://binance.com/", "commission": "0.20%-0.40%", "cookie_window": 90 },
+      { "name": "Coinbase", "url": "https://coinbase.com/", "commission": "varies", "cookie_window": 30 }
+    ],
+    "articles_per_day": 4,
+    "publish_times": ["09:00", "12:00", "15:00", "18:00"]
+  },
+  "intelligence": {
+    "generation_system_prompt": "You are a business automation expert. Write practical step-by-step guides on using AI tools (Claude, ChatGPT, Gemini) to automate business processes. Target: solopreneurs, SMBs, makers. Focus: time-saving, cost-reduction, real use cases. CRITICAL: Link to official tool documentation.",
+    "verification_sources": {
+      "tools": ["https://openai.com/docs", "https://www.anthropic.com/docs", "https://support.zapier.com"],
+      "news": ["https://www.producthunt.com", "https://techcrunch.com"]
+    },
+    "affiliate_programs": [
+      { "name": "Zapier", "url": "https://zapier.com/", "commission": "0.03 per signup", "cookie_window": 60 },
+      { "name": "Make", "url": "https://make.com/", "commission": "0.03 per signup", "cookie_window": 30 },
+      { "name": "OpenAI", "url": "https://platform.openai.com/", "commission": "varies", "cookie_window": null }
+    ],
+    "articles_per_day": 3,
+    "publish_times": ["09:00", "14:00", "18:00"]
+  },
+  "onlinebiz": {
+    "generation_system_prompt": "You are a side-hustle and passive income expert. Write detailed, actionable guides on earning money online. Target: students, freelancers, side-hustlers. Focus: realistic expectations, proven methods, income breakdowns. CRITICAL: Use real case studies and verified income reports. Avoid get-rich-quick.",
+    "verification_sources": {
+      "case_studies": ["https://www.failory.com", "https://www.indiehackers.com"],
+      "tools": ["https://www.producthunt.com", "https://alternativeto.net"]
+    },
+    "affiliate_programs": [
+      { "name": "Gumroad", "url": "https://gumroad.com/", "commission": "varies", "cookie_window": 90 },
+      { "name": "Hotmart", "url": "https://hotmart.com/", "commission": "0.10-0.15", "cookie_window": 30 },
+      { "name": "Skillshare", "url": "https://skillshare.com/", "commission": "0.10", "cookie_window": 30 }
+    ],
+    "articles_per_day": 3,
+    "publish_times": ["09:00", "13:00", "18:00"]
+  }
+}
