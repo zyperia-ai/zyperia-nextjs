@@ -1,31 +1,37 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
+import Header from '@zyperia/shared-ui/components/Header';
+import Footer from '@zyperia/shared-ui/components/Footer';
 
 export const metadata: Metadata = {
-  title: "Crypto | ZYPERIA",
-  description: "Guia completo sobre cryptocurrency, trading, DeFi, segurança. Educação prática sobre Bitcoin, Ethereum e blockchain.",
+  title: 'Crypto | ZYPERIA — Bitcoin, Ethereum & DeFi Education',
+  description:
+    'Learn about cryptocurrency, Bitcoin, Ethereum, DeFi, trading, and blockchain security. Expert-reviewed, updated daily.',
+  openGraph: {
+    title: 'Crypto | ZYPERIA',
+    description: 'The complete guide to cryptocurrency and blockchain',
+    type: 'website',
+  },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function CryptoLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt">
-      <body className="bg-white text-gray-900 font-sans">
-        <header className="border-b border-gray-200">
-          <nav className="max-w-6xl mx-auto px-4 py-4">
-            <h1 className="text-2xl font-bold text-blue-600">🪙 Crypto</h1>
-          </nav>
-        </header>
-        <main className="max-w-6xl mx-auto px-4 py-8">
-          {children}
-        </main>
-        <footer className="border-t border-gray-200 mt-12 py-8">
-          <div className="max-w-6xl mx-auto px-4 text-center text-gray-600">
-            <p>&copy; 2026 ZYPERIA. All rights reserved.</p>
-          </div>
-        </footer>
+    <html lang="en" className="scroll-smooth">
+      <head>
+        <meta name="theme-color" content="#1f2937" />
+        <meta name="mobile-web-app-capable" content="yes" />
+      </head>
+      <body className="bg-gray-900 text-gray-100 font-sans antialiased">
+        <div className="flex flex-col min-h-screen">
+          <Header blogName="Crypto" blogIcon="🪙" isDark />
+
+          <main className="flex-1 max-w-6xl mx-auto px-4 py-8 w-full">{children}</main>
+
+          <Footer
+            blogName="Crypto"
+            isDark
+            affiliateDisclosure="We may earn commissions from affiliate links. This helps us provide free educational content."
+          />
+        </div>
       </body>
     </html>
   );

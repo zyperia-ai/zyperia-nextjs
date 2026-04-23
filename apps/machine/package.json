@@ -3,11 +3,20 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "stage:0": "ts-node scripts/stage-0-competitive-analysis.ts",
+    "stage:1": "ts-node scripts/stage-1-research-topics.ts",
+    "stage:2": "ts-node scripts/stage-2-generate-articles.ts",
+    "stage:3": "ts-node scripts/stage-3-visual-enrichment.ts",
+    "stage:4": "ts-node scripts/stage-4-plagiarism-check.ts",
+    "stage:5": "ts-node scripts/stage-5-editorial-review.ts",
+    "stage:6": "ts-node scripts/stage-6-publish-articles.ts",
+    "mock:generate": "ts-node scripts/mock-data-generator.ts",
+    "test:local": "ts-node scripts/run-local-test.ts",
+    "test:all": "npm run mock:generate && npm run test:local",
     "generate": "ts-node scripts/generate-articles.ts",
     "verify": "ts-node scripts/verify-articles.ts",
     "publish": "ts-node scripts/publish-articles.ts",
-    "research": "ts-node scripts/research-topics.ts",
-    "test": "echo 'No tests configured yet'"
+    "research": "ts-node scripts/research-topics.ts"
   },
   "dependencies": {
     "@zyperia/shared-lib": "*",

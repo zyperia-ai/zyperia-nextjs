@@ -1,0 +1,220 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test & Lint
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Lint code
+        run: pnpm run lint
+
+      - name: Type check
+        run: pnpm run type-check
+
+  build:
+    runs-on: ubuntu-latest
+    name: Build All Apps
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build apps
+        run: pnpm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: builds
+          path: .
+
+  test-pipeline:
+    runs-on: ubuntu-latest
+    name: Test Content Machine Pipeline
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Generate mock data
+        run: cd apps/machine && npm run mock:generate
+
+      - name: Run pipeline test
+        run: cd apps/machine && npm run test:local
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: pipeline-test-results
+          path: apps/machine/.mock-db-after-test.json
+
+  deploy-crypto:
+    runs-on: ubuntu-latest
+    name: Deploy Crypto Blog
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: builds
+
+      - name: Deploy to Vercel (Crypto)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID_CRYPTO: ${{ secrets.VERCEL_PROJECT_ID_CRYPTO }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          npm i -g vercel
+          vercel deploy --prod \
+            --token=$VERCEL_TOKEN \
+            --project-id=$VERCEL_PROJECT_ID_CRYPTO \
+            --org-id=$VERCEL_ORG_ID \
+            apps/crypto
+
+  deploy-intelligence:
+    runs-on: ubuntu-latest
+    name: Deploy Intelligence Blog
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: builds
+
+      - name: Deploy to Vercel (Intelligence)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID_INTELLIGENCE: ${{ secrets.VERCEL_PROJECT_ID_INTELLIGENCE }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          npm i -g vercel
+          vercel deploy --prod \
+            --token=$VERCEL_TOKEN \
+            --project-id=$VERCEL_PROJECT_ID_INTELLIGENCE \
+            --org-id=$VERCEL_ORG_ID \
+            apps/intelligence
+
+  deploy-onlinebiz:
+    runs-on: ubuntu-latest
+    name: Deploy OnlineBiz Blog
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: builds
+
+      - name: Deploy to Vercel (OnlineBiz)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID_ONLINEBIZ: ${{ secrets.VERCEL_PROJECT_ID_ONLINEBIZ }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          npm i -g vercel
+          vercel deploy --prod \
+            --token=$VERCEL_TOKEN \
+            --project-id=$VERCEL_PROJECT_ID_ONLINEBIZ \
+            --org-id=$VERCEL_ORG_ID \
+            apps/onlinebiz
+
+  notify:
+    runs-on: ubuntu-latest
+    name: Notify Deployment Status
+    needs: [deploy-crypto, deploy-intelligence, deploy-onlinebiz]
+    if: always()
+
+    steps:
+      - name: Slack notification
+        if: failure()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+          payload: |
+            {
+              "text": "ZYPERIA Deployment Failed",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*ZYPERIA Deployment Failed*\n${{ github.repository }} - ${{ github.ref }}"
+                  }
+                }
+              ]
+            }
+
+      - name: Slack success notification
+        if: success()
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+          payload: |
+            {
+              "text": "ZYPERIA Deployment Successful",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*ZYPERIA Deployment Successful* ✓\n${{ github.repository }} - ${{ github.ref }}"
+                  }
+                }
+              ]
+            }
