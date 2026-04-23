@@ -1,53 +1,82 @@
-# ZYPERIA — Multi-Blog Content Machine
+# ZYPERIA — 3-Blog Monetization Platform
 
-3 high-performance blogs powered by AI content generation:
-- **crypto.zyperia.ai** — Cryptocurrency education & trading
-- **intelligence.zyperia.ai** — Business automation with AI
-- **onlinebiz.zyperia.ai** — How to earn money online
+Expert content on Cryptocurrency, AI & Business Automation, and How to Earn Online.
 
-## Architecture
+**Status:** ✅ Production Ready (May 1, 2026 Launch)  
+**Live:** https://zyperia.ai  
+**Repository:** https://github.com/zyperya-ai/relocate  
 
-**Monorepo** with pnpm workspaces + Turborepo:
-- `apps/crypto`, `apps/intelligence`, `apps/onlinebiz` — Next.js 16.2 blogs
-- `apps/machine` — Content generation pipeline
-- `packages/shared-lib` — Shared business logic
-- `packages/shared-ui` — Shared React components
-- `packages/shared-config` — Shared configuration
-- `packages/supabase` — Database schema + migrations
+---
 
-## AI Stack (Cost-Optimized)
+## 📚 What's Inside
 
-1. **Phi-4 (Ollama)** — FREE local inference for generation (~2 min/article)
-2. **Gemini Flash** — Super cheap verification (~€0.001/article)
-3. **Claude Sonnet** — Fallback only (~5-10% articles)
+### 3 Expert Blogs
+- **Crypto & Blockchain** → /crypto (education, security, trading)
+- **AI & Business Automation** → /intelligence (tools, workflows, automation)
+- **How to Earn Online** → /onlinebiz (side hustles, passive income, digital products)
 
-**Total cost: €3-25/month** (vs. €200+/month using Claude only)
+### Monetization Systems
+- **Newsletter System** — Double opt-in, multi-theme, SendGrid bulk sending
+- **Affiliate Marketing** — 15 platforms, click tracking, conversion attribution  
+- **AdSense** — Secondary revenue stream (future)
 
-## Quick Start
+### Revenue Model
+- Newsletter: €300-5,000/month
+- Affiliate Links: €500-25,000/month
+- AdSense: €0-500/month
+- **Year 1 Target: €500 → €30,000+/month**
+
+---
+
+## 🏗️ Architecture
+
+**Monorepo** with pnpm workspaces:
+- `apps/root/` — Landing page (/)
+- `apps/crypto/` — /crypto blog
+- `apps/intelligence/` — /intelligence blog
+- `apps/onlinebiz/` — /onlinebiz blog
+- `apps/machine/` — Content generation engine
+- `packages/shared-ui/` — React components
+- `packages/shared-lib/` — Shared logic
+- `packages/supabase/` — Database migrations
+
+**Deployment:** Single Vercel project with middleware routing  
+**Database:** Supabase (PostgreSQL)  
+**Email:** Resend (confirmations) + SendGrid (bulk)
+
+## 🚀 Quick Start
 
 ```bash
 # Install dependencies
 pnpm install
 
-# Run dev servers (all apps in parallel)
+# Setup environment
+cp .env.example .env.local
+# Edit with your Supabase credentials
+
+# Apply database migrations
+pnpm supabase migration up
+
+# Seed affiliate platforms
+npx ts-node apps/machine/scripts/seed-affiliate-platforms.ts
+
+# Run development server
 pnpm dev
 
-# Build all apps
-pnpm build
-
-# Run content generation pipeline
-cd apps/machine
-pnpm generate   # Generate articles
-pnpm verify     # Fact-check them
-pnpm publish    # Publish to blogs
+# Visit http://localhost:3000
 ```
 
-## Deployment
+## 📤 Deployment
 
-All 3 apps deploy to Vercel automatically via CI/CD.
+```bash
+# Push to GitHub
+git push origin main
 
-Each blog:
-- `crypto.zyperia.ai` runs on port 3001
+# Vercel auto-deploys (1-2 minutes)
+# Check: https://vercel.com/dashboard
+
+# Live at: https://zyperia.ai
+```
 - `intelligence.zyperia.ai` runs on port 3002
 - `onlinebiz.zyperia.ai` runs on port 3003
 
