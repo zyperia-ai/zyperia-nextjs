@@ -250,10 +250,11 @@ git push origin main
 Go to **Settings → Environment Variables** and add to **ALL 3 projects**:
 
 ```env
-# Already configured (no change needed):
-SUPABASE_URL=https://echhftptqtznxqpvjgta.supabase.co
-SUPABASE_KEY=sb_publishable_x97fdNFMpSHyvBVQSRukJA_iENLv8dH
-ANTHROPIC_API_KEY=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
+# Configure these (values in Vercel settings):
+SUPABASE_URL=<your-supabase-url>
+SUPABASE_KEY=<your-supabase-anon-key>
+SUPABASE_SERVICE_ROLE_KEY=<your-supabase-service-role-key>
+ANTHROPIC_API_KEY=<generate-new-key-at-https://platform.claude.com/settings/keys>
 
 # NEW - Required for cron jobs:
 CRON_SECRET=<generate with: openssl rand -base64 32>
@@ -261,6 +262,8 @@ CRON_SECRET=<generate with: openssl rand -base64 32>
 # NEW - For admin dashboard (optional):
 ADMIN_TOKEN=<generate with: openssl rand -base64 32>
 ```
+
+⚠️ **SECURITY NOTE**: Never commit credentials to git. Use Vercel environment variables or .env.local (gitignored).
 
 **Apply to:** 
 - zyperia-crypto
