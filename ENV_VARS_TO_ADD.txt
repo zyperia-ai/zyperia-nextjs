@@ -1,0 +1,16 @@
+Add these environment variables to EACH Vercel project:
+
+SUPABASE_URL=https://echhftptqtznxqpvjgta.supabase.co
+SUPABASE_KEY=sb_publishable_x97fdNFMpSHyvBVQSRukJA_iENLv8dH
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVjaGhmdHB0cXR6bnhxcHZqZ3RhIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Njk1MzMyNiwiZXhwIjoyMDkyNTI5MzI2fQ.3LpwhyjAz_34Emsr1DVBKQk_4KLIjyY_ScG6OE_VzFA
+NEXT_PUBLIC_SUPABASE_URL=https://echhftptqtznxqpvjgta.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_x97fdNFMpSHyvBVQSRukJA_iENLv8dH
+RESEND_API_KEY=re_X1R32haY_A1VUKTLGpTu2Jz1mZFA1aqtB
+ANTHROPIC_API_KEY=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
+
+STEPS FOR EACH PROJECT:
+1. Go to https://vercel.com/dashboard
+2. Click on project (zyperia-crypto, zyperia-intelligence, or zyperia-onlinebiz)
+3. Click "Settings" → "Environment Variables"
+4. Add all 8 variables above
+5. Redeploy

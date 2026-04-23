@@ -16,7 +16,11 @@
     "generate": "ts-node scripts/generate-articles.ts",
     "verify": "ts-node scripts/verify-articles.ts",
     "publish": "ts-node scripts/publish-articles.ts",
-    "research": "ts-node scripts/research-topics.ts"
+    "research": "ts-node scripts/research-topics.ts",
+    "seed:topics": "ts-node scripts/seed-content-topics.ts",
+    "pipeline:full": "ts-node scripts/stage-0-competitive-analysis.ts && ts-node scripts/stage-1-research-topics.ts && ts-node scripts/stage-2-generate-articles.ts && ts-node scripts/stage-3-visual-enrichment.ts && ts-node scripts/stage-4-plagiarism-check.ts && ts-node scripts/stage-5-editorial-review.ts && ts-node scripts/stage-6-publish-articles.ts",
+    "test:production": "ts-node scripts/full-pipeline-test.ts",
+    "optimize:pipeline": "ts-node scripts/optimize-pipeline.ts"
   },
   "dependencies": {
     "@zyperia/shared-lib": "*",

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://openapi.vercelapis.com/vercel.json",
+  "buildCommand": "yarn build",
+  "devCommand": "yarn dev",
+  "installCommand": "yarn install",
+  "framework": "nextjs",
+  "crons": [
+    {
+      "path": "/api/cron/stage-0-analysis",
+      "schedule": "0 23 * * *"
+    },
+    {
+      "path": "/api/cron/stage-1-research",
+      "schedule": "30 0 * * *"
+    },
+    {
+      "path": "/api/cron/stage-2-generate",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/stage-3-visuals",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/stage-4-plagiarism",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/stage-5-editorial",
+      "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/cron/stage-6-publish",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/stage-6-publish",
+      "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/cron/stage-6-publish",
+      "schedule": "0 18 * * *"
+    }
+  ]
+}
