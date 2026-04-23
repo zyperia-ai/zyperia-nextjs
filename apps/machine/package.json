@@ -28,7 +28,10 @@
     "seo:analyze": "ts-node scripts/seo-analysis.ts",
     "seo:track": "ts-node scripts/seo-analysis.ts crypto track-rankings",
     "seo:keywords": "ts-node scripts/seo-analysis.ts crypto keyword-analysis",
-    "seo:opportunities": "ts-node scripts/seo-analysis.ts crypto opportunity-finder"
+    "seo:opportunities": "ts-node scripts/seo-analysis.ts crypto opportunity-finder",
+    "backup": "ts-node scripts/database-backup.ts",
+    "backup:list": "ts-node scripts/database-backup.ts crypto list-backups",
+    "backup:cleanup": "ts-node scripts/database-backup.ts crypto cleanup"
   },
   "dependencies": {
     "@zyperia/shared-lib": "*",
