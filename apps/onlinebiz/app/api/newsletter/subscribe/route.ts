@@ -18,15 +18,19 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { sendConfirmationEmail } from '@zyperia/machine/lib/newsletter-service';
+import { sendConfirmationEmail } from '@zyperia/shared-lib';
 import crypto from 'crypto';
+export const dynamic = 'force-dynamic';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabase() {
+  return createClient(
+    process.env.SUPABASE_URL || '',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  );
+}
 
 export async function POST(request: Request) {
+  const supabase = getSupabase();
   try {
     const { email, themes, source } = await request.json();
 
@@ -99,8 +103,8 @@ export async function POST(request: Request) {
       });
     }
 
-    // Log the subscription attempt
-    await supabase.from('generation_logs').insert({
+    // Log subscription (non-blocking)
+    void supabase.from('generation_logs').insert({
       app_id: source?.split('_')[0] || 'unknown',
       stage: 'newsletter_subscribe',
       status: 'success',
@@ -117,7 +121,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Newsletter subscribe error:', error);
 
-    await supabase.from('generation_logs').insert({
+    void supabase.from('generation_logs').insert({
       stage: 'newsletter_subscribe',
       status: 'failed',
       duration_seconds: 1,

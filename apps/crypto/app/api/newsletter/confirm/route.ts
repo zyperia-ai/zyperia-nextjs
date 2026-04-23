@@ -6,13 +6,17 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+export const dynamic = 'force-dynamic';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabase() {
+  return createClient(
+    process.env.SUPABASE_URL || '',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  );
+}
 
 export async function GET(request: Request) {
+  const supabase = getSupabase();
   try {
     const { searchParams } = new URL(request.url);
     const token = searchParams.get('token');
@@ -66,7 +70,8 @@ export async function GET(request: Request) {
       .filter(Boolean)
       .join(', ');
 
-    await supabase.from('generation_logs').insert({
+    // Log success (non-blocking)
+    void supabase.from('generation_logs').insert({
       stage: 'newsletter_confirm',
       status: 'success',
       duration_seconds: 1,
@@ -81,7 +86,8 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error('Newsletter confirm error:', error);
 
-    await supabase.from('generation_logs').insert({
+    // Log error (non-blocking)
+    void supabase.from('generation_logs').insert({
       stage: 'newsletter_confirm',
       status: 'failed',
       duration_seconds: 1,

@@ -14,13 +14,17 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+export const dynamic = 'force-dynamic';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabase() {
+  return createClient(
+    process.env.SUPABASE_URL || '',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  );
+}
 
 export async function GET(request: Request) {
+  const supabase = getSupabase();
   try {
     const { searchParams } = new URL(request.url);
     const trackingId = searchParams.get('id');
@@ -73,7 +77,7 @@ export async function GET(request: Request) {
     }
 
     // Redirect to affiliate URL
-    const affiliateUrl = link.affiliate_platforms?.affiliate_url;
+    const affiliateUrl = link.affiliate_platforms?.[0]?.affiliate_url;
     if (!affiliateUrl) {
       return Response.json(
         { error: 'Affiliate URL not found' },
@@ -103,6 +107,7 @@ export async function GET(request: Request) {
  * }
  */
 export async function POST(request: Request) {
+  const supabase = getSupabase();
   try {
     const { tracking_id, conversion_id, conversion_value } = await request.json();
 

@@ -1,65 +1,44 @@
 'use client';
 
-import Link from 'next/link';
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function NewsletterConfirmedPage() {
+function NewsletterConfirmedContent() {
   const searchParams = useSearchParams();
-  const email = searchParams.get('email') || '';
-  const themes = searchParams.get('themes') || 'your newsletters';
+  const email = searchParams.get('email') || 'your email';
+  const themes = searchParams.get('themes') || 'subscribed';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
-        {/* Success Icon */}
-        <div className="mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full">
-            <span className="text-4xl">✓</span>
-          </div>
-        </div>
-
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">You're In! 🎉</h1>
-
-        <p className="text-gray-600 mb-6">
-          Confirmation successful! A welcome email is on the way to:
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white flex items-center justify-center p-4">
+      <div className="max-w-md text-center">
+        <div className="text-5xl mb-4">✓</div>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          Subscription Confirmed!
+        </h1>
+        <p className="text-gray-600 mb-4">
+          You'll now receive updates for:
         </p>
-
-        <p className="text-lg font-semibold text-gray-900 bg-gray-50 p-3 rounded-lg mb-6">
-          {email}
+        <p className="text-lg font-semibold text-purple-600 mb-6">
+          {themes}
         </p>
-
-        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6 text-left">
-          <p className="text-sm text-blue-900">
-            <strong>You're subscribed to:</strong>
-            <br />
-            {themes}
-          </p>
-        </div>
-
-        <p className="text-gray-600 text-sm mb-8">
-          Check your inbox (and spam folder, just in case!) for insights and exclusive content.
+        <p className="text-gray-500 mb-6">
+          Check {email} for our latest content
         </p>
-
-        <div className="space-y-3">
-          <Link
-            href="/"
-            className="block w-full px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-all transform hover:scale-105"
-          >
-            Explore Blog
-          </Link>
-
-          <Link
-            href="/about"
-            className="block w-full px-6 py-3 border-2 border-green-600 text-green-600 font-bold rounded-lg hover:bg-green-50 transition-all"
-          >
-            Learn More
-          </Link>
-        </div>
-
-        <p className="text-xs text-gray-400 mt-8">
-          You can unsubscribe anytime from any email we send you.
-        </p>
+        <a
+          href="/"
+          className="inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700"
+        >
+          Back to Home
+        </a>
       </div>
     </div>
+  );
+}
+
+export default function NewsletterConfirmedPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <NewsletterConfirmedContent />
+    </Suspense>
   );
 }

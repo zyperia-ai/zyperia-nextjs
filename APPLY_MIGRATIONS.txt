@@ -1,0 +1,50 @@
+🚀 ZYPERIA DATABASE MIGRATIONS
+================================
+
+✅ Build Status: ALL PASSING
+✅ Credentials: Configured in .env.local
+⏳ Next: Apply Migrations to Supabase
+
+STEP 1: Open Supabase SQL Editor
+=================================
+1. Go to: https://app.supabase.com/
+2. Select project: echhftptqtznxqpvjgta
+3. Click "SQL Editor" (left sidebar)
+4. Click "New Query"
+
+STEP 2: Copy Migrations
+=======================
+Open file: packages/supabase/migrations/0_ALL_MIGRATIONS.sql
+Copy ALL content (Ctrl+A → Ctrl+C)
+
+STEP 3: Paste & Execute
+=======================
+In Supabase SQL Editor:
+1. Paste content (Ctrl+V)
+2. Click "RUN" button
+3. Wait for success message
+
+TABLES CREATED:
+===============
+✓ blog_posts (articles)
+✓ content_research (research data)
+✓ content_topics (topic queue)
+✓ blog_performance (views/clicks/revenue)
+✓ theme_config (AI prompts, affiliates)
+✓ generation_logs (audit trail)
+✓ All indexes + RLS policies
+
+VERIFY:
+=======
+After running migrations:
+1. Click "Schema" in SQL Editor
+2. Should see all tables listed
+3. Expand "blog_posts" to verify columns
+
+THEN PROCEED TO:
+================
+1. Deploy to Vercel (see DEPLOYMENT.md)
+2. Configure custom domains
+3. Start content machine (Week 2)
+
+Questions? Check DEPLOYMENT.md
