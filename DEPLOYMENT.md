@@ -48,16 +48,16 @@ vercel deploy --name zyperia-onlinebiz apps/onlinebiz
 
 ### Set Environment Variables in Each Project
 
-In Vercel dashboard, add these for **each** project:
+In Vercel dashboard, add these for **each** project (values in `.env.local`):
 
 ```
-SUPABASE_URL=https://echhftptqtznxqpvjgta.supabase.co
-SUPABASE_KEY=sb_publishable_x97fdNFMpSHyvBVQSRukJA_iENLv8dH
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-NEXT_PUBLIC_SUPABASE_URL=https://echhftptqtznxqpvjgta.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_x97fdNFMpSHyvBVQSRukJA_iENLv8dH
-RESEND_API_KEY=re_X1R32haY_A1VUKTLGpTu2Jz1mZFA1aqtB
-ANTHROPIC_API_KEY=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
+SUPABASE_URL
+SUPABASE_KEY
+SUPABASE_SERVICE_ROLE_KEY
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+RESEND_API_KEY
+ANTHROPIC_API_KEY
 ```
 
 ---
