@@ -20,7 +20,15 @@
     "seed:topics": "ts-node scripts/seed-content-topics.ts",
     "pipeline:full": "ts-node scripts/stage-0-competitive-analysis.ts && ts-node scripts/stage-1-research-topics.ts && ts-node scripts/stage-2-generate-articles.ts && ts-node scripts/stage-3-visual-enrichment.ts && ts-node scripts/stage-4-plagiarism-check.ts && ts-node scripts/stage-5-editorial-review.ts && ts-node scripts/stage-6-publish-articles.ts",
     "test:production": "ts-node scripts/full-pipeline-test.ts",
-    "optimize:pipeline": "ts-node scripts/optimize-pipeline.ts"
+    "optimize:pipeline": "ts-node scripts/optimize-pipeline.ts",
+    "backlinks:find": "ts-node scripts/backlink-campaign-manager.ts",
+    "backlinks:campaign": "ts-node scripts/backlink-campaign-manager.ts",
+    "backlinks:report": "ts-node scripts/backlink-campaign-manager.ts",
+    "benchmark": "ts-node scripts/performance-benchmark.ts",
+    "seo:analyze": "ts-node scripts/seo-analysis.ts",
+    "seo:track": "ts-node scripts/seo-analysis.ts crypto track-rankings",
+    "seo:keywords": "ts-node scripts/seo-analysis.ts crypto keyword-analysis",
+    "seo:opportunities": "ts-node scripts/seo-analysis.ts crypto opportunity-finder"
   },
   "dependencies": {
     "@zyperia/shared-lib": "*",
