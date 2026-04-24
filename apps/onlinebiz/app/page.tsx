@@ -20,15 +20,15 @@ export default function OnlineBizLandingPage() {
       {/* =========== HERO =========== */}
       <section className="relative pt-10 pb-20 md:pt-16 md:pb-28">
         <div className="hero-ambient" />
-        <div className="relative z-10 max-w-6xl mx-auto px-6">
-          <div className="relative mx-auto w-full max-w-5xl rounded-2xl overflow-hidden border border-white/10 shadow-[0_40px_120px_-40px_rgba(174,234,0,0.45)]">
+        <div className="container-narrow relative z-10">
+          <div className="hero-banner-wrap">
             <Image
               src="/hero-banner.png"
               alt="ZYPERIA OnlineBiz"
               width={1920}
               height={800}
               priority
-              className="w-full h-auto block"
+              sizes="(max-width: 1024px) 100vw, 1024px"
             />
           </div>
 
