@@ -18,56 +18,65 @@ export default function IntelligenceLandingPage() {
       <Nav />
 
       {/* =========== HERO =========== */}
-      <section className="relative pt-10 pb-20 md:pt-16 md:pb-28">
+      <section className="relative pt-8 pb-16 md:pt-12 md:pb-24">
         <div className="hero-ambient" />
         <div className="container-narrow relative z-10">
-          <div className="hero-banner-wrap">
-            <Image
-              src="/hero-banner.png"
-              alt="ZYPERIA Intelligence"
-              width={1920}
-              height={800}
-              priority
-              sizes="(max-width: 1024px) 100vw, 1024px"
-            />
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
-          <div className="mt-14 md:mt-20 max-w-4xl mx-auto text-center">
-            <span className="kicker mb-6">
-              AI & Automation · Built for Operators
-            </span>
-            <h1 className="h-display text-5xl md:text-7xl lg:text-8xl mb-6">
-              Practical AI{" "}
-              <span className="text-brand-gradient">for people who ship.</span>
-            </h1>
-            <p className="text-lg md:text-xl text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed">
-              Automation playbooks, workflow blueprints, and the tools that
-              actually earn their seat at the table. No AI hype, no "game
-              changer" headlines.
-            </p>
+            {/* Banner — left on desktop, top on mobile */}
+            <div className="lg:col-span-5 order-1 lg:order-1">
+              <div className="hero-banner-wrap mx-auto lg:mx-0 max-w-md lg:max-w-none">
+                <Image
+                  src="/hero-banner.png"
+                  alt="ZYPERIA Intelligence"
+                  width={1920}
+                  height={800}
+                  priority
+                  sizes="(max-width: 1024px) 90vw, 40vw"
+                />
+              </div>
+            </div>
 
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/articles" className="btn-primary">
-                Browse playbooks <ArrowRight size={18} />
-              </Link>
-              <Link href="#newsletter" className="btn-ghost">
-                Weekly breakdown <Mail size={18} />
-              </Link>
+            {/* Text — right on desktop, bottom on mobile */}
+            <div className="lg:col-span-7 order-2 lg:order-2 text-center lg:text-left">
+              <span className="kicker mb-4">
+                AI & Automation · Built for Operators
+              </span>
+              <p className="text-sm md:text-base text-[var(--text-muted)] mt-4 mb-4 h-mono uppercase tracking-wider">
+                A weekly AI automation blog for operators
+              </p>
+              <h1 className="h-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-5">
+                Practical AI{" "}
+                <span className="text-brand-gradient">for people who ship.</span>
+              </h1>
+              <p className="text-base md:text-lg text-[var(--text-secondary)] max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                Automation playbooks, workflow blueprints, and the tools that actually earn their seat at the table. No AI hype, no "game changer" headlines.
+              </p>
+
+              <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+                <Link href="/articles" className="btn-primary">
+                  Browse playbooks <ArrowRight size={18} />
+                </Link>
+                <Link href="#newsletter" className="btn-ghost">
+                  Weekly breakdown <Mail size={18} />
+                </Link>
+              </div>
             </div>
           </div>
 
-          <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5 rounded-xl overflow-hidden border border-white/10">
+          {/* Stats strip — below hero, full width */}
+          <div className="mt-12 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5 rounded-xl overflow-hidden border border-white/10">
             {[
               { label: "Playbooks published", value: "860+" },
               { label: "Tools reviewed", value: "220+" },
               { label: "Automations shared", value: "140" },
               { label: "Readers/month", value: "31K" },
             ].map((s) => (
-              <div key={s.label} className="bg-[var(--surface-1)] px-6 py-6 text-center">
-                <div className="h-display text-3xl md:text-4xl text-brand-gradient">
+              <div key={s.label} className="bg-[var(--surface-1)] px-4 py-5 md:px-6 md:py-6 text-center">
+                <div className="h-display text-2xl md:text-4xl text-brand-gradient">
                   {s.value}
                 </div>
-                <div className="text-xs uppercase tracking-wider text-[var(--text-muted)] mt-2 h-mono">
+                <div className="text-[10px] md:text-xs uppercase tracking-wider text-[var(--text-muted)] mt-2 h-mono">
                   {s.label}
                 </div>
               </div>
