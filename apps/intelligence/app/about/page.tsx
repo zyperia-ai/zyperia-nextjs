@@ -1,74 +1,82 @@
-'use client'
+import { Metadata } from "next";
+import Link from "next/link";
 
-import Link from 'next/link'
-import { ArrowRight, Target, Users, Zap, Globe } from 'lucide-react'
+export const metadata: Metadata = {
+  title: "Sobre — ZYPERIA Intelligence",
+  description: "Playbooks de IA para quem executa. Sem hype, sem think pieces.",
+};
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950 text-white">
-      {/* Header */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-white/5 backdrop-blur border-b border-white/10">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            About ZYPERIA Intelligence
-          </h1>
-          <p className="text-gray-300 text-lg">Democratizing expert knowledge and AI-powered insights</p>
+    <div className="min-h-screen px-4 py-20">
+      <div className="container-narrow max-w-3xl">
+        <span className="kicker mb-6">Sobre</span>
+        <h1 className="h-display text-4xl md:text-6xl mb-8">
+          Para quem prefere <span className="text-brand-gradient">executar em vez de teorizar.</span>
+        </h1>
+
+        <div className="prose-zyperia">
+          <p>
+            A ZYPERIA Intelligence é uma publicação para operadores — as pessoas
+            dentro de empresas e negócios a solo que realmente têm de fazer a IA e
+            a automação funcionar. Não os futuristas de IA. Não os influencers de
+            prompts. As pessoas cujo trabalho depende de o workflow aguentar na
+            segunda-feira de manhã.
+          </p>
+
+          <h2>O que publicamos</h2>
+          <p>
+            Playbooks, não ensaios. Cada automação sobre a qual escrevemos foi
+            construída, implementada, e testada à pressão antes de publicarmos.
+            Os screenshots são nossos. Os modos de falha estão documentados. Os
+            custos são ditos à frente.
+          </p>
+
+          <p>
+            Cobrimos LLMs em produção, automação de workflows (n8n, Make, Zapier,
+            e cola à medida), agentes autónomos, stacks open-source (Ollama,
+            Llama, Mistral, Phi), e o trabalho sujo de integração de ligar IA às
+            ferramentas que a tua equipa recusa largar.
+          </p>
+
+          <h2>O que evitamos</h2>
+          <ul>
+            <li><strong>Think pieces.</strong> "O que isto significa para a humanidade" não é o nosso território.</li>
+            <li><strong>Ciclos de hype.</strong> Se uma ferramenta tem três meses e não está provada, esperamos.</li>
+            <li><strong>Manchetes "revolucionárias".</strong> Nada é revolucionário. Algumas coisas são úteis.</li>
+            <li><strong>Listas de ferramentas.</strong> "Top 47 ferramentas de IA para 2026" é spam de SEO com um casaco bonito.</li>
+          </ul>
+
+          <h2>Padrão editorial</h2>
+          <p>
+            Se não conseguimos correr, não escrevemos. Cada peça começa a partir da
+            dor real de um operador, não de uma ferramenta à procura de caso de uso.
+            Os trade-offs — custo, fiabilidade, vendor lock-in, carga de manutenção
+            — são ditos explicitamente, não enterrados ao fundo.
+          </p>
+
+          <h2>Como somos financiados</h2>
+          <p>
+            Relações de afiliado com plataformas que usamos genuinamente (Zapier,
+            Make, OpenAI, Anthropic, Notion) e patrocínios da newsletter. Não
+            vendemos cursos, cohorts, ou programas de "mastery". Detalhe completo
+            na <Link href="/disclosure">nossa página de divulgação</Link>.
+          </p>
+
+          <h2>A rede ZYPERIA</h2>
+          <p>
+            A ZYPERIA Intelligence é parte de uma operação de três publicações, ao
+            lado da <a href="https://crypto.zyperia.ai">ZYPERIA Crypto</a> (análise de activos digitais) e da{" "}
+            <a href="https://onlinebiz.zyperia.ai">ZYPERIA OnlineBiz</a> (rendimento
+            online, sem gurus). A mesma regra editorial nas três: não publicar o
+            que não se consegue suportar com evidência.
+          </p>
+
+          <p>
+            <Link href="/#newsletter">O Build Semanal chega todas as terças →</Link>
+          </p>
         </div>
-      </section>
-
-      {/* Mission */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
-            <div>
-              <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Our Mission
-              </h2>
-              <p className="text-gray-300 text-lg leading-relaxed mb-4">
-                We believe knowledge is power. Our mission is to empower individuals and organizations with deep, actionable intelligence on technology, business, and markets.
-              </p>
-              <p className="text-gray-400 text-lg">
-                By combining expert research with AI analysis, we make sophisticated insights accessible to everyone, not just institutions.
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-xl p-8 border border-white/10">
-              <Target className="h-16 w-16 text-purple-400 mb-4" />
-              <h3 className="text-2xl font-bold mb-3">Knowledge at Scale</h3>
-              <p className="text-gray-300">Empowering millions with the intelligence to make better decisions.</p>
-            </div>
-          </div>
-
-          {/* Values */}
-          <div className="mb-20">
-            <h2 className="text-4xl font-bold mb-12 text-center bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Our Values
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[
-                { icon: Zap, title: 'Insight', desc: 'Deep, actionable intelligence' },
-                { icon: Users, title: 'Community', desc: 'Learning together, growing together' },
-                { icon: Globe, title: 'Accessibility', desc: 'Knowledge for everyone' },
-                { icon: Target, title: 'Impact', desc: 'Making you smarter every day' }
-              ].map((value, idx) => (
-                <div key={idx} className="p-8 rounded-xl bg-white/5 border border-white/10 hover:border-purple-400/50 transition-all">
-                  <value.icon className="h-8 w-8 text-purple-400 mb-4" />
-                  <h3 className="text-xl font-bold mb-2">{value.title}</h3>
-                  <p className="text-gray-400">{value.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* CTA */}
-          <div className="text-center">
-            <p className="text-gray-300 text-lg mb-6">Ready to expand your knowledge?</p>
-            <Link href="/articles" className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-500 rounded-lg font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all">
-              Start Learning
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
-  )
+  );
 }

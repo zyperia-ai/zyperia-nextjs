@@ -1,74 +1,87 @@
-'use client'
+import { Metadata } from "next";
+import Link from "next/link";
 
-import Link from 'next/link'
-import { ArrowRight, Target, Users, Zap, Globe } from 'lucide-react'
+export const metadata: Metadata = {
+  title: "Sobre — ZYPERIA Crypto",
+  description: "Porquê mais uma publicação sobre cripto? Porque a maioria não faz o trabalho.",
+};
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white">
-      {/* Header */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 bg-white/5 backdrop-blur border-b border-white/10">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            About ZYPERIA
-          </h1>
-          <p className="text-gray-300 text-lg">Empowering traders and investors with real-time intelligence</p>
+    <div className="min-h-screen px-4 py-20">
+      <div className="container-narrow max-w-3xl">
+        <span className="kicker mb-6">Sobre</span>
+        <h1 className="h-display text-4xl md:text-6xl mb-8">
+          Lemos os whitepapers <span className="text-brand-gradient">para não teres de os ler.</span>
+        </h1>
+
+        <div className="prose-zyperia">
+          <p>
+            A ZYPERIA Crypto é uma publicação independente de análise sobre a
+            economia dos activos digitais — Bitcoin, Ethereum, DeFi, L2s,
+            infraestrutura, e a maquinaria regulatória à volta de tudo isto.
+          </p>
+
+          <p>
+            Foi construída para um tipo específico de leitor: alguém que já anda
+            na cripto há tempo suficiente para estar farto do ciclo de hype, das
+            threads de shill, e das newsletters "desta vez é diferente". Alguém
+            que prefere ler uma análise afiada a dez opiniões.
+          </p>
+
+          <h2>O que publicamos</h2>
+          <p>
+            Análise diária, curta o suficiente para acabar enquanto bebes o café,
+            profunda o suficiente para mudar a forma como pensas sobre um tema.
+            Cada afirmação é verificada contra dados on-chain, documentação de
+            protocolo, ou fontes primárias. Se não conseguimos confirmar, não
+            publicamos.
+          </p>
+
+          <h2>O que não publicamos</h2>
+          <ul>
+            <li><strong>Previsões de preço.</strong> Gráficos conseguem mentir em 20 línguas. Nós cobrimos fundamentos.</li>
+            <li><strong>Aconselhamento financeiro.</strong> Nada aqui é recomendação para comprar, vender ou manter seja o que for.</li>
+            <li><strong>Cobertura paga.</strong> Nenhum projecto, fundação ou exchange pode comprar espaço editorial.</li>
+            <li><strong>Isco de afiliados.</strong> Temos parcerias de afiliados (vê <Link href="/disclosure">como somos financiados</Link>) mas não decidem o que cobrimos.</li>
+          </ul>
+
+          <h2>Quem está por trás disto</h2>
+          <p>
+            A ZYPERIA Crypto é gerida por uma equipa pequena liderada por um
+            operador com 12+ anos de exposição à cripto — desde as rondas iniciais
+            de Bitcoin, passando pelas ICOs, o DeFi summer, o ciclo dos NFTs, até
+            ao que for que este capítulo actual se revele ser. Vimos o mesmo
+            playbook repetir-se vezes suficientes para o cheirar à distância.
+          </p>
+
+          <p>
+            Essa experiência molda o que cobrimos e, mais importante, o que
+            ignoramos.
+          </p>
+
+          <h2>Como somos financiados</h2>
+          <p>
+            Parcerias de afiliados com infraestrutura que já usaríamos (exchanges,
+            carteiras de hardware, ferramentas seleccionadas), patrocínios da
+            newsletter, e eventualmente publicidade display. Imagem completa na
+            nossa <Link href="/disclosure">página de divulgação</Link>.
+          </p>
+
+          <h2>A rede ZYPERIA</h2>
+          <p>
+            A ZYPERIA Crypto é uma das três publicações da operação ZYPERIA, ao
+            lado da <a href="https://intelligence.zyperia.ai">ZYPERIA Intelligence</a> (IA
+            e automação para operadores) e da <a href="https://onlinebiz.zyperia.ai">ZYPERIA OnlineBiz</a> (rendimento
+            online, sem gurus). Cada uma é independente editorialmente; o que
+            partilham é um padrão: não publicar o que não se consegue verificar.
+          </p>
+
+          <p>
+            Queres o Resumo Matinal? <Link href="/#newsletter">Subscreve grátis →</Link>
+          </p>
         </div>
-      </section>
-
-      {/* Mission */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-20">
-            <div>
-              <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Our Mission
-              </h2>
-              <p className="text-gray-300 text-lg leading-relaxed mb-4">
-                We believe everyone deserves access to world-class cryptocurrency intelligence. Our mission is to democratize market insights, making professional-grade analysis available to traders of all levels.
-              </p>
-              <p className="text-gray-400 text-lg">
-                We combine cutting-edge AI with human expertise to deliver actionable intelligence that helps you stay ahead of the market.
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-xl p-8 border border-white/10">
-              <Target className="h-16 w-16 text-blue-400 mb-4" />
-              <h3 className="text-2xl font-bold mb-3">Precision. Clarity. Success.</h3>
-              <p className="text-gray-300">Every article, chart, and insight is designed to move you closer to your financial goals.</p>
-            </div>
-          </div>
-
-          {/* Values */}
-          <div className="mb-20">
-            <h2 className="text-4xl font-bold mb-12 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Our Values
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[
-                { icon: Zap, title: 'Excellence', desc: 'Highest quality content and analysis' },
-                { icon: Users, title: 'Community', desc: 'Building a supportive trader network' },
-                { icon: Globe, title: 'Transparency', desc: 'Open, honest market commentary' },
-                { icon: Target, title: 'Impact', desc: 'Real results for our members' }
-              ].map((value, idx) => (
-                <div key={idx} className="p-8 rounded-xl bg-white/5 border border-white/10 hover:border-blue-400/50 transition-all">
-                  <value.icon className="h-8 w-8 text-blue-400 mb-4" />
-                  <h3 className="text-xl font-bold mb-2">{value.title}</h3>
-                  <p className="text-gray-400">{value.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* CTA */}
-          <div className="text-center">
-            <p className="text-gray-300 text-lg mb-6">Ready to join the ZYPERIA community?</p>
-            <Link href="/articles" className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 rounded-lg font-semibold hover:shadow-lg hover:shadow-blue-500/50 transition-all">
-              Start Exploring
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
-  )
+  );
 }
