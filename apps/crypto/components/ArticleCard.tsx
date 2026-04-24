@@ -14,7 +14,7 @@ export type ArticleCardData = {
 };
 
 export default function ArticleCard({ article }: { article: ArticleCardData }) {
-  const dateStr = new Date(article.published_at).toLocaleDateString("en-GB", {
+  const dateStr = new Date(article.published_at).toLocaleDateString("pt-PT", {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -47,7 +47,7 @@ export default function ArticleCard({ article }: { article: ArticleCardData }) {
             <>
               <span>·</span>
               <span className="flex items-center gap-1">
-                <Clock size={10} /> {article.reading_time_minutes} min
+                <Clock size={10} /> {article.reading_time_minutes} min de leitura
               </span>
             </>
           )}
@@ -62,7 +62,7 @@ export default function ArticleCard({ article }: { article: ArticleCardData }) {
         )}
         {article.author_byline && (
           <div className="text-[10px] h-mono uppercase tracking-wider text-[var(--text-muted)] mt-4">
-            By {article.author_byline}
+            Por {article.author_byline}
           </div>
         )}
       </div>

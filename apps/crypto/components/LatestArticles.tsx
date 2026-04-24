@@ -24,16 +24,16 @@ export default async function LatestArticles() {
     return (
       <section className="relative py-16 md:py-24 border-t border-white/5">
         <div className="container-narrow text-center">
-          <span className="kicker mb-4 mx-auto">Latest</span>
+          <span className="kicker mb-4 mx-auto">Recentes</span>
           <h2 className="h-display text-3xl md:text-4xl mb-4">
-            First articles landing soon.
+            As primeiras análises estão a caminho.
           </h2>
           <p className="text-[var(--text-secondary)] max-w-lg mx-auto mb-8">
-            The research desk is warming up. Subscribe to get the first issues
-            in your inbox the day they publish.
+            A mesa de pesquisa está a aquecer. Subscreve e recebe os primeiros números
+            no teu email no dia em que saírem.
           </p>
           <Link href="#newsletter" className="btn-primary">
-            Subscribe for launch <ArrowRight size={18} />
+            Subscrever para o lançamento <ArrowRight size={18} />
           </Link>
         </div>
       </section>
@@ -45,16 +45,16 @@ export default async function LatestArticles() {
       <div className="container-narrow">
         <div className="flex items-end justify-between mb-10 md:mb-12">
           <div>
-            <span className="kicker mb-3">Latest</span>
+            <span className="kicker mb-3">Recentes</span>
             <h2 className="h-display text-3xl md:text-4xl mt-2">
-              Fresh research.
+              Análise fresca.
             </h2>
           </div>
           <Link
             href="/articles"
             className="text-sm text-[var(--text-secondary)] hover:text-[var(--brand-highlight)] transition-colors flex items-center gap-1"
           >
-            View all <ArrowRight size={14} />
+            Ver todas <ArrowRight size={14} />
           </Link>
         </div>
 
