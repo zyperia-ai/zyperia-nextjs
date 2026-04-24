@@ -26,7 +26,7 @@ export default function OnlineBizLandingPage() {
 
             {/* Banner — left on desktop, top on mobile */}
             <div className="lg:col-span-5 order-1 lg:order-1">
-              <div className="hero-banner-wrap mx-auto lg:mx-0 max-w-md lg:max-w-none">
+              <div className="hero-banner-wrap mx-auto lg:mx-0 max-w-[280px] lg:max-w-lg">
                 <Image
                   src="/hero-banner.png"
                   alt="ZYPERIA OnlineBiz"
@@ -46,7 +46,7 @@ export default function OnlineBizLandingPage() {
               <p className="text-sm md:text-base text-[var(--text-muted)] mt-4 mb-4 h-mono uppercase tracking-wider">
                 Um blog semanal de casos de estudo sobre negócios online
               </p>
-              <h1 className="h-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-5">
+              <h1 className="h-display text-4xl sm:text-5xl md:text-5xl lg:text-5xl xl:text-6xl mb-5">
                 Rendimento que trabalha{" "}
                 <span className="text-brand-gradient">enquanto tu descansas.</span>
               </h1>
