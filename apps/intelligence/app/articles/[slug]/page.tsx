@@ -1,9 +1,6 @@
-'use client'
-
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Heart } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import ArticleCard from '@/components/ArticleCard'
 
 interface Article {
@@ -19,63 +16,49 @@ interface Article {
   tags?: string[]
 }
 
-export default function ArticlePage() {
-  const params = useParams()
-  const [article, setArticle] = useState<Article | null>(null)
-  const [relatedArticles, setRelatedArticles] = useState<Article[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+async function fetchArticle(slug: string): Promise<Article> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'}/api/articles/${slug}`, {
+      cache: 'no-store'
+    })
 
-  const slug = params?.slug as string
-
-  useEffect(() => {
-    if (!slug) return
-
-    const fetchArticle = async () => {
-      try {
-        const response = await fetch(`/api/articles/${slug}`)
-        if (!response.status === 200) {
-          throw new Error('Artigo não encontrado')
-        }
-        const data = await response.json()
-        setArticle(data.article)
-
-        // Fetch related articles
-        const relatedRes = await fetch(`/api/articles/related/${slug}`)
-        if (relatedRes.ok) {
-          const relatedData = await relatedRes.json()
-          setRelatedArticles(relatedData.articles || [])
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Erro ao carregar artigo')
-      } finally {
-        setLoading(false)
-      }
+    if (!response.ok || response.status === 404) {
+      notFound()
     }
 
-    fetchArticle()
-  }, [slug])
+    const data = await response.json()
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center pt-32">
-        <p className="text-[var(--text-secondary)]">A carregar…</p>
-      </div>
-    )
-  }
+    if (!data.article || data.article === null || data.article === undefined) {
+      notFound()
+    }
 
-  if (error || !article) {
-    return (
-      <div className="min-h-screen pt-32 pb-20">
-        <div className="max-w-3xl mx-auto px-4 text-center">
-          <p className="text-red-400 mb-6">{error || 'Artigo não encontrado.'}</p>
-          <Link href="/articles" className="btn-ghost">
-            <ArrowLeft size={14} /> Voltar aos playbooks
-          </Link>
-        </div>
-      </div>
-    )
+    return data.article
+  } catch (err) {
+    notFound()
   }
+}
+
+async function fetchRelatedArticles(slug: string): Promise<Article[]> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002'}/api/articles/related/${slug}`, {
+      cache: 'no-store'
+    })
+
+    if (!response.ok) {
+      return []
+    }
+
+    const data = await response.json()
+    return data.articles || []
+  } catch {
+    return []
+  }
+}
+
+export default async function ArticlePage({ params }: { params: { slug: string } }) {
+  const { slug } = params
+  const article = await fetchArticle(slug)
+  const relatedArticles = await fetchRelatedArticles(slug)
 
   const dateStr = new Date(article.published_at).toLocaleDateString('pt-PT', {
     day: 'numeric',
@@ -84,7 +67,7 @@ export default function ArticlePage() {
   })
 
   return (
-    <main className="min-h-screen pt-32 pb-20">
+    <main className="min-h-screen pt-24 pb-20">
       <div className="max-w-3xl mx-auto px-4">
         {/* Back link */}
         <Link href="/articles" className="btn-ghost text-sm mb-8 inline-flex items-center gap-2">
