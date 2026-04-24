@@ -230,3 +230,68 @@ body::before {
   width: 100%;
   height: auto;
 }
+
+/* =====================================================
+   PROSE STYLES FOR ARTICLE CONTENT
+   ===================================================== */
+
+.prose-zyperia {
+  color: var(--text-primary);
+  line-height: 1.75;
+}
+
+.prose-zyperia p {
+  margin: 1.5rem 0;
+  color: var(--text-secondary);
+}
+
+.prose-zyperia h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  font-family: var(--font-syne), system-ui, sans-serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.prose-zyperia h3 {
+  margin-top: 2rem;
+  margin-bottom: 0.875rem;
+  font-family: var(--font-syne), system-ui, sans-serif;
+  font-size: 1.375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.prose-zyperia ul {
+  margin: 1.5rem 0;
+  padding-left: 1.75rem;
+  list-style-type: disc;
+}
+
+.prose-zyperia li {
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.prose-zyperia strong {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.prose-zyperia a {
+  color: var(--brand-highlight);
+  text-decoration: underline;
+  transition: color 200ms ease;
+}
+
+.prose-zyperia a:hover {
+  color: var(--brand-primary);
+}
+
+.prose-zyperia em {
+  font-style: italic;
+  color: var(--text-secondary);
+}
