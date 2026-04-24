@@ -22,15 +22,15 @@ export default function OnlineBizLayout({ children }: { children: React.ReactNod
       </head>
       <body className="bg-white text-slate-900 font-sans antialiased">
         <div className="flex flex-col min-h-screen">
-          <EnhancedHeader blogName="Earn Online" blogIcon="💰" theme="onlinebiz" isDark={false} />
+          <EnhancedHeader appName="Earn Online" appIcon="💰" theme="onlinebiz" isDark={false} />
 
           <main className="flex-1 max-w-6xl mx-auto px-4 py-8 w-full">{children}</main>
 
           <EnhancedFooter
-            blogName="Earn Online"
+            appName="Earn Online"
+            appIcon="💰"
             theme="onlinebiz"
             isDark={false}
-            affiliateDisclosure="We recommend products we genuinely use. Affiliate commissions help us create free guides."
           />
         </div>
       </body>

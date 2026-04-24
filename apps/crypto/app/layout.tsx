@@ -22,15 +22,15 @@ export default function CryptoLayout({ children }: { children: React.ReactNode }
       </head>
       <body className="bg-slate-950 text-slate-100 font-sans antialiased">
         <div className="flex flex-col min-h-screen">
-          <EnhancedHeader blogName="Crypto" blogIcon="🪙" theme="crypto" isDark />
+          <EnhancedHeader appName="Crypto" appIcon="🪙" theme="crypto" isDark />
 
           <main className="flex-1 max-w-6xl mx-auto px-4 py-8 w-full">{children}</main>
 
           <EnhancedFooter
-            blogName="Crypto"
+            appName="Crypto"
+            appIcon="🪙"
             theme="crypto"
             isDark
-            affiliateDisclosure="We may earn commissions from affiliate links. This helps us provide free educational content."
           />
         </div>
       </body>

@@ -22,15 +22,15 @@ export default function IntelligenceLayout({ children }: { children: React.React
       </head>
       <body className="bg-white text-slate-900 font-sans antialiased">
         <div className="flex flex-col min-h-screen">
-          <EnhancedHeader blogName="Intelligence" blogIcon="🧠" theme="intelligence" isDark={false} />
+          <EnhancedHeader appName="Intelligence" appIcon="🧠" theme="intelligence" isDark={false} />
 
           <main className="flex-1 max-w-6xl mx-auto px-4 py-8 w-full">{children}</main>
 
           <EnhancedFooter
-            blogName="Intelligence"
+            appName="Intelligence"
+            appIcon="🧠"
             theme="intelligence"
             isDark={false}
-            affiliateDisclosure="We earn affiliate commissions from tool recommendations. This supports our free content."
           />
         </div>
       </body>
