@@ -89,11 +89,11 @@ export default function IntelligenceLandingPage() {
       <LatestArticles />
 
       {/* =========== WHAT WE COVER =========== */}
-      <section className="relative py-20 md:py-28 border-t border-white/5">
+      <section className="relative py-16 md:py-24 border-t border-white/5">
         <div className="max-w-6xl mx-auto px-6">
           <div className="max-w-2xl mb-16">
             <span className="kicker mb-4">What we cover</span>
-            <h2 className="h-display text-4xl md:text-5xl mt-4">
+            <h2 className="h-display text-3xl md:text-4xl mt-4">
               Six fronts of the automation economy.
             </h2>
           </div>
@@ -146,12 +146,12 @@ export default function IntelligenceLandingPage() {
       </section>
 
       {/* =========== HOW WE WORK =========== */}
-      <section className="relative py-20 md:py-28 border-t border-white/5 bg-[var(--surface-1)]">
+      <section className="relative py-16 md:py-24 border-t border-white/5 bg-[var(--surface-1)]">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             <div className="lg:col-span-5">
               <span className="kicker mb-4">Editorial standard</span>
-              <h2 className="h-display text-4xl md:text-5xl mt-4 mb-6">
+              <h2 className="h-display text-3xl md:text-4xl mt-4 mb-6">
                 If we can't run it, we don't write it.
               </h2>
               <p className="text-[var(--text-secondary)] leading-relaxed">
@@ -204,10 +204,10 @@ export default function IntelligenceLandingPage() {
       </section>
 
       {/* =========== NEWSLETTER =========== */}
-      <section id="newsletter" className="relative py-20 md:py-28 border-t border-white/5">
+      <section id="newsletter" className="relative py-16 md:py-24 border-t border-white/5">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <span className="kicker mb-4">The Weekly Build</span>
-          <h2 className="h-display text-4xl md:text-5xl mt-4 mb-5">
+          <h2 className="h-display text-3xl md:text-4xl mt-4 mb-5">
             One deep playbook. Every Tuesday.
           </h2>
           <p className="text-[var(--text-secondary)] text-lg mb-10 max-w-xl mx-auto">
