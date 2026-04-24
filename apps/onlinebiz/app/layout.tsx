@@ -24,19 +24,20 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ZYPERIA OnlineBiz — Build Income That Works While You Don't",
+  title: "ZYPERIA OnlineBiz — Rendimento Online, Sem Rodeios",
   description:
-    "No-fluff guides to online income. Affiliate, digital products, SaaS side-projects, content, and the systems behind the money.",
+    "Guias sem enchimento sobre rendimento online. Afiliados, produtos digitais, micro-SaaS, conteúdo, e os sistemas por trás do dinheiro.",
   openGraph: {
     title: "ZYPERIA OnlineBiz",
-    description: "Build income that works while you don't.",
+    description: "Rendimento online, sem rodeios.",
     images: ["/og-image.png"],
     type: "website",
+    locale: "pt_PT",
   },
   twitter: {
     card: "summary_large_image",
     title: "ZYPERIA OnlineBiz",
-    description: "Build income that works while you don't.",
+    description: "Rendimento online, sem rodeios.",
     images: ["/og-image.png"],
   },
 };
@@ -45,7 +46,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${syne.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="pt-PT" className={`${syne.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased bg-[#070707] text-white">
         {children}
       </body>

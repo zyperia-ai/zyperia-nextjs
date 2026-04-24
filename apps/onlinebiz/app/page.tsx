@@ -41,25 +41,25 @@ export default function OnlineBizLandingPage() {
             {/* Text — right on desktop, bottom on mobile */}
             <div className="lg:col-span-7 order-2 lg:order-2 text-center lg:text-left">
               <span className="kicker mb-4">
-                Online Income · No Fluff · No Gurus
+                Rendimento Online · Sem Rodeios · Sem Gurus
               </span>
               <p className="text-sm md:text-base text-[var(--text-muted)] mt-4 mb-4 h-mono uppercase tracking-wider">
-                A weekly online-business case-study blog
+                Um blog semanal de casos de estudo sobre negócios online
               </p>
               <h1 className="h-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-5">
-                Income that works{" "}
-                <span className="text-brand-gradient">while you don't.</span>
+                Rendimento que trabalha{" "}
+                <span className="text-brand-gradient">enquanto tu descansas.</span>
               </h1>
               <p className="text-base md:text-lg text-[var(--text-secondary)] max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Affiliate, digital products, micro-SaaS, content, services. Real numbers, real breakdowns, and the systems behind the money. No "laptop lifestyle" Instagram posts.
+                Afiliados, produtos digitais, micro-SaaS, conteúdo, serviços. Números reais, análises detalhadas, e os sistemas por trás do dinheiro. Sem posts de "laptop lifestyle" no Instagram.
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                 <Link href="/articles" className="btn-primary">
-                  Browse case studies <ArrowRight size={18} />
+                  Ver casos de estudo <ArrowRight size={18} />
                 </Link>
                 <Link href="#newsletter" className="btn-ghost">
-                  Friday breakdown <Mail size={18} />
+                  Análise de Sexta <Mail size={18} />
                 </Link>
               </div>
             </div>
@@ -68,10 +68,10 @@ export default function OnlineBizLandingPage() {
           {/* Stats strip — below hero, full width */}
           <div className="mt-12 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5 rounded-xl overflow-hidden border border-white/10">
             {[
-              { label: "Case studies", value: "480+" },
-              { label: "Business models", value: "25" },
-              { label: "Tools reviewed", value: "310" },
-              { label: "Readers/month", value: "56K" },
+              { label: "Casos de estudo", value: "480+" },
+              { label: "Modelos de negócio", value: "25" },
+              { label: "Ferramentas analisadas", value: "310" },
+              { label: "Leitores/mês", value: "56K" },
             ].map((s) => (
               <div key={s.label} className="bg-[var(--surface-1)] px-4 py-5 md:px-6 md:py-6 text-center">
                 <div className="h-display text-2xl md:text-4xl text-brand-gradient">
@@ -92,9 +92,9 @@ export default function OnlineBizLandingPage() {
       <section className="relative py-16 md:py-24 border-t border-white/5">
         <div className="max-w-6xl mx-auto px-6">
           <div className="max-w-2xl mb-16">
-            <span className="kicker mb-4">Income models</span>
+            <span className="kicker mb-4">Modelos de rendimento</span>
             <h2 className="h-display text-3xl md:text-4xl mt-4">
-              Six paths. Pick the one that fits your life.
+              Seis caminhos. Escolhe o que encaixa na tua vida.
             </h2>
           </div>
 
@@ -102,33 +102,33 @@ export default function OnlineBizLandingPage() {
             {[
               {
                 icon: DollarSign,
-                title: "Affiliate Marketing",
-                desc: "Content-driven affiliate programs with real commission structures — not the $5-a-signup trap.",
+                title: "Marketing de Afiliados",
+                desc: "Programas de afiliados baseados em conteúdo com estruturas de comissão reais — não a armadilha dos $5 por registo.",
               },
               {
                 icon: ShoppingBag,
-                title: "Digital Products",
-                desc: "Templates, courses, notion setups, prompt packs. Build once, sell while you sleep.",
+                title: "Produtos Digitais",
+                desc: "Templates, cursos, setups de Notion, packs de prompts. Constrói uma vez, vende enquanto dormes.",
               },
               {
                 icon: FileText,
-                title: "Content & Newsletters",
-                desc: "Paid newsletters, Substacks, niche blogs. What actually compounds vs. what burns out.",
+                title: "Conteúdo & Newsletters",
+                desc: "Newsletters pagas, Substacks, blogs de nicho. O que realmente compõe vs. o que acaba por se esgotar.",
               },
               {
                 icon: Rocket,
                 title: "Micro-SaaS",
-                desc: "Small tools solving one problem for one niche. $2k-20k MRR without a team.",
+                desc: "Ferramentas pequenas que resolvem um problema para um nicho. €2k-20k MRR sem equipa.",
               },
               {
                 icon: Users,
-                title: "Services & Productised",
-                desc: "Freelance, done-for-you, fixed-scope offers. The fastest path to €5k months.",
+                title: "Serviços & Productised",
+                desc: "Freelance, done-for-you, ofertas de âmbito fixo. O caminho mais rápido para os €5k por mês.",
               },
               {
                 icon: Target,
                 title: "E-commerce",
-                desc: "DTC, print-on-demand, digital-first storefronts. Margin math that actually pencils out.",
+                desc: "DTC, print-on-demand, lojas digital-first. Matemática de margem que realmente fecha as contas.",
               },
             ].map((f) => (
               <div key={f.title} className="card p-6 md:p-7">
@@ -150,37 +150,37 @@ export default function OnlineBizLandingPage() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             <div className="lg:col-span-5">
-              <span className="kicker mb-4">Editorial standard</span>
+              <span className="kicker mb-4">Padrão editorial</span>
               <h2 className="h-display text-3xl md:text-4xl mt-4 mb-6">
-                Receipts or it didn't happen.
+                Recibos ou não aconteceu.
               </h2>
               <p className="text-[var(--text-secondary)] leading-relaxed">
-                Every revenue claim is backed by a screenshot, a dashboard,
-                or a verified interview. No "I made $10k last month" without
-                the invoice trail.
+                Cada afirmação sobre receita é apoiada por um screenshot, um dashboard,
+                ou uma entrevista verificada. Nada de "fiz 10k no último mês" sem o
+                rasto das facturas.
               </p>
             </div>
             <div className="lg:col-span-7 space-y-px bg-white/5 rounded-xl overflow-hidden border border-white/10">
               {[
                 {
                   n: "01",
-                  t: "Verified numbers",
-                  d: "Every case study includes screenshots, P&L, or founder interviews. No anonymous bragging.",
+                  t: "Números verificados",
+                  d: "Cada caso de estudo inclui screenshots, P&L, ou entrevistas com o fundador. Sem bragging anónimo.",
                 },
                 {
                   n: "02",
-                  t: "Full cost picture",
-                  d: "Gross revenue is easy. We publish the margins, the tools, the refunds, the tax bill.",
+                  t: "Imagem de custos completa",
+                  d: "A receita bruta é fácil. Nós publicamos as margens, as ferramentas, os reembolsos, a factura do imposto.",
                 },
                 {
                   n: "03",
-                  t: "Time + effort",
-                  d: "Hours per week, months to ramp, skills required. The honest version of what 'passive' means.",
+                  t: "Tempo + esforço",
+                  d: "Horas por semana, meses para arrancar, competências necessárias. A versão honesta do que 'passivo' significa.",
                 },
                 {
                   n: "04",
-                  t: "No course pitches",
-                  d: "We don't sell $997 programs. If a business model needs a funnel to work, we say so.",
+                  t: "Sem pitches de curso",
+                  d: "Não vendemos programas de €997. Se um modelo de negócio precisa de um funil para funcionar, nós dizemos.",
                 },
               ].map((step) => (
                 <div
@@ -206,29 +206,29 @@ export default function OnlineBizLandingPage() {
       {/* =========== NEWSLETTER =========== */}
       <section id="newsletter" className="relative py-16 md:py-24 border-t border-white/5">
         <div className="max-w-3xl mx-auto px-6 text-center">
-          <span className="kicker mb-4">The Friday Breakdown</span>
+          <span className="kicker mb-4">A Análise de Sexta</span>
           <h2 className="h-display text-3xl md:text-4xl mt-4 mb-5">
-            One business. Dissected. Every Friday.
+            Um negócio. Dissecado. Todas as sextas.
           </h2>
           <p className="text-[var(--text-secondary)] text-lg mb-10 max-w-xl mx-auto">
-            We pick one real online business, break down its model, numbers,
-            and what you can actually steal from it. No gurus. No fluff.
+            Escolhemos um negócio online real, desmontamos o modelo, os números, e
+            o que realmente podes aproveitar dele. Sem gurus. Sem enchimento.
           </p>
 
           <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
               type="email"
               required
-              placeholder="you@domain.com"
+              placeholder="tu@dominio.com"
               className="flex-1 px-4 py-3 rounded-lg bg-[var(--surface-1)] border border-white/10 text-white placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-primary)] transition-colors"
             />
             <button type="submit" className="btn-primary whitespace-nowrap">
-              Subscribe free
+              Subscrever grátis
             </button>
           </form>
 
           <p className="text-xs text-[var(--text-muted)] mt-6 h-mono">
-            Join 56,000+ builders · No spam · GDPR compliant
+            Junta-te a 56.000+ construtores · Sem spam · Conforme GDPR
           </p>
         </div>
       </section>
@@ -255,11 +255,12 @@ function Nav() {
           </div>
         </Link>
         <nav className="hidden md:flex items-center gap-8 text-sm text-[var(--text-secondary)]">
-          <Link href="/articles" className="hover:text-white transition-colors">Case Studies</Link>
-          <Link href="/about" className="hover:text-white transition-colors">About</Link>
-          <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+          <Link href="/articles" className="hover:text-white transition-colors">Casos de Estudo</Link>
+          <Link href="/archive" className="hover:text-white transition-colors">Arquivo</Link>
+          <Link href="/about" className="hover:text-white transition-colors">Sobre</Link>
+          <Link href="/contact" className="hover:text-white transition-colors">Contacto</Link>
         </nav>
-        <Link href="#newsletter" className="btn-primary text-sm py-2 px-4">Subscribe</Link>
+        <Link href="#newsletter" className="btn-primary text-sm py-2 px-4">Subscrever</Link>
       </div>
     </header>
   );
@@ -279,40 +280,49 @@ function Footer() {
               <span className="h-display tracking-wide">ZYPERIA OnlineBiz</span>
             </div>
             <p className="text-sm text-[var(--text-muted)] max-w-xs">
-              Part of the ZYPERIA research network.
+              Parte da rede de análise ZYPERIA.
+            </p>
+            <p className="text-xs text-[var(--text-muted)] mt-4 max-w-xs leading-relaxed">
+              Alguns links para plataformas (Gumroad, Hotmart, Fiverr, Amazon, etc.)
+              são links de afiliado. Sem custo adicional para ti.{" "}
+              <Link href="/disclosure" className="underline hover:text-white">
+                Lê como somos financiados
+              </Link>.
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 text-sm">
             <div>
-              <div className="h-mono text-[10px] uppercase tracking-widest text-[var(--text-muted)] mb-3">Read</div>
+              <div className="h-mono text-[10px] uppercase tracking-widest text-[var(--text-muted)] mb-3">Ler</div>
               <ul className="space-y-2 text-[var(--text-secondary)]">
-                <li><Link href="/articles" className="hover:text-white">Latest</Link></li>
-                <li><Link href="/articles?tag=affiliate" className="hover:text-white">Affiliate</Link></li>
-                <li><Link href="/articles?tag=saas" className="hover:text-white">Micro-SaaS</Link></li>
+                <li><Link href="/articles" className="hover:text-white">Análises recentes</Link></li>
+                <li><Link href="/archive" className="hover:text-white">Arquivo</Link></li>
+                <li><Link href="/about" className="hover:text-white">Sobre</Link></li>
               </ul>
             </div>
             <div>
-              <div className="h-mono text-[10px] uppercase tracking-widest text-[var(--text-muted)] mb-3">Company</div>
+              <div className="h-mono text-[10px] uppercase tracking-widest text-[var(--text-muted)] mb-3">Contacto</div>
               <ul className="space-y-2 text-[var(--text-secondary)]">
-                <li><Link href="/about" className="hover:text-white">About</Link></li>
-                <li><Link href="/contact" className="hover:text-white">Contact</Link></li>
+                <li><Link href="/contact" className="hover:text-white">Fala connosco</Link></li>
+                <li><Link href="/#newsletter" className="hover:text-white">Newsletter</Link></li>
               </ul>
             </div>
             <div>
               <div className="h-mono text-[10px] uppercase tracking-widest text-[var(--text-muted)] mb-3">Legal</div>
               <ul className="space-y-2 text-[var(--text-secondary)]">
-                <li><Link href="/privacy" className="hover:text-white">Privacy</Link></li>
-                <li><Link href="/terms" className="hover:text-white">Terms</Link></li>
+                <li><Link href="/privacy" className="hover:text-white">Privacidade</Link></li>
+                <li><Link href="/terms" className="hover:text-white">Termos</Link></li>
+                <li><Link href="/cookies" className="hover:text-white">Cookies</Link></li>
+                <li><Link href="/disclosure" className="hover:text-white">Divulgação</Link></li>
               </ul>
             </div>
           </div>
         </div>
         <div className="mt-12 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-xs text-[var(--text-muted)] h-mono">
-            © {new Date().getFullYear()} ZYPERIA · Results shown are not typical
+            © {new Date().getFullYear()} ZYPERIA · Resultados não são típicos
           </div>
           <div className="flex items-center gap-4 text-[var(--text-muted)]">
-            <a href="#" aria-label="Share" className="hover:text-[var(--brand-primary)] transition-colors">
+            <a href="#" aria-label="Partilhar" className="hover:text-[var(--brand-primary)] transition-colors">
               <Share2 size={16} />
             </a>
             <a href="#newsletter" aria-label="Newsletter" className="hover:text-[var(--brand-primary)] transition-colors">
