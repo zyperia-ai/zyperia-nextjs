@@ -1,58 +1,56 @@
 export default function Home() {
   return (
-    <main className="w-screen h-screen bg-slate-900 flex flex-col">
-      {/* Banner - tiny image in header 80x40px */}
-      <div className="w-32 h-10 bg-green-900 border border-green-600 m-1 overflow-hidden rounded">
-        <img
-          src="/HeroBanner_OnlineBiz_1920x800.png"
-          alt="Online Business"
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-        />
+    <main className="w-screen h-screen bg-gradient-to-br from-green-950 via-slate-900 to-green-900 flex flex-col">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-green-900 to-green-800 px-6 py-4 border-b-2 border-green-600">
+        <h2 className="text-green-300 text-sm font-bold">ZYPERIA</h2>
       </div>
 
-      {/* Content - centered */}
-      <div className="flex-1 flex flex-col items-center justify-center px-4">
-        {/* Title */}
-        <h1 className="text-2xl font-bold text-white text-center mb-2">
-          Online Business
-        </h1>
+      {/* Content */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+        <div className="mb-8">
+          <div className="text-6xl mb-4">💰</div>
+          <h1 className="text-4xl font-black text-white mb-2">
+            ONLINE BUSINESS
+          </h1>
+          <div className="w-24 h-1 bg-gradient-to-r from-green-500 to-green-400 mx-auto mb-6"></div>
+          <p className="text-lg text-green-200 max-w-lg">
+            Build, scale and monetize your online empire
+          </p>
+        </div>
 
-        {/* Description */}
-        <p className="text-sm text-slate-300 text-center mb-4 max-w-sm">
-          Build, scale & monetize your business
-        </p>
-
-        {/* Buttons */}
-        <div className="flex gap-2 mb-4">
-          <button className="px-4 py-1.5 bg-green-600 text-white text-sm rounded font-semibold hover:bg-green-700">
+        <div className="flex gap-4 mb-12">
+          <button className="px-6 py-2 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg transition shadow-lg">
             Subscribe
           </button>
-          <button className="px-4 py-1.5 bg-slate-700 text-white text-sm rounded font-semibold hover:bg-slate-600">
-            Read
+          <button className="px-6 py-2 border-2 border-green-400 text-green-300 hover:bg-green-900 font-bold rounded-lg transition">
+            Explore
           </button>
         </div>
 
-        {/* Features */}
-        <div className="grid grid-cols-3 gap-2 text-center">
-          <div className="bg-slate-800 p-2 rounded border border-slate-700">
-            <div className="text-2xl">💰</div>
-            <p className="text-xs text-slate-300">Monetization</p>
+        <div className="grid grid-cols-3 gap-6 max-w-2xl">
+          <div className="bg-green-900/50 border-2 border-green-600 rounded-lg p-4 hover:border-green-400 transition">
+            <div className="text-3xl mb-2">💎</div>
+            <p className="text-green-200 font-bold text-sm">MONETIZE</p>
+            <p className="text-xs text-green-300">Multiple streams</p>
           </div>
-          <div className="bg-slate-800 p-2 rounded border border-slate-700">
-            <div className="text-2xl">📈</div>
-            <p className="text-xs text-slate-300">Growth</p>
+          <div className="bg-green-900/50 border-2 border-green-600 rounded-lg p-4 hover:border-green-400 transition">
+            <div className="text-3xl mb-2">📊</div>
+            <p className="text-green-200 font-bold text-sm">GROWTH</p>
+            <p className="text-xs text-green-300">Scale systems</p>
           </div>
-          <div className="bg-slate-800 p-2 rounded border border-slate-700">
-            <div className="text-2xl">🎯</div>
-            <p className="text-xs text-slate-300">Systems</p>
+          <div className="bg-green-900/50 border-2 border-green-600 rounded-lg p-4 hover:border-green-400 transition">
+            <div className="text-3xl mb-2">🎯</div>
+            <p className="text-green-200 font-bold text-sm">SYSTEMS</p>
+            <p className="text-xs text-green-300">Automation</p>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="h-8 border-t border-slate-800 flex items-center justify-center">
-        <p className="text-slate-500 text-xs">© 2026 Zyperia</p>
-      </footer>
+      <div className="bg-green-950 border-t-2 border-green-600 px-6 py-3 text-center">
+        <p className="text-green-400 text-xs">© 2026 ZYPERIA • ONLINE BUSINESS</p>
+      </div>
     </main>
   )
 }
