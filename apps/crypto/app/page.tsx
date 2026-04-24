@@ -11,6 +11,7 @@ import {
   Share2,
   Mail,
 } from "lucide-react";
+import LatestArticles from "@/components/LatestArticles";
 
 export default function CryptoLandingPage() {
   return (
@@ -86,6 +87,8 @@ export default function CryptoLandingPage() {
           </div>
         </div>
       </section>
+
+      <LatestArticles />
 
       {/* =========== WHAT WE COVER =========== */}
       <section className="relative py-20 md:py-28 border-t border-white/5">

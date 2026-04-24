@@ -11,6 +11,7 @@ import {
   Share2,
   Mail,
 } from "lucide-react";
+import LatestArticles from "@/components/LatestArticles";
 
 export default function OnlineBizLandingPage() {
   return (
@@ -84,6 +85,8 @@ export default function OnlineBizLandingPage() {
           </div>
         </div>
       </section>
+
+      <LatestArticles />
 
       {/* =========== BUSINESS MODELS =========== */}
       <section className="relative py-20 md:py-28 border-t border-white/5">
