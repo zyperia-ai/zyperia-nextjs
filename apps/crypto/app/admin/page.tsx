@@ -103,7 +103,7 @@ export default function AdminDashboard() {
           />
           <StatCard
             label="Estimated Revenue"
-            value="$" + (stats.affiliateClicksThisMonth * 2).toLocaleString()}
+            value={`$${(stats.affiliateClicksThisMonth * 2).toLocaleString()}`}
             subtext="Based on clicks"
           />
         </div>
