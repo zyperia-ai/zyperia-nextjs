@@ -1,8 +1,8 @@
 export default function Home() {
   return (
     <main className="w-screen h-screen bg-slate-900 flex flex-col">
-      {/* Banner - tiny header only 40px */}
-      <div className="w-full h-10 bg-purple-900 border-b border-purple-600 overflow-hidden">
+      {/* Banner - tiny image in header 80x40px */}
+      <div className="w-32 h-10 bg-purple-900 border border-purple-600 m-1 overflow-hidden rounded">
         <img
           src="/HeroBanner_Intelligence_1920x800.png"
           alt="Intelligence"
