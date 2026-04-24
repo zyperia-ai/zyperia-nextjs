@@ -295,3 +295,18 @@ body::before {
   font-style: italic;
   color: var(--text-secondary);
 }
+
+.prose-zyperia table {
+  display: block;
+  overflow-x: auto;
+}
+
+.prose-zyperia img {
+  max-width: 100%;
+  height: auto;
+}
+
+.prose-zyperia pre {
+  overflow-x: auto;
+  font-size: 0.875rem;
+}
