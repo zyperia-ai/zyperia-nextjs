@@ -1,16 +1,37 @@
 @import "tailwindcss";
 
+/* =====================================================
+   TAILWIND 4 THEME CONFIG — INLINE CSS VARIABLES
+   (replaces tailwind.config.js in v4)
+   ===================================================== */
+
+@theme inline {
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-syne), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  --color-surface-0: #070707;
+  --color-surface-1: #0E0E0E;
+  --color-surface-2: #151515;
+  --color-surface-3: #1F1F1F;
+}
+
+/* =====================================================
+   BRAND TOKENS — ONLINEBIZ (Neon Green)
+   ===================================================== */
+
 :root {
-  /* Brand tokens — ONLINEBIZ (Neon Green) */
   --brand-primary: #AEEA00;
   --brand-highlight: #C6FF4C;
   --brand-glow: rgba(174, 234, 0, 0.35);
   --brand-soft: rgba(174, 234, 0, 0.08);
+  --brand-border: rgba(174, 234, 0, 0.20);
 
   --surface-0: #070707;
   --surface-1: #0E0E0E;
   --surface-2: #151515;
   --surface-3: #1F1F1F;
+
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-medium: rgba(255, 255, 255, 0.14);
 
@@ -19,32 +40,26 @@
   --text-muted: rgba(255, 255, 255, 0.48);
 }
 
-@theme inline {
-  --color-brand: var(--brand-primary);
-  --color-brand-hi: var(--brand-highlight);
-  --color-surface-0: var(--surface-0);
-  --color-surface-1: var(--surface-1);
-  --color-surface-2: var(--surface-2);
-  --color-surface-3: var(--surface-3);
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-syne);
-  --font-mono: var(--font-mono);
-}
-
-* {
-  border-color: var(--border-subtle);
-}
+/* =====================================================
+   BASE STYLES
+   ===================================================== */
 
 html {
   scroll-behavior: smooth;
+  background-color: var(--surface-0);
 }
 
 body {
   background-color: var(--surface-0);
   color: var(--text-primary);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden; /* NEVER allow horizontal scroll */
+}
+
+* {
+  box-sizing: border-box;
 }
 
 /* Subtle grain overlay */
@@ -58,31 +73,33 @@ body::before {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
 }
 
-/* Ambient glow behind hero */
+/* =====================================================
+   COMPONENT CLASSES (safe, always work)
+   ===================================================== */
+
 .hero-ambient {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 0;
   background:
     radial-gradient(60% 50% at 50% 0%, var(--brand-soft), transparent 70%),
-    radial-gradient(40% 40% at 20% 30%, rgba(174, 234, 0, 0.05), transparent 70%),
-    radial-gradient(40% 40% at 80% 30%, rgba(174, 234, 0, 0.05), transparent 70%);
+    radial-gradient(40% 40% at 20% 30%, var(--brand-soft), transparent 70%),
+    radial-gradient(40% 40% at 80% 30%, var(--brand-soft), transparent 70%);
 }
 
-/* Display headings */
 .h-display {
-  font-family: var(--font-syne), sans-serif;
+  font-family: var(--font-syne), system-ui, sans-serif;
   font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 0.95;
 }
 
 .h-mono {
-  font-family: var(--font-mono), monospace;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
   letter-spacing: 0.02em;
 }
 
-/* Gradient text (brand) */
 .text-brand-gradient {
   background: linear-gradient(135deg, var(--brand-highlight) 0%, var(--brand-primary) 100%);
   -webkit-background-clip: text;
@@ -90,7 +107,6 @@ body::before {
   color: transparent;
 }
 
-/* Hairline divider */
 .hairline {
   height: 1px;
   background: linear-gradient(
@@ -101,7 +117,6 @@ body::before {
   );
 }
 
-/* Button — primary */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -114,10 +129,10 @@ body::before {
   font-size: 0.95rem;
   border-radius: 0.5rem;
   border: 1px solid var(--brand-highlight);
-  box-shadow:
-    0 0 0 0 var(--brand-glow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
   transition: transform 150ms ease, box-shadow 250ms ease, background 200ms ease;
+  cursor: pointer;
 }
 .btn-primary:hover {
   transform: translateY(-2px);
@@ -128,7 +143,6 @@ body::before {
     inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
-/* Button — ghost */
 .btn-ghost {
   display: inline-flex;
   align-items: center;
@@ -141,7 +155,9 @@ body::before {
   font-size: 0.95rem;
   border-radius: 0.5rem;
   border: 1px solid var(--border-medium);
-  transition: transform 150ms ease, background 200ms ease, border-color 200ms ease;
+  text-decoration: none;
+  transition: transform 150ms ease, background 200ms ease, border-color 200ms ease, color 200ms ease;
+  cursor: pointer;
 }
 .btn-ghost:hover {
   transform: translateY(-2px);
@@ -150,7 +166,6 @@ body::before {
   color: var(--brand-highlight);
 }
 
-/* Card */
 .card {
   background: linear-gradient(180deg, var(--surface-1) 0%, var(--surface-2) 100%);
   border: 1px solid var(--border-subtle);
@@ -163,7 +178,6 @@ body::before {
   box-shadow: 0 20px 50px -20px var(--brand-glow);
 }
 
-/* Kicker label */
 .kicker {
   display: inline-flex;
   align-items: center;
@@ -171,16 +185,14 @@ body::before {
   padding: 0.375rem 0.75rem;
   background: var(--brand-soft);
   color: var(--brand-highlight);
-  font-family: var(--font-mono), monospace;
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
   font-size: 0.7rem;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   border-radius: 2rem;
-  border: 1px solid rgba(174, 234, 0, 0.2);
+  border: 1px solid var(--brand-border);
 }
-
-/* Kicker dot */
 .kicker::before {
   content: "";
   width: 6px;
@@ -188,4 +200,33 @@ body::before {
   border-radius: 50%;
   background: var(--brand-primary);
   box-shadow: 0 0 8px var(--brand-primary);
+}
+
+/* =====================================================
+   LAYOUT SAFETY NET — guarantees even if Tailwind breaks
+   ===================================================== */
+
+.container-narrow {
+  width: 100%;
+  max-width: 72rem; /* 1152px */
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.hero-banner-wrap {
+  width: 100%;
+  max-width: 64rem; /* 1024px */
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 40px 120px -40px var(--brand-glow);
+}
+.hero-banner-wrap img {
+  display: block;
+  width: 100%;
+  height: auto;
 }
