@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
-import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Online Business Blog',
-  description: 'Online business and entrepreneurship tips',
+  title: 'Online Business | ZYPERIA',
+  description: 'Build, scale and monetize your online business',
 }
 
 export default function RootLayout({
@@ -13,7 +12,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="m-0 p-0 bg-white text-gray-900 font-sans" style={{fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'}}>
+        {children}
+      </body>
     </html>
   )
 }
