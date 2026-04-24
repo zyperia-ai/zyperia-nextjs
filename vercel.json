@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercelapis.com/vercel.json",
-  "buildCommand": "yarn build",
-  "devCommand": "yarn dev",
-  "installCommand": "yarn install",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm ci",
   "framework": "nextjs",
   "crons": [
     {
