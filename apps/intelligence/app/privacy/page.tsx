@@ -1,40 +1,122 @@
+import { Metadata } from "next";
+import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Política de Privacidade — ZYPERIA Intelligence",
+  description: "Como tratamos os teus dados pessoais.",
+};
+
 export default function PrivacyPage() {
+  const lastUpdated = "24 de Abril de 2026";
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950 text-white">
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold mb-8 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Privacy Policy
-          </h1>
-
-          <div className="prose prose-invert max-w-none">
-            <h2 className="text-2xl font-bold mt-8 mb-4">Introduction</h2>
-            <p className="text-gray-300 mb-6">
-              ZYPERIA Intelligence ("we", "us", "our") operates the website. This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service and the choices you have associated with that data.
-            </p>
-
-            <h2 className="text-2xl font-bold mt-8 mb-4">Information Collection</h2>
-            <p className="text-gray-300 mb-4">
-              We collect several different types of information for various purposes to provide and improve our Service to you.
-            </p>
-
-            <h2 className="text-2xl font-bold mt-8 mb-4">Use of Data</h2>
-            <p className="text-gray-300 mb-6">
-              ZYPERIA uses the collected data for various purposes including providing and maintaining the service, notifying you of changes, and gathering analysis to improve the service.
-            </p>
-
-            <h2 className="text-2xl font-bold mt-8 mb-4">Security</h2>
-            <p className="text-gray-300 mb-6">
-              The security of your data is important to us. While we strive to use commercially acceptable means to protect your Personal Data, we cannot guarantee its absolute security.
-            </p>
-
-            <h2 className="text-2xl font-bold mt-8 mb-4">Contact Us</h2>
-            <p className="text-gray-300">
-              If you have any questions about this Privacy Policy, please contact us at privacy@zyperia.ai
-            </p>
-          </div>
+    <div className="min-h-screen px-4 py-20">
+      <div className="container-narrow max-w-3xl">
+        <span className="kicker mb-6">Legal</span>
+        <h1 className="h-display text-4xl md:text-6xl mb-4">Política de Privacidade</h1>
+        <div className="text-xs text-[var(--text-muted)] h-mono mb-12">
+          Última actualização: {lastUpdated}
         </div>
-      </section>
+
+        <div className="prose-zyperia">
+          <p>
+            Esta Política de Privacidade explica como a ZYPERIA Intelligence
+            ("nós") trata dados pessoais quando visitas o site ou subscreves O
+            Build Semanal. Cumprimos o GDPR. O princípio é simples: recolher apenas
+            o que é necessário para correr a newsletter e perceber se os playbooks
+            ressoam, nada mais.
+          </p>
+
+          <h2>1. Dados que recolhemos</h2>
+          <p>Recolhemos dados mínimos, apenas o necessário para operar o site:</p>
+          <ul>
+            <li><strong>Email:</strong> quando subscreves a newsletter.</li>
+            <li><strong>Dados de cookies:</strong> apenas se consentires (vê a nossa <Link href="/cookies">Política de Cookies</Link>).</li>
+            <li><strong>Analytics de utilização:</strong> dados de tráfego anonimizados via Google Analytics e/ou Plausible (apenas com consentimento).</li>
+          </ul>
+
+          <h2>2. Como usamos os teus dados</h2>
+          <ul>
+            <li>Para enviar a newsletter que subscreveste.</li>
+            <li>Para perceber que conteúdo ressoa (apenas analytics agregados).</li>
+            <li>Para responder a mensagens que envies pelo formulário de contacto.</li>
+          </ul>
+          <p>
+            <strong>Não</strong> vendemos os teus dados a terceiros. <strong>Não</strong> usamos
+            os teus dados para perfis publicitários.
+          </p>
+
+          <h2>3. Base legal (GDPR Art. 6)</h2>
+          <ul>
+            <li><strong>Consentimento:</strong> para subscrição da newsletter e cookies não-essenciais.</li>
+            <li><strong>Interesse legítimo:</strong> para analytics essenciais e segurança do site.</li>
+          </ul>
+
+          <h2>4. Processadores terceiros</h2>
+          <p>Partilhamos dados apenas com processadores verificados estritamente necessários:</p>
+          <ul>
+            <li><strong>Supabase</strong> (base de dados, região UE — Irlanda)</li>
+            <li><strong>Resend</strong> (email transaccional)</li>
+            <li><strong>SendGrid</strong> (entrega de newsletter em massa)</li>
+            <li><strong>Vercel</strong> (alojamento, entrega de conteúdo)</li>
+            <li><strong>Google Analytics</strong> (apenas se consentires em cookies de analytics)</li>
+          </ul>
+
+          <h2>5. Retenção de dados</h2>
+          <p>
+            Subscritores da newsletter: dados mantidos até cancelares subscrição,
+            mais 30 dias por razões operacionais. Dados de analytics: retidos por
+            14 meses, anonimizados. Mensagens do formulário de contacto: eliminadas
+            após 12 meses, excepto se uma conversa em curso exigir de outra forma.
+          </p>
+
+          <h2>6. Os teus direitos ao abrigo do GDPR</h2>
+          <p>Tens direito a:</p>
+          <ul>
+            <li>Aceder aos dados que mantemos sobre ti.</li>
+            <li>Pedir correcção de dados inexactos.</li>
+            <li>Pedir eliminação dos teus dados ("direito ao esquecimento").</li>
+            <li>Opor-te ao processamento ou pedir restrição.</li>
+            <li>Pedir portabilidade de dados (exportação).</li>
+            <li>Retirar o consentimento em qualquer momento.</li>
+            <li>Apresentar queixa a uma autoridade de supervisão (ex. CNPD em Portugal).</li>
+          </ul>
+          <p>
+            Para exercer qualquer destes direitos, escreve para{" "}
+            <a href="mailto:hi@zyperia.ai?subject=Pedido%20GDPR">hi@zyperia.ai</a>
+            {/* TODO: trocar por privacy@zyperia.ai quando mailbox for criada */}
+            . Respondemos em 30 dias.
+          </p>
+
+          <h2>7. Segurança</h2>
+          <p>
+            Todos os dados são transmitidos por HTTPS. O acesso à base de dados é
+            restringido por políticas Row Level Security (RLS). Não processamos
+            cartões de crédito nem dados de pagamento.
+          </p>
+
+          <h2>8. Crianças</h2>
+          <p>
+            Este site não é dirigido a crianças com menos de 16 anos. Não
+            recolhemos conscientemente dados de menores.
+          </p>
+
+          <h2>9. Alterações a esta política</h2>
+          <p>
+            Publicamos aqui quaisquer alterações e actualizamos a data de "Última
+            actualização". Alterações materiais são notificadas pela newsletter.
+          </p>
+
+          <h2>10. Contacto</h2>
+          <p>
+            Questões sobre privacidade:{" "}
+            <a href="mailto:hi@zyperia.ai?subject=Privacidade">hi@zyperia.ai</a>
+            {/* TODO: trocar por privacy@zyperia.ai quando mailbox for criada */}
+            <br />
+            Contacto geral: vê <Link href="/contact">Contacto</Link>.
+          </p>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
