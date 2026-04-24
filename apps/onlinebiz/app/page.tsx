@@ -1,7 +1,6 @@
 'use client';
 
 import ArticleCard from '@zyperia/shared-ui/components/ArticleCard';
-import NewsletterSignup from '@zyperia/shared-ui/components/NewsletterSignup';
 
 const mockArticles = [
   {
@@ -11,6 +10,7 @@ const mockArticles = [
     excerpt: 'Step-by-step guide to finding clients, setting rates, and landing your first paid project.',
     publishedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
     readingTime: 8,
+    category: 'Freelancing',
   },
   {
     id: '2',
@@ -19,6 +19,7 @@ const mockArticles = [
     excerpt: 'Real strategies beyond the hype. Digital products, courses, and affiliate marketing that generate revenue.',
     publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     readingTime: 11,
+    category: 'Passive Income',
   },
   {
     id: '3',
@@ -27,6 +28,7 @@ const mockArticles = [
     excerpt: 'Templates, courses, presets, ebooks. Learn what sells and how to launch your first product.',
     publishedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     readingTime: 10,
+    category: 'Digital Products',
   },
   {
     id: '4',
@@ -35,6 +37,7 @@ const mockArticles = [
     excerpt: 'How much can you earn? Real numbers from successful affiliates and strategies that work.',
     publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     readingTime: 9,
+    category: 'Affiliate',
   },
   {
     id: '5',
@@ -43,109 +46,194 @@ const mockArticles = [
     excerpt: 'How to validate ideas before investing time and money. Strategies from successful entrepreneurs.',
     publishedAt: new Date(Date.now() - 9 * 24 * 60 * 60 * 1000).toISOString(),
     readingTime: 8,
+    category: 'Side Hustle',
   },
   {
     id: '6',
     slug: 'scaling-to-5-figures',
     title: '5-Figure Income: The Path to $5000/Month',
-    excerpt: 'Real case studies and step-by-step frameworks to scale your online income.',
+    excerpt: 'Real case studies and strategies from people earning $5K+/month online.',
     publishedAt: new Date(Date.now() - 11 * 24 * 60 * 60 * 1000).toISOString(),
     readingTime: 12,
+    category: 'Scaling',
   },
 ];
 
-export default function OnlineBizPage() {
+export default function OnlineBizHome() {
   return (
-    <div className="space-y-16">
-      {/* Hero Section */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-green-50 to-emerald-50 -mx-4 px-4 rounded-lg">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-green-100 border border-green-300 rounded-full px-4 py-2 mb-6">
-            <span className="w-2 h-2 bg-green-600 rounded-full animate-pulse"></span>
-            <span className="text-sm text-green-700">Real Money • Proven Methods</span>
-          </div>
+    <div className="space-y-20">
+      {/* ===================== HERO SECTION ===================== */}
+      <section className="relative py-20 sm:py-32 bg-gradient-to-br from-emerald-50 to-teal-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Text content */}
+            <div className="space-y-8">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 bg-emerald-100 border border-emerald-300 rounded-full px-4 py-2 w-fit">
+                <span className="w-2 h-2 bg-emerald-600 rounded-full animate-pulse" />
+                <span className="text-sm text-emerald-700">Real Strategies • Real Income • Verified</span>
+              </div>
 
-          {/* Title */}
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 text-gray-900">
-            Earn Money Online
-          </h1>
+              {/* Headline */}
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-slate-900 leading-tight">
+                Make Real Money <span className="bg-gradient-to-r from-emerald-600 to-amber-500 bg-clip-text text-transparent">Online</span> in 2026
+              </h1>
 
-          {/* Subtitle */}
-          <p className="text-xl sm:text-2xl text-gray-700 mb-8">
-            Real strategies for making money from home. Freelancing, digital products, passive income, and side hustles that actually work.
-          </p>
+              {/* Subheading */}
+              <p className="text-lg sm:text-xl text-slate-600 leading-relaxed max-w-2xl">
+                Proven strategies for freelancing, side hustles, and passive income. Learn from real people earning $1K-$10K+ monthly.
+              </p>
 
-          {/* CTA */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition-all transform hover:scale-105">
-              Start Now
-            </button>
-            <button className="px-8 py-4 border-2 border-green-600 text-green-600 hover:bg-green-50 font-bold rounded-lg transition-all">
-              Join Community
-            </button>
-          </div>
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <button className="px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
+                  View Income Strategies
+                </button>
+                <button className="px-8 py-4 border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 font-bold rounded-lg transition-all">
+                  Join Our Community
+                </button>
+              </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 mt-12 pt-12 border-t border-green-200">
-            <div>
-              <div className="text-3xl font-bold text-green-600">$1M+</div>
-              <div className="text-sm text-gray-600">Earned by Readers</div>
+              {/* Badge */}
+              <p className="text-sm text-slate-600 font-medium">
+                ✓ 8K+ Active Members • ✓ Real Income Reports • ✓ 100+ Strategies
+              </p>
             </div>
-            <div>
-              <div className="text-3xl font-bold text-green-600">100K+</div>
-              <div className="text-sm text-gray-600">Active Community</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-green-600">2026</div>
-              <div className="text-sm text-gray-600">Strategies Updated</div>
+
+            {/* Right: Growth chart visualization */}
+            <div className="hidden lg:flex items-center justify-center h-64">
+              <div className="relative w-full h-full flex items-end justify-center gap-2">
+                {[20, 35, 50, 65, 75, 85, 90, 88].map((height, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 bg-gradient-to-t from-emerald-600 to-emerald-300 rounded-t-lg opacity-80 hover:opacity-100 transition-opacity"
+                    style={{
+                      height: `${height}%`,
+                      animation: `chartGrow 3s ease-in-out infinite`,
+                      animationDelay: `${i * 0.2}s`,
+                    }}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
+
+        <style>{`
+          @keyframes chartGrow {
+            0%, 100% { transform: scaleY(1); opacity: 0.8; }
+            50% { transform: scaleY(1.15); opacity: 1; }
+          }
+        `}</style>
       </section>
 
-      {/* Latest Articles */}
-      <section>
-        <div className="mb-12">
-          <h2 className="text-4xl font-bold mb-2">Strategies & Methods</h2>
-          <p className="text-gray-600">Learn proven ways to earn money online. New income streams every week.</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockArticles.map((article) => (
-            <ArticleCard key={article.id} isDark={false} {...article} />
+      {/* ===================== REAL NUMBERS ===================== */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[
+            { number: '$50K+', label: 'Total Earnings from Strategies Featured' },
+            { number: '100+', label: 'Methods Tested and Reviewed' },
+            { number: '2K+', label: 'Active Community Members' },
+          ].map((stat, i) => (
+            <div key={i} className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-lg p-8 text-center">
+              <div className="text-4xl sm:text-5xl font-bold text-emerald-600 mb-3">{stat.number}</div>
+              <p className="text-slate-600 font-medium">{stat.label}</p>
+            </div>
           ))}
         </div>
+        <p className="text-center text-sm text-slate-500 mt-6">
+          Real figures from our community members sharing their results
+        </p>
       </section>
 
-      {/* Newsletter */}
-      <section>
-        <NewsletterSignup isDark={false} />
-      </section>
-
-      {/* E-E-A-T */}
-      <section className="py-12 bg-gray-50 rounded-lg px-6">
-        <div className="max-w-3xl mx-auto">
-          <h3 className="text-2xl font-bold mb-6">Why This Content Works</h3>
-
-          <div className="space-y-4 text-gray-700">
-            <p>
-              <strong className="text-green-600">Expertise:</strong> Written by people who've earned money online. We share real case studies and verified income reports.
-            </p>
-
-            <p>
-              <strong className="text-green-600">Authority:</strong> Backed by real data. Every claim is tested and verified with case studies from our community.
-            </p>
-
-            <p>
-              <strong className="text-green-600">Trustworthiness:</strong> Honest about what works and what doesn't. We include realistic timelines and income expectations.
-            </p>
-
-            <p className="text-sm text-gray-600 border-t border-gray-300 pt-4">
-              ⚠️ <strong>Income Disclaimer:</strong> Results vary. No guarantee of specific earnings. We're sharing what we and our community have achieved. Your results depend on your effort and market conditions.
+      {/* ===================== FEATURED ARTICLES ===================== */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="space-y-12">
+          <div className="space-y-4">
+            <h2 className="text-4xl sm:text-5xl font-bold text-slate-900">All Strategies</h2>
+            <p className="text-lg text-slate-600">
+              Proven methods to earn money online, from $500 to $5000+ monthly.
             </p>
           </div>
+
+          {/* Article grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {mockArticles.map((article) => (
+              <div key={article.id} className="group">
+                <div className="bg-white border border-slate-200 hover:border-emerald-400 rounded-lg overflow-hidden transition-all hover:shadow-lg">
+                  {/* Image placeholder */}
+                  <div className="h-48 bg-gradient-to-br from-emerald-100 to-amber-100 relative overflow-hidden">
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-5xl opacity-30">💰</div>
+                    </div>
+                    {/* Category badge */}
+                    <div className="absolute top-4 right-4 bg-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full">
+                      {article.category}
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="p-6 space-y-4">
+                    <h3 className="text-lg font-bold text-slate-900 line-clamp-2 group-hover:text-emerald-600 transition-colors">
+                      {article.title}
+                    </h3>
+                    <p className="text-slate-600 text-sm line-clamp-2">{article.excerpt}</p>
+
+                    {/* Metadata */}
+                    <div className="flex items-center justify-between text-xs text-slate-500 pt-4 border-t border-slate-200">
+                      <span>📖 {article.readingTime} min</span>
+                      <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
+                    </div>
+
+                    {/* CTA */}
+                    <button className="w-full mt-4 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 font-semibold rounded-lg transition-all text-sm">
+                      Read Strategy →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+      </section>
+
+      {/* ===================== NEWSLETTER ===================== */}
+      <section className="bg-gradient-to-r from-emerald-600 to-teal-500 py-16 sm:py-24">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
+          <div className="space-y-4">
+            <h2 className="text-4xl sm:text-5xl font-bold text-white">
+              Join 8K+ Earners
+            </h2>
+            <p className="text-lg text-emerald-100">
+              Get weekly income ideas and strategies. Real people, real results.
+            </p>
+          </div>
+
+          {/* Form */}
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 space-y-4 max-w-md mx-auto">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="email"
+                placeholder="your@email.com"
+                className="flex-1 px-4 py-3 bg-white/90 text-slate-900 placeholder-slate-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
+              />
+              <button className="px-6 py-3 bg-white text-emerald-600 font-bold rounded-lg hover:bg-emerald-50 transition-all whitespace-nowrap">
+                Subscribe
+              </button>
+            </div>
+            <p className="text-xs text-emerald-100">✓ No spam • ✓ Unsubscribe anytime • ✓ Community verified</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ===================== BOTTOM CTA ===================== */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-8">
+          Ready to Start Earning?
+        </h2>
+        <button className="px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
+          Explore All Strategies
+        </button>
       </section>
     </div>
   );
