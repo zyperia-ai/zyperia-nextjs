@@ -8,16 +8,17 @@ import {
   Zap,
   Globe2,
   BookOpen,
-  Share2,
   Mail,
 } from "lucide-react";
 import LatestArticles from "@/components/LatestArticles";
+import SiteNav from "@/components/SiteNav";
+import SiteFooter from "@/components/SiteFooter";
 
 export default function CryptoLandingPage() {
   return (
     <main className="relative min-h-screen overflow-hidden">
       {/* =========== NAV =========== */}
-      <Nav />
+      <SiteNav />
 
       {/* =========== HERO =========== */}
       <section className="relative pt-8 pb-16 md:pt-12 md:pb-24">
@@ -237,120 +238,20 @@ export default function CryptoLandingPage() {
       </section>
 
       {/* =========== FOOTER =========== */}
-      <Footer />
+      <SiteFooter
+        variant="homepage"
+        appName="ZYPERIA Crypto"
+        affiliateText={
+          <>
+            Alguns links para exchanges e carteiras de hardware são links de
+            afiliado. Podemos receber uma comissão sem qualquer custo para ti.{" "}
+            <Link href="/disclosure" className="underline hover:text-white">
+              Lê como somos financiados
+            </Link>.
+          </>
+        }
+      />
     </main>
   );
 }
 
-/* ====================================================================== */
-/* SUB-COMPONENTS                                                         */
-/* ====================================================================== */
-
-function Nav() {
-  return (
-    <header className="relative z-20">
-      <div className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-md bg-[var(--brand-primary)] flex items-center justify-center">
-            <span className="h-display text-black text-lg leading-none">Z</span>
-          </div>
-          <div className="leading-tight">
-            <div className="h-display text-sm tracking-wide">ZYPERIA</div>
-            <div className="h-mono text-[10px] uppercase text-[var(--brand-primary)] tracking-widest">
-              Crypto
-            </div>
-          </div>
-        </Link>
-        <nav className="hidden md:flex items-center gap-8 text-sm text-[var(--text-secondary)]">
-          <Link href="/articles" className="hover:text-white transition-colors">
-            Research
-          </Link>
-          <Link href="/about" className="hover:text-white transition-colors">
-            About
-          </Link>
-          <Link href="/contact" className="hover:text-white transition-colors">
-            Contact
-          </Link>
-        </nav>
-        <Link href="#newsletter" className="btn-primary text-sm py-2 px-4">
-          Subscribe
-        </Link>
-      </div>
-    </header>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="relative border-t border-white/5 py-12">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="hairline mb-10" />
-        <div className="flex flex-col md:flex-row justify-between items-start gap-8">
-          <div>
-            <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-7 h-7 rounded-md bg-[var(--brand-primary)] flex items-center justify-center">
-                <span className="h-display text-black text-base leading-none">Z</span>
-              </div>
-              <span className="h-display tracking-wide">ZYPERIA Crypto</span>
-            </div>
-            <p className="text-sm text-[var(--text-muted)] max-w-xs">
-              Parte da rede de análise ZYPERIA.
-            </p>
-            <p className="text-xs text-[var(--text-muted)] mt-4 max-w-xs leading-relaxed">
-              Alguns links para exchanges e carteiras de hardware são links de
-              afiliado. Podemos receber uma comissão sem qualquer custo para ti.{" "}
-              <Link href="/disclosure" className="underline hover:text-white">
-                Lê como somos financiados
-              </Link>.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 text-sm">
-            <div>
-              <div className="h-mono text-[10px] uppercase tracking-widest text-[var(--text-muted)] mb-3">
-                Ler
-              </div>
-              <ul className="space-y-2 text-[var(--text-secondary)]">
-                <li><Link href="/articles" className="hover:text-white">Análises recentes</Link></li>
-                <li><Link href="/archive" className="hover:text-white">Arquivo</Link></li>
-                <li><Link href="/about" className="hover:text-white">Sobre</Link></li>
-              </ul>
-            </div>
-            <div>
-              <div className="h-mono text-[10px] uppercase tracking-widest text-[var(--text-muted)] mb-3">
-                Contacto
-              </div>
-              <ul className="space-y-2 text-[var(--text-secondary)]">
-                <li><Link href="/contact" className="hover:text-white">Fala connosco</Link></li>
-                <li><Link href="/#newsletter" className="hover:text-white">Newsletter</Link></li>
-              </ul>
-            </div>
-            <div>
-              <div className="h-mono text-[10px] uppercase tracking-widest text-[var(--text-muted)] mb-3">
-                Legal
-              </div>
-              <ul className="space-y-2 text-[var(--text-secondary)]">
-                <li><Link href="/privacy" className="hover:text-white">Privacidade</Link></li>
-                <li><Link href="/terms" className="hover:text-white">Termos</Link></li>
-                <li><Link href="/cookies" className="hover:text-white">Cookies</Link></li>
-                <li><Link href="/disclosure" className="hover:text-white">Divulgação</Link></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div className="mt-12 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-xs text-[var(--text-muted)] h-mono">
-            © {new Date().getFullYear()} ZYPERIA · Não constitui aconselhamento financeiro
-          </div>
-          <div className="flex items-center gap-4 text-[var(--text-muted)]">
-            <a href="#" aria-label="Partilhar" className="hover:text-[var(--brand-primary)] transition-colors">
-              <Share2 size={16} />
-            </a>
-            <a href="#newsletter" aria-label="Newsletter" className="hover:text-[var(--brand-primary)] transition-colors">
-              <Mail size={16} />
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
-}
