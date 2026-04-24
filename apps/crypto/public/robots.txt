@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+Allow: /articles
+Allow: /search
+Disallow: /admin
+Disallow: /api
+Disallow: /*.json
+Disallow: /private
+
+Sitemap: https://crypto.zyperia.ai/sitemap.xml
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /

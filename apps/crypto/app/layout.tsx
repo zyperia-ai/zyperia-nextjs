@@ -24,20 +24,20 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ZYPERIA Crypto — Intelligence for the Digital Asset Era",
+  title: "ZYPERIA Crypto — Análise da Era dos Activos Digitais",
   description:
-    "Deep crypto research, signal over noise. Daily insights on Bitcoin, Ethereum, DeFi, and the infrastructure reshaping finance.",
+    "Análise cripto em profundidade, sinal sem ruído. Insights diários sobre Bitcoin, Ethereum, DeFi, e a infraestrutura que está a redesenhar as finanças.",
   openGraph: {
     title: "ZYPERIA Crypto",
-    description:
-      "Deep crypto research, signal over noise. Daily insights on Bitcoin, Ethereum, DeFi, and the infrastructure reshaping finance.",
+    description: "Análise cripto em profundidade, sinal sem ruído.",
     images: ["/og-image.png"],
     type: "website",
+    locale: "pt_PT",
   },
   twitter: {
     card: "summary_large_image",
     title: "ZYPERIA Crypto",
-    description: "Deep crypto research, signal over noise.",
+    description: "Análise cripto em profundidade, sinal sem ruído.",
     images: ["/og-image.png"],
   },
 };
@@ -46,7 +46,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${syne.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="pt-PT" className={`${syne.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased bg-[#070707] text-white">
         {children}
       </body>

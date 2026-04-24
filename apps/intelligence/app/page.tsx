@@ -30,8 +30,8 @@ export default function IntelligenceLandingPage() {
                 <Image
                   src="/hero-banner.png"
                   alt="ZYPERIA Intelligence"
-                  width={1920}
-                  height={800}
+                  width={1254}
+                  height={1254}
                   priority
                   sizes="(max-width: 1024px) 90vw, 40vw"
                 />

@@ -14,6 +14,7 @@ interface Article {
   views: number
   reading_time_minutes?: number
   tags?: string[]
+  featured_image_url?: string
 }
 
 async function fetchArticle(slug: string): Promise<Article> {
@@ -152,7 +153,7 @@ export default async function ArticlePage({ params }: { params: { slug: string }
             <h2 className="h-display text-2xl md:text-3xl mb-8">Continuar a ler.</h2>
             <div className="grid gap-6">
               {relatedArticles.slice(0, 3).map((article) => (
-                <ArticleCard key={article.id} article={article} />
+                <ArticleCard key={article.id} article={article as any} />
               ))}
             </div>
           </div>
