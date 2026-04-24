@@ -8,7 +8,7 @@ import {
   Zap,
   Globe2,
   BookOpen,
-  Twitter,
+  Share2,
   Mail,
 } from "lucide-react";
 
@@ -322,8 +322,8 @@ function Footer() {
             © {new Date().getFullYear()} ZYPERIA · Not financial advice
           </div>
           <div className="flex items-center gap-4 text-[var(--text-muted)]">
-            <a href="#" aria-label="Twitter" className="hover:text-[var(--brand-primary)] transition-colors">
-              <Twitter size={16} />
+            <a href="#" aria-label="Share" className="hover:text-[var(--brand-primary)] transition-colors">
+              <Share2 size={16} />
             </a>
             <a href="#newsletter" aria-label="Newsletter" className="hover:text-[var(--brand-primary)] transition-colors">
               <Mail size={16} />
