@@ -1,9 +1,9 @@
 export default function Home() {
   return (
     <main className="w-screen h-screen bg-slate-900 flex flex-col">
-      {/* Banner - confined box 400x96px */}
-      <div className="w-full h-24 bg-purple-900 border-b-2 border-purple-600">
-        <div className="w-full h-24 overflow-hidden flex items-center justify-center">
+      {/* Banner - super tiny 64px */}
+      <div className="w-full h-16 bg-purple-900 border-b border-purple-600">
+        <div className="w-full h-16 overflow-hidden">
           <img
             src="/HeroBanner_Intelligence_1920x800.png"
             alt="Intelligence"
@@ -14,8 +14,8 @@ export default function Home() {
 
       {/* Content - centered */}
       <div className="flex-1 flex flex-col items-center justify-center px-4">
-        {/* Logo - confined 80x80px box */}
-        <div className="w-20 h-20 mb-2 flex items-center justify-center">
+        {/* Logo - tiny 48x48px */}
+        <div className="w-12 h-12 mb-1 flex items-center justify-center">
           <img
             src="/ZYPERIA INTELLIGENCE LOGO.png"
             alt="Intelligence Logo"
@@ -24,44 +24,41 @@ export default function Home() {
         </div>
 
         {/* Title */}
-        <h1 className="text-2xl font-bold text-white text-center mb-1">
-          AI & Intelligence
+        <h1 className="text-xl font-bold text-white text-center mb-1">
+          Intelligence
         </h1>
 
         {/* Description */}
-        <p className="text-xs text-slate-300 text-center mb-3 max-w-sm">
-          Machine learning, AI models & automation
+        <p className="text-xs text-slate-300 text-center mb-2 max-w-xs">
+          AI, ML & Automation
         </p>
 
         {/* Buttons */}
-        <div className="flex gap-2 mb-3">
-          <button className="px-3 py-1 bg-purple-600 text-white text-xs rounded font-semibold hover:bg-purple-700">
+        <div className="flex gap-1 mb-2">
+          <button className="px-2 py-0.5 bg-purple-600 text-white text-xs rounded font-semibold hover:bg-purple-700">
             Subscribe
           </button>
-          <button className="px-3 py-1 bg-slate-700 text-white text-xs rounded font-semibold hover:bg-slate-600">
+          <button className="px-2 py-0.5 bg-slate-700 text-white text-xs rounded font-semibold hover:bg-slate-600">
             Read
           </button>
         </div>
 
         {/* Features */}
-        <div className="grid grid-cols-3 gap-2 text-center text-xs">
-          <div className="bg-slate-800 p-2 rounded border border-slate-700">
-            <div className="text-lg">🤖</div>
-            <p className="text-slate-300">AI Models</p>
+        <div className="grid grid-cols-3 gap-1 text-center text-xs">
+          <div className="bg-slate-800 p-1 rounded border border-slate-700">
+            <div className="text-base">🤖</div>
           </div>
-          <div className="bg-slate-800 p-2 rounded border border-slate-700">
-            <div className="text-lg">⚙️</div>
-            <p className="text-slate-300">Automation</p>
+          <div className="bg-slate-800 p-1 rounded border border-slate-700">
+            <div className="text-base">⚙️</div>
           </div>
-          <div className="bg-slate-800 p-2 rounded border border-slate-700">
-            <div className="text-lg">🧠</div>
-            <p className="text-slate-300">ML Eng</p>
+          <div className="bg-slate-800 p-1 rounded border border-slate-700">
+            <div className="text-base">🧠</div>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="h-8 border-t border-slate-800 flex items-center justify-center">
+      <footer className="h-6 border-t border-slate-800 flex items-center justify-center">
         <p className="text-slate-500 text-xs">© 2026 Zyperia</p>
       </footer>
     </main>
