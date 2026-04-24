@@ -24,19 +24,20 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ZYPERIA Intelligence — AI & Automation for Operators",
+  title: "ZYPERIA Intelligence — IA & Automação para Operadores",
   description:
-    "Practical AI for people who run things. Automation playbooks, workflow blueprints, and the tools that actually ship.",
+    "IA prática para quem gere e executa. Playbooks de automação, blueprints de workflows, e as ferramentas que realmente funcionam.",
   openGraph: {
     title: "ZYPERIA Intelligence",
-    description: "Practical AI for people who run things.",
+    description: "IA prática para operadores.",
     images: ["/og-image.png"],
     type: "website",
+    locale: "pt_PT",
   },
   twitter: {
     card: "summary_large_image",
     title: "ZYPERIA Intelligence",
-    description: "Practical AI for people who run things.",
+    description: "IA prática para operadores.",
     images: ["/og-image.png"],
   },
 };
@@ -45,7 +46,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${syne.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="pt-PT" className={`${syne.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased bg-[#070707] text-white">
         {children}
       </body>
