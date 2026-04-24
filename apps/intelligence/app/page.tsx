@@ -1,7 +1,6 @@
 'use client';
 
 import ArticleCard from '@zyperia/shared-ui/components/ArticleCard';
-import NewsletterSignup from '@zyperia/shared-ui/components/NewsletterSignup';
 
 const mockArticles = [
   {

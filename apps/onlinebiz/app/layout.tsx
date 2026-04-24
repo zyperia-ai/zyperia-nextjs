@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import Header from '@zyperia/shared-ui/components/Header';
-import Footer from '@zyperia/shared-ui/components/Footer';
+import EnhancedHeader from '@zyperia/shared-ui/components/EnhancedHeader';
+import EnhancedFooter from '@zyperia/shared-ui/components/EnhancedFooter';
 
 export const metadata: Metadata = {
   title: 'Earn Online | ZYPERIA — Make Money From Home',
@@ -20,14 +20,15 @@ export default function OnlineBizLayout({ children }: { children: React.ReactNod
         <meta name="theme-color" content="#ffffff" />
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
-      <body className="bg-white text-gray-900 font-sans antialiased">
+      <body className="bg-white text-slate-900 font-sans antialiased">
         <div className="flex flex-col min-h-screen">
-          <Header blogName="Earn Online" blogIcon="💰" isDark={false} />
+          <EnhancedHeader blogName="Earn Online" blogIcon="💰" theme="onlinebiz" isDark={false} />
 
           <main className="flex-1 max-w-6xl mx-auto px-4 py-8 w-full">{children}</main>
 
-          <Footer
+          <EnhancedFooter
             blogName="Earn Online"
+            theme="onlinebiz"
             isDark={false}
             affiliateDisclosure="We recommend products we genuinely use. Affiliate commissions help us create free guides."
           />

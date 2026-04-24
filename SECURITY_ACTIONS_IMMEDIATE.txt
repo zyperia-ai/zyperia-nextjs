@@ -1,0 +1,92 @@
+🚨 CRITICAL SECURITY FIX — IMMEDIATE ACTIONS REQUIRED
+
+Exposure: Anthropic API key found in public GitHub (already deactivated by Anthropic)
+Status: Credentials removed from repo, manual rotation required
+
+═══════════════════════════════════════════════════════════════════════════════
+
+STEP 1: Generate New Anthropic API Key (5 min)
+─────────────────────────────────────────────
+
+1. Go to: https://platform.claude.com/settings/keys
+2. Sign in with your Anthropic account
+3. Click "Create new key"
+4. Name it: "ZYPERIA_2026_04_24" (date-stamped for tracking)
+5. Copy the new key (starts with sk-ant-api03-)
+6. Save to password manager
+
+NEW KEY: _____________________ (paste here for your records)
+
+
+STEP 2: Rotate Supabase Credentials (5 min)
+───────────────────────────────────────────
+
+1. Go to: https://app.supabase.com/
+2. Select your project
+3. Settings → API
+4. Under "anon" key:
+   - Click "Rotate" button
+5. Under "service_role" key:
+   - Click "Rotate" button
+6. Copy new keys
+
+NEW SUPABASE ANON KEY: _____________________
+NEW SERVICE ROLE KEY: _____________________
+
+
+STEP 3: Update Vercel (3 projects, 3 min each = 9 min)
+──────────────────────────────────────────────────────
+
+For EACH project (zyperia-crypto, zyperia-intelligence, zyperia-onlinebiz):
+
+1. Go to: https://vercel.com/dashboard
+2. Select project
+3. Settings → Environment Variables
+4. Update these values:
+   - ANTHROPIC_API_KEY = <new key from Step 1>
+   - SUPABASE_KEY = <new anon key from Step 2>
+   - SUPABASE_SERVICE_ROLE_KEY = <new service role key from Step 2>
+5. Redeploy if prompted
+
+Projects Updated:
+- [ ] zyperia-crypto
+- [ ] zyperia-intelligence
+- [ ] zyperia-onlinebiz
+
+
+STEP 4: Force-push to GitHub (1 min)
+────────────────────────────────────
+
+1. Open terminal in repo directory
+2. Run:
+   git push --force origin main
+
+3. Confirm when prompted (this removes exposed creds from public history)
+
+
+STEP 5: Verify GitHub
+────────────────────
+
+1. Go to: https://github.com/zyperia-ai/zyperia-nextjs/security/secret-scanning
+2. Verify no active credential alerts
+3. Check: "No secrets detected" status
+
+
+STEP 6: Test Deployments
+────────────────────────
+
+1. Trigger manual deploy on Vercel (all 3 projects)
+2. Check build logs for errors
+3. Test API calls:
+   curl https://crypto.zyperia.ai/api/articles
+   (should work without auth errors)
+
+
+TOTAL TIME: ~30 minutes
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+If you need help, see: SECURITY_REMEDIATION_REPORT.md (detailed explanation)
+
+After completing all steps, mark them above and you're secure! ✅

@@ -32,7 +32,7 @@ export default function ArticleCard({
     : '';
 
   return (
-    <Link href={`/${slug}`}>
+    <Link href={`/articles/${slug}`}>
       <article
         className={`
           group rounded-lg overflow-hidden transition-all duration-300
