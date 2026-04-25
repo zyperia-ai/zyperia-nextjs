@@ -149,6 +149,16 @@ export default function SiteFooter({
           </div>
         </div>
 
+        {/* Rede link */}
+        <div className="mt-6 pt-6 border-t border-white/5 text-center">
+          <Link
+            href="/rede"
+            className="text-xs text-[var(--text-muted)] hover:text-white transition-colors inline-flex items-center gap-1"
+          >
+            Parte da rede ZYPERIA →
+          </Link>
+        </div>
+
         {/* Bottom */}
         <div className={`flex ${variant === 'homepage' ? 'flex-col md:flex-row justify-between items-center gap-4' : 'text-xs'} text-[var(--text-muted)] h-mono`}>
           <div className="text-xs">
