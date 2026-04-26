@@ -4,7 +4,8 @@
     "NODE_ENV",
     "NEXT_PUBLIC_*",
     "SUPABASE_*",
-    "ANTHROPIC_*"
+    "ANTHROPIC_*",
+    "RESEND_*"
   ],
   "tasks": {
     "build": {
