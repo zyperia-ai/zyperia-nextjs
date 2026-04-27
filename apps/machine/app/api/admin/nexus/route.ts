@@ -6,10 +6,12 @@
 
 import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_KEY!
-)
+function getSupabase() {
+  return createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_KEY!
+  )
+}
 
 const adminToken = process.env.ADMIN_TOKEN || 'default-insecure-token'
 
@@ -34,34 +36,34 @@ async function fetchNexusData() {
     { count: totalRejected },
   ] = await Promise.all([
     // Top 10 artigos por views
-    supabase
+    getSupabase()
       .from('article_performance')
       .select('article_id, views, dwell_time_seconds, scroll_depth_percent, newsletter_signups')
       .order('views', { ascending: false })
       .limit(10),
 
     // Scores por categoria
-    supabase
+    getSupabase()
       .from('topic_scores')
       .select('category, audience_level, avg_views, avg_dwell_time, avg_scroll_depth, avg_newsletter_rate, article_count, last_calculated_at')
       .order('avg_views', { ascending: false })
       .limit(20),
 
     // Últimas 10 decisões NEXUS
-    supabase
+    getSupabase()
       .from('nexus_decisions')
       .select('decision_type, reason, articles_affected, decision_data, created_at')
       .order('created_at', { ascending: false })
       .limit(10),
 
     // Config actual
-    supabase
+    getSupabase()
       .from('nexus_config')
       .select('config_key, config_value, updated_by, updated_at')
       .order('config_key'),
 
     // Artigos rejeitados últimos 7 dias
-    supabase
+    getSupabase()
       .from('rejected_articles')
       .select('app_name, rejection_layer, rejection_reason, rejected_at')
       .gte('rejected_at', sevenDaysAgo.toISOString())
@@ -69,27 +71,27 @@ async function fetchNexusData() {
       .limit(20),
 
     // Últimos logs para circuit breaker status
-    supabase
+    getSupabase()
       .from('generation_logs')
       .select('status, stage, created_at')
       .order('created_at', { ascending: false })
       .limit(20),
 
     // Publicados hoje
-    supabase
+    getSupabase()
       .from('blog_posts')
       .select('*', { count: 'exact', head: true })
       .eq('status', 'published')
       .gte('published_at', today.toISOString()),
 
     // Total publicados
-    supabase
+    getSupabase()
       .from('blog_posts')
       .select('*', { count: 'exact', head: true })
       .eq('status', 'published'),
 
     // Total rejeitados
-    supabase
+    getSupabase()
       .from('rejected_articles')
       .select('*', { count: 'exact', head: true }),
   ])
