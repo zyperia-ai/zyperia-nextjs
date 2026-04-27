@@ -1,4 +1,7 @@
-﻿/**
+﻿export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+
+/**
  * Vercel Cron Job - Stage 5: Editorial Review & E-E-A-T Enhancement
  * Runs daily at 05:00 UTC
  */

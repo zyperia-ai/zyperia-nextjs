@@ -1,4 +1,7 @@
-﻿/**
+﻿export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+
+/**
  * Vercel Cron Job - Stage 3: Visual Enrichment
  * Runs daily at 03:00 UTC
  * Adds hero images, visualizations, and OG images to draft articles

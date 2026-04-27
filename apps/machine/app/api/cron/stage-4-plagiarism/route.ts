@@ -1,4 +1,7 @@
-﻿/**
+﻿export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+
+/**
  * Vercel Cron Job - Stage 4: Plagiarism Check & Verification
  * Runs daily at 04:00 UTC
  */

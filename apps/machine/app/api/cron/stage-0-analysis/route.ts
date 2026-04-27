@@ -1,4 +1,7 @@
-﻿/**
+﻿export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+
+/**
  * Vercel Cron Job - Stage 0: Competitive Analysis
  * Runs daily at 23:00 UTC
  */

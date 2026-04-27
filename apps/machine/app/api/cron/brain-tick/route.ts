@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+
 /**
  * NEXUS Brain Tick — Cron diário às 03:00 UTC
  * Lê article_performance → calcula scores → actualiza topic_scores + nexus_config
