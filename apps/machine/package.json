@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "vercel-build": "next build",
+    "build": "next build",
+    "dev": "next dev",
+    "start": "next start",
     "stage:0": "ts-node scripts/stage-0-competitive-analysis.ts",
     "stage:1": "ts-node scripts/stage-1-research-topics.ts",
     "stage:2": "ts-node scripts/stage-2-generate-articles.ts",
