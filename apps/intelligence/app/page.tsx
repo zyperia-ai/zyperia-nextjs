@@ -42,22 +42,24 @@ export default function IntelligenceLandingPage() {
             {/* Text — right on desktop, bottom on mobile */}
             <div className="lg:col-span-7 order-2 lg:order-2 text-center lg:text-left">
               <span className="kicker mb-4">
-                IA & Automação · Feito para Quem Constrói
+                IA & Automação · Para Quem Executa
               </span>
               <p className="text-sm md:text-base text-[var(--text-muted)] mt-4 mb-4 h-mono uppercase tracking-wider">
-                Um blog semanal de automação com IA para operadores
+                Guias práticos de automação com IA
               </p>
               <h1 className="h-display text-4xl sm:text-5xl md:text-5xl lg:text-5xl xl:text-6xl mb-5">
-                IA prática{" "}
-                <span className="text-brand-gradient">para quem executa.</span>
+                Workflows que funcionam.{" "}
+                <span className="text-brand-gradient">Não só em teoria.</span>
               </h1>
               <p className="text-base md:text-lg text-[var(--text-secondary)] max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Playbooks de automação, blueprints de workflows, e as ferramentas que realmente merecem o seu lugar à mesa. Sem hype de IA, sem manchetes "revolucionárias".
+                Tutoriais passo a passo para construir com Claude, n8n, Make e ferramentas
+                open source. Do primeiro agente ao pipeline em produção — sem hype, sem
+                buzzwords, com custos reais.
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                 <Link href="/articles" className="btn-primary">
-                  Ver playbooks <ArrowRight size={18} />
+                  Ver tutoriais <ArrowRight size={18} />
                 </Link>
                 <Link href="#newsletter" className="btn-ghost">
                   Análise semanal <Mail size={18} />
@@ -69,10 +71,10 @@ export default function IntelligenceLandingPage() {
           {/* Stats strip — below hero, full width */}
           <div className="mt-12 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5 rounded-xl overflow-hidden border border-white/10">
             {[
-              { label: "Playbooks publicados", value: "860+" },
-              { label: "Ferramentas analisadas", value: "220+" },
-              { label: "Automações partilhadas", value: "140" },
-              { label: "Leitores/mês", value: "31K" },
+              { label: "Ferramentas analisadas", value: "50+" },
+              { label: "Categorias cobertas", value: "6" },
+              { label: "Stack principal", value: "Claude · n8n" },
+              { label: "Publicação", value: "Semanal" },
             ].map((s) => (
               <div key={s.label} className="bg-[var(--surface-1)] px-4 py-5 md:px-6 md:py-6 text-center">
                 <div className="h-display text-2xl md:text-4xl text-brand-gradient">
@@ -95,7 +97,7 @@ export default function IntelligenceLandingPage() {
           <div className="max-w-2xl mb-16">
             <span className="kicker mb-4">O que cobrimos</span>
             <h2 className="h-display text-3xl md:text-4xl mt-4">
-              Seis frentes da economia da automação.
+              Seis áreas. Do primeiro workflow ao pipeline em produção.
             </h2>
           </div>
 
@@ -103,33 +105,33 @@ export default function IntelligenceLandingPage() {
             {[
               {
                 icon: Brain,
-                title: "LLMs em Produção",
-                desc: "Prompt engineering que sobrevive a utilizadores reais, pipelines de avaliação, e saber quando fazer fine-tune vs prompt.",
+                title: "Claude & LLMs",
+                desc: "Como usar Claude, ChatGPT e Gemini para tarefas reais. Prompts que funcionam, limites honestos, custos por caso de uso.",
               },
               {
                 icon: Workflow,
-                title: "Automação de Workflows",
-                desc: "n8n, Make, Zapier, e cola de código à medida. Walkthroughs ao nível de blueprint que consegues implementar hoje.",
+                title: "Automação com n8n & Make",
+                desc: "Workflows do zero ao deploy. Blueprints que podes importar e adaptar hoje.",
               },
               {
                 icon: Bot,
-                title: "Agentes Autónomos",
-                desc: "Arquitecturas de agentes, uso de ferramentas, memória, e os limites honestos do que funciona em 2026.",
+                title: "AI Agents",
+                desc: "Agentes de email, pesquisa, suporte. O que já funciona em 2026 e o que ainda é promessa de conferência.",
               },
               {
                 icon: Gauge,
-                title: "Operações & Produtividade",
-                desc: "Triagem de email, notas de reunião, assistentes de pesquisa. Sistemas que compõem, não brinquedos que se desgastam.",
+                title: "Claude API & Código",
+                desc: "Construir apps com a API da Anthropic. Node.js, deploy no Vercel, custo por chamada.",
               },
               {
                 icon: Cpu,
-                title: "Stack Open Source",
-                desc: "Ollama, Llama, Mistral, Phi — a correr modelos capazes no hardware que já tens.",
+                title: "Open Source & Local",
+                desc: "Ollama, Mistral, Phi. Correr modelos no teu hardware sem pagar por token.",
               },
               {
                 icon: Layers,
-                title: "Integrações",
-                desc: "Ligar IA a CRMs, ERPs, folhas de cálculo, e às ferramentas que a tua equipa não vai largar.",
+                title: "Comparações de Ferramentas",
+                desc: "n8n vs Make vs Zapier, Claude vs ChatGPT, Cursor vs Copilot. Tabelas honestas sem patrocínios.",
               },
             ].map((f) => (
               <div key={f.title} className="card p-6 md:p-7">
@@ -153,12 +155,12 @@ export default function IntelligenceLandingPage() {
             <div className="lg:col-span-5">
               <span className="kicker mb-4">Padrão editorial</span>
               <h2 className="h-display text-3xl md:text-4xl mt-4 mb-6">
-                Se não conseguimos correr, não escrevemos.
+                Se não conseguimos construir, não escrevemos.
               </h2>
               <p className="text-[var(--text-secondary)] leading-relaxed">
-                Cada automação que publicamos foi construída, testada, e documentada a
-                partir de uma implementação real. Nada de "aqui está o que podias fazer
-                em teoria". Só o que realmente funciona.
+                Cada tutorial foi executado antes de ser publicado. Os screenshots são
+                nossos, os erros também. Não escrevemos sobre o que "podias" fazer —
+                escrevemos sobre o que fizemos.
               </p>
             </div>
             <div className="lg:col-span-7 space-y-px bg-white/5 rounded-xl overflow-hidden border border-white/10">
@@ -166,17 +168,17 @@ export default function IntelligenceLandingPage() {
                 {
                   n: "01",
                   t: "O problema primeiro",
-                  d: "Começamos a partir da dor real de um operador — não de uma ferramenta à procura de caso de uso.",
+                  d: "Começamos por uma tarefa concreta que alguém quer automatizar, não por uma ferramenta à procura de caso de uso.",
                 },
                 {
                   n: "02",
                   t: "Construímos nós próprios",
-                  d: "Cada workflow é montado de ponta a ponta antes de publicarmos. Os screenshots são nossos.",
+                  d: "O workflow é montado de ponta a ponta. Se falhar a meio, reescrevemos até funcionar.",
                 },
                 {
                   n: "03",
-                  t: "Trade-offs honestos",
-                  d: "Custo, fiabilidade, vendor lock-in, esforço de manutenção. Dito à frente, não escondido.",
+                  t: "Custos e trade-offs à frente",
+                  d: "Quanto custa por mês, quanto tempo demora a manter, onde pode falhar. Dito antes de recomendar.",
                 },
                 {
                   n: "04",
@@ -209,11 +211,11 @@ export default function IntelligenceLandingPage() {
         <div className="max-w-3xl mx-auto px-6 text-center">
           <span className="kicker mb-4">O Build Semanal</span>
           <h2 className="h-display text-3xl md:text-4xl mt-4 mb-5">
-            Um playbook em profundidade. Toda a terça-feira.
+            Um tutorial novo. Toda a semana.
           </h2>
           <p className="text-[var(--text-secondary)] text-lg mb-10 max-w-xl mx-auto">
-            Uma automação, explicada passo a passo, com o template pronto a importar.
-            Salta o ciclo de hype e lança alguma coisa útil.
+            Uma automação explicada passo a passo, com os custos reais e os erros que
+            cometemos. Sem ciclo de hype de IA — só o que é útil lançar esta semana.
           </p>
 
           <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
@@ -229,7 +231,7 @@ export default function IntelligenceLandingPage() {
           </form>
 
           <p className="text-xs text-[var(--text-muted)] mt-6 h-mono">
-            Junta-te a 31.000+ operadores · Sem spam · Conforme GDPR
+            Sem spam · Cancelas quando quiseres · Conforme GDPR
           </p>
         </div>
       </section>

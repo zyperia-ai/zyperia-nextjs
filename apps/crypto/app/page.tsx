@@ -43,24 +43,23 @@ export default function CryptoLandingPage() {
             {/* Text — right on desktop, bottom on mobile */}
             <div className="lg:col-span-7 order-2 lg:order-2 text-center lg:text-left">
               <span className="kicker mb-4">
-                Análise · Sem Ruído
+                Cripto · Sem Atalhos
               </span>
               <p className="text-sm md:text-base text-[var(--text-muted)] mt-4 mb-4 h-mono uppercase tracking-wider">
-                Um blog diário de análise sobre cripto
+                Guias práticos e análise independente
               </p>
               <h1 className="h-display text-4xl sm:text-5xl md:text-5xl lg:text-5xl xl:text-6xl mb-5">
-                A economia cripto,{" "}
-                <span className="text-brand-gradient">descodificada todos os dias.</span>
+                Bitcoin, Ethereum, DeFi.{" "}
+                <span className="text-brand-gradient">Explicado para durar.</span>
               </h1>
               <p className="text-base md:text-lg text-[var(--text-secondary)] max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Análise em profundidade sobre Bitcoin, Ethereum, DeFi e a infraestrutura
-                que está a redesenhar as finanças. Factos verificados, leitura sem
-                publicidade, entregue todas as manhãs.
+                Guias práticos para investidores iniciantes a avançados. 12 anos de experiência
+                explicados em português claro. Sem hype, sem atalhos, sem vendas escondidas.
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                 <Link href="/articles" className="btn-primary">
-                  Ler análises recentes <ArrowRight size={18} />
+                  Explorar guias <ArrowRight size={18} />
                 </Link>
                 <Link href="#newsletter" className="btn-ghost">
                   Receber o resumo diário <Mail size={18} />
@@ -72,10 +71,10 @@ export default function CryptoLandingPage() {
           {/* Stats strip — below hero, full width */}
           <div className="mt-12 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5 rounded-xl overflow-hidden border border-white/10">
             {[
-              { label: "Artigos publicados", value: "1.240+" },
+              { label: "Anos em cripto", value: "12+" },
               { label: "Activos cobertos", value: "80+" },
-              { label: "Fontes de pesquisa", value: "35" },
-              { label: "Leitores/mês", value: "42K" },
+              { label: "Fontes verificadas", value: "35+" },
+              { label: "Publicação", value: "Diária" },
             ].map((s) => (
               <div key={s.label} className="bg-[var(--surface-1)] px-4 py-5 md:px-6 md:py-6 text-center">
                 <div className="h-display text-2xl md:text-4xl text-brand-gradient">
@@ -98,41 +97,41 @@ export default function CryptoLandingPage() {
           <div className="max-w-2xl mb-16">
             <span className="kicker mb-4">O que cobrimos</span>
             <h2 className="h-display text-3xl md:text-4xl mt-4">
-              Seis lentes sobre a economia dos activos digitais.
+              Seis áreas. Do iniciante ao avançado.
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               {
+                icon: BookOpen,
+                title: "Primeiros Passos",
+                desc: "Carteiras, primeiras compras, seed phrases, 2FA. O que tens mesmo de saber antes de pôr dinheiro real em jogo.",
+              },
+              {
                 icon: Bitcoin,
-                title: "Bitcoin & Macro",
-                desc: "Ciclos de halving, fluxos de ETF, métricas on-chain e o papel do Bitcoin como activo de reserva.",
+                title: "Bitcoin & Ethereum",
+                desc: "Staking, Lightning, Layer 2, gas fees. Os dois activos que mais importam, explicados sem simplificar demais.",
               },
               {
                 icon: Zap,
-                title: "Ethereum & L2s",
-                desc: "Economia pós-merge, guerras de rollups, restaking, e o caminho para 100k TPS.",
-              },
-              {
-                icon: LineChart,
-                title: "DeFi & Rendimento",
-                desc: "Yield real, liquid staking, perpétuos, e os protocolos que justificam o teu capital.",
+                title: "DeFi & Protocolos",
+                desc: "Uniswap, yield farming, bridges, tokens scam. Como participar sem perder capital em erros evitáveis.",
               },
               {
                 icon: ShieldCheck,
                 title: "Segurança & Custódia",
-                desc: "Carteiras de hardware, multi-sig, planos de sucessão, e a OPSEC dos detentores sérios.",
+                desc: "Ledger, Trezor, multi-sig, self-custody. A OPSEC de quem leva o próprio dinheiro a sério.",
               },
               {
                 icon: Globe2,
-                title: "Regulação",
-                desc: "MiCA, casos da SEC, leis sobre stablecoins, e como a política molda o próximo ciclo.",
+                title: "Regulação & Impostos",
+                desc: "MICA, IRS português, stablecoins pós-2026. O que mudou e o que tens de declarar.",
               },
               {
-                icon: BookOpen,
-                title: "Fundamentos",
-                desc: "Explicações em português claro para quem começa. Sem hype, sem armadilhas de afiliados.",
+                icon: LineChart,
+                title: "Comparações Honestas",
+                desc: "Exchanges, carteiras, plataformas de staking. Tabelas reais sem patrocínios a distorcer.",
               },
             ].map((f) => (
               <div key={f.title} className="card p-6 md:p-7">
@@ -156,35 +155,35 @@ export default function CryptoLandingPage() {
             <div className="lg:col-span-5">
               <span className="kicker mb-4">O nosso método</span>
               <h2 className="h-display text-3xl md:text-4xl mt-4 mb-6">
-                Análise que aguenta sob pressão.
+                Escrito por quem já cometeu os erros.
               </h2>
               <p className="text-[var(--text-secondary)] leading-relaxed">
-                Todas as afirmações são verificadas contra dados on-chain, fontes
-                primárias, e documentação de protocolos. Se não conseguimos confirmar,
-                não publicamos. É o jogo todo.
+                12 anos em cripto significa ter sobrevivido a exchanges falidas, hacks
+                de DeFi, e ciclos de bear market. Cada guia é escrito com esse contexto
+                — o que realmente protege, não o que soa bem numa thread do Twitter.
               </p>
             </div>
             <div className="lg:col-span-7 space-y-px bg-white/5 rounded-xl overflow-hidden border border-white/10">
               {[
                 {
                   n: "01",
-                  t: "Selecção de tópicos",
-                  d: "Scan diário de dados on-chain, actualizações de protocolos, e eventos de mercado. Só pegamos em tópicos onde há informação nova.",
+                  t: "Começamos pelo erro mais comum",
+                  d: "Cada guia nasce de uma pergunta real ou de um erro que custa dinheiro. Não cobrimos tópicos porque estão em tendência.",
                 },
                 {
                   n: "02",
-                  t: "Fontes primárias",
-                  d: "Whitepapers, commits de GitHub, dashboards da Dune, anúncios oficiais. Nada de scraping a outros blogs.",
+                  t: "Fontes primárias sempre",
+                  d: "Documentação oficial, exploradores de blockchain, auditorias de contratos. Nada de scraping a outros blogs de cripto.",
                 },
                 {
                   n: "03",
-                  t: "Verificação de factos",
-                  d: "Cada número é cruzado com duas fontes independentes antes de publicar.",
+                  t: "Números verificados",
+                  d: "Cada fee, cada percentagem de staking, cada prazo regulatório é cruzado com duas fontes antes de publicar.",
                 },
                 {
                   n: "04",
-                  t: "Revisão editorial",
-                  d: "Linguagem clara, sem paredes de jargão, sem hype. Suficientemente claro para quem começa, suficientemente afiado para profissionais.",
+                  t: "Linguagem sem jargão desnecessário",
+                  d: "Explicamos o que é necessário explicar. Se um conceito precisa de três parágrafos de contexto, escrevemos esses três parágrafos.",
                 },
               ].map((step) => (
                 <div
@@ -212,11 +211,11 @@ export default function CryptoLandingPage() {
         <div className="max-w-3xl mx-auto px-6 text-center">
           <span className="kicker mb-4">O Resumo Matinal</span>
           <h2 className="h-display text-3xl md:text-4xl mt-4 mb-5">
-            Um email. 5 minutos. Todas as manhãs.
+            O essencial em cripto. Todas as manhãs.
           </h2>
           <p className="text-[var(--text-secondary)] text-lg mb-10 max-w-xl mx-auto">
-            As 3 histórias que interessam antes de abrires a app da exchange. Zero
-            enchimento, zero promos pagas. Anulas a subscrição num clique.
+            O que mudou no mercado, um guia novo, e o que não vale a pena ler —
+            entregue antes de abrires a app da exchange. Sem hype, sem promos pagas.
           </p>
 
           <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
@@ -232,7 +231,7 @@ export default function CryptoLandingPage() {
           </form>
 
           <p className="text-xs text-[var(--text-muted)] mt-6 h-mono">
-            Junta-te a 42.000+ leitores · Sem spam · Conforme GDPR
+            Sem spam · Cancelas quando quiseres
           </p>
         </div>
       </section>

@@ -42,22 +42,24 @@ export default function OnlineBizLandingPage() {
             {/* Text — right on desktop, bottom on mobile */}
             <div className="lg:col-span-7 order-2 lg:order-2 text-center lg:text-left">
               <span className="kicker mb-4">
-                Rendimento Online · Sem Rodeios · Sem Gurus
+                Negócio Online · Sem Gurus · Com Números
               </span>
               <p className="text-sm md:text-base text-[var(--text-muted)] mt-4 mb-4 h-mono uppercase tracking-wider">
-                Um blog semanal de casos de estudo sobre negócios online
+                Guias práticos de rendimento online
               </p>
               <h1 className="h-display text-4xl sm:text-5xl md:text-5xl lg:text-5xl xl:text-6xl mb-5">
-                Rendimento que trabalha{" "}
-                <span className="text-brand-gradient">enquanto tu descansas.</span>
+                Negócio online que funciona.{" "}
+                <span className="text-brand-gradient">Com os números a confirmar.</span>
               </h1>
               <p className="text-base md:text-lg text-[var(--text-secondary)] max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Afiliados, produtos digitais, micro-SaaS, conteúdo, serviços. Números reais, análises detalhadas, e os sistemas por trás do dinheiro. Sem posts de "laptop lifestyle" no Instagram.
+                Do zero ao primeiro euro online — afiliados, produtos digitais, freelance,
+                micro-SaaS. Tutoriais passo a passo com custos reais, ferramentas testadas,
+                e zero promessas de "rendimento passivo" sem trabalho.
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                 <Link href="/articles" className="btn-primary">
-                  Ver casos de estudo <ArrowRight size={18} />
+                  Ver guias <ArrowRight size={18} />
                 </Link>
                 <Link href="#newsletter" className="btn-ghost">
                   Análise de Sexta <Mail size={18} />
@@ -69,10 +71,10 @@ export default function OnlineBizLandingPage() {
           {/* Stats strip — below hero, full width */}
           <div className="mt-12 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5 rounded-xl overflow-hidden border border-white/10">
             {[
-              { label: "Casos de estudo", value: "480+" },
-              { label: "Modelos de negócio", value: "25" },
-              { label: "Ferramentas analisadas", value: "310" },
-              { label: "Leitores/mês", value: "56K" },
+              { label: "Modelos de negócio", value: "25+" },
+              { label: "Ferramentas analisadas", value: "50+" },
+              { label: "Categorias cobertas", value: "6" },
+              { label: "Publicação", value: "Semanal" },
             ].map((s) => (
               <div key={s.label} className="bg-[var(--surface-1)] px-4 py-5 md:px-6 md:py-6 text-center">
                 <div className="h-display text-2xl md:text-4xl text-brand-gradient">
@@ -95,7 +97,7 @@ export default function OnlineBizLandingPage() {
           <div className="max-w-2xl mb-16">
             <span className="kicker mb-4">Modelos de rendimento</span>
             <h2 className="h-display text-3xl md:text-4xl mt-4">
-              Seis caminhos. Escolhe o que encaixa na tua vida.
+              Seis modelos. Com o que realmente custa a arrancar.
             </h2>
           </div>
 
@@ -104,32 +106,32 @@ export default function OnlineBizLandingPage() {
               {
                 icon: DollarSign,
                 title: "Marketing de Afiliados",
-                desc: "Programas de afiliados baseados em conteúdo com estruturas de comissão reais — não a armadilha dos $5 por registo.",
+                desc: "Como escolher nicho, criar conteúdo que converte, e as estruturas de comissão que realmente valem a pena. Sem os programas de €5 por registo.",
               },
               {
                 icon: ShoppingBag,
                 title: "Produtos Digitais",
-                desc: "Templates, cursos, setups de Notion, packs de prompts. Constrói uma vez, vende enquanto dormes.",
+                desc: "Templates, ebooks, cursos, packs de prompts. Como criar, onde vender (Gumroad, Hotmart, Lemon Squeezy), e o que realmente compra.",
               },
               {
                 icon: FileText,
-                title: "Conteúdo & Newsletters",
-                desc: "Newsletters pagas, Substacks, blogs de nicho. O que realmente compõe vs. o que acaba por se esgotar.",
+                title: "Freelance & Serviços",
+                desc: "Pricing, proposta, primeiros clientes, como sair do ciclo de hora por dinheiro. O caminho mais directo para os primeiros €1k/mês.",
               },
               {
                 icon: Rocket,
-                title: "Micro-SaaS",
-                desc: "Ferramentas pequenas que resolvem um problema para um nicho. €2k-20k MRR sem equipa.",
+                title: "Conteúdo & Newsletter",
+                desc: "Blogs de nicho, newsletters pagas, SEO. O que compõe com o tempo vs. o que se esgota em 6 meses.",
               },
               {
                 icon: Users,
-                title: "Serviços & Productised",
-                desc: "Freelance, done-for-you, ofertas de âmbito fixo. O caminho mais rápido para os €5k por mês.",
+                title: "Ferramentas Comparadas",
+                desc: "Webflow vs WordPress, ConvertKit vs Beehiiv, Ahrefs vs Semrush. Qual usar para cada situação e orçamento.",
               },
               {
                 icon: Target,
-                title: "E-commerce",
-                desc: "DTC, print-on-demand, lojas digital-first. Matemática de margem que realmente fecha as contas.",
+                title: "Micro-SaaS & Tech",
+                desc: "Ferramentas pequenas para nichos específicos. Como validar antes de construir e onde encontrar os primeiros 100 clientes.",
               },
             ].map((f) => (
               <div key={f.title} className="card p-6 md:p-7">
@@ -153,35 +155,35 @@ export default function OnlineBizLandingPage() {
             <div className="lg:col-span-5">
               <span className="kicker mb-4">Padrão editorial</span>
               <h2 className="h-display text-3xl md:text-4xl mt-4 mb-6">
-                Recibos ou não aconteceu.
+                Números ou não publicamos.
               </h2>
               <p className="text-[var(--text-secondary)] leading-relaxed">
-                Cada afirmação sobre receita é apoiada por um screenshot, um dashboard,
-                ou uma entrevista verificada. Nada de "fiz 10k no último mês" sem o
-                rasto das facturas.
+                Cada tutorial inclui os custos reais das ferramentas, o tempo necessário,
+                e o que pode correr mal. Sem receitas de sucesso sem contexto. Sem "fiz
+                €10k no primeiro mês" sem a factura do imposto.
               </p>
             </div>
             <div className="lg:col-span-7 space-y-px bg-white/5 rounded-xl overflow-hidden border border-white/10">
               {[
                 {
                   n: "01",
-                  t: "Números verificados",
-                  d: "Cada caso de estudo inclui screenshots, P&L, ou entrevistas com o fundador. Sem bragging anónimo.",
+                  t: "Custos antes de tudo",
+                  d: "Cada guia começa pelo que realmente custa: ferramentas, tempo, skills necessárias. A matemática que os gurus escondem.",
                 },
                 {
                   n: "02",
-                  t: "Imagem de custos completa",
-                  d: "A receita bruta é fácil. Nós publicamos as margens, as ferramentas, os reembolsos, a factura do imposto.",
+                  t: "Ferramentas testadas",
+                  d: "Só escrevemos sobre o que usámos. Comparações com planos reais, não só com o tier gratuito.",
                 },
                 {
                   n: "03",
-                  t: "Tempo + esforço",
-                  d: "Horas por semana, meses para arrancar, competências necessárias. A versão honesta do que 'passivo' significa.",
+                  t: "O que pode correr mal",
+                  d: "Cada modelo de negócio tem armadilhas conhecidas. Dizemo-las antes de recomendar.",
                 },
                 {
                   n: "04",
                   t: "Sem pitches de curso",
-                  d: "Não vendemos programas de €997. Se um modelo de negócio precisa de um funil para funcionar, nós dizemos.",
+                  d: "Não vendemos formações de €997. Se a solução para um problema é pagar um curso, dizemos qual — e porque é que a maioria não vale a pena.",
                 },
               ].map((step) => (
                 <div
@@ -209,11 +211,12 @@ export default function OnlineBizLandingPage() {
         <div className="max-w-3xl mx-auto px-6 text-center">
           <span className="kicker mb-4">A Análise de Sexta</span>
           <h2 className="h-display text-3xl md:text-4xl mt-4 mb-5">
-            Um negócio. Dissecado. Todas as sextas.
+            Um modelo de negócio. Dissecado. Todas as sextas.
           </h2>
           <p className="text-[var(--text-secondary)] text-lg mb-10 max-w-xl mx-auto">
-            Escolhemos um negócio online real, desmontamos o modelo, os números, e
-            o que realmente podes aproveitar dele. Sem gurus. Sem enchimento.
+            Escolhemos um modelo de rendimento online, explicamos como funciona, quanto
+            custa a arrancar, e o que os tutoriais do YouTube não dizem. Sem gurus.
+            Com números.
           </p>
 
           <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
@@ -229,7 +232,7 @@ export default function OnlineBizLandingPage() {
           </form>
 
           <p className="text-xs text-[var(--text-muted)] mt-6 h-mono">
-            Junta-te a 56.000+ construtores · Sem spam · Conforme GDPR
+            Sem spam · Cancelas quando quiseres · Conforme GDPR
           </p>
         </div>
       </section>
