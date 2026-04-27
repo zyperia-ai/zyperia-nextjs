@@ -34,8 +34,6 @@
     "backup:cleanup": "ts-node scripts/database-backup.ts crypto cleanup"
   },
   "dependencies": {
-    "@zyperia/shared-lib": "*",
-    "@zyperia/shared-config": "*",
     "@anthropic-ai/sdk": "^0.81.0",
     "@google/generative-ai": "^0.1.0",
     "@supabase/supabase-js": "^2.101.1",
