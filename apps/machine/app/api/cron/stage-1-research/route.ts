@@ -42,39 +42,25 @@ async function runStage1() {
     for (const app of apps || []) {
       console.log(`\nSelecting topics for: ${app.app_id} (${app.articles_per_day} articles)`);
 
+      // NEXUS audience_focus — preferência mas sem bloquear se não há tópicos suficientes
       const audienceFocus = await getNexusAudienceFocus()
-
-      // Determinar audience_level preferido pelo NEXUS (maior peso)
       const preferredAudience = Object.entries(audienceFocus).sort((a, b) => b[1] - a[1])[0][0]
 
-      // Tentar primeiro tópicos com o audience_level preferido
-      let { data: topics } = await getSupabase()
+      // Buscar todos os tópicos disponíveis ordenados por prioridade
+      const { data: allTopics } = await getSupabase()
         .from('content_topics')
         .select('id, title, priority, search_volume, audience_level')
         .eq('app_id', app.app_id)
         .is('last_used_at', null)
-        .eq('audience_level', preferredAudience)
         .order('priority', { ascending: false })
-        .order('search_volume', { ascending: false })
-        .limit(app.articles_per_day)
+        .limit(app.articles_per_day * 3)
 
-      // Fallback: se não há tópicos com o audience preferido, pegar todos
-      if (!topics || topics.length < app.articles_per_day) {
-        const needed = app.articles_per_day - (topics?.length ?? 0)
-        const existingIds = topics?.map((t: { id: string }) => t.id) ?? []
+      // Separar preferidos dos restantes
+      const preferred = (allTopics ?? []).filter(t => t.audience_level === preferredAudience)
+      const others = (allTopics ?? []).filter(t => t.audience_level !== preferredAudience)
 
-        const { data: fallbackTopics } = await getSupabase()
-          .from('content_topics')
-          .select('id, title, priority, search_volume, audience_level')
-          .eq('app_id', app.app_id)
-          .is('last_used_at', null)
-          .not('id', 'in', existingIds.length > 0 ? `(${existingIds.join(',')})` : '()')
-          .order('priority', { ascending: false })
-          .order('search_volume', { ascending: false })
-          .limit(needed)
-
-        topics = [...(topics ?? []), ...(fallbackTopics ?? [])]
-      }
+      // Combinar: preferidos primeiro, depois os restantes até ao limite
+      const topics = [...preferred, ...others].slice(0, app.articles_per_day)
 
       if (!topics || topics.length === 0) {
         console.log(`⚠️  No topics available for ${app.app_id}`);
