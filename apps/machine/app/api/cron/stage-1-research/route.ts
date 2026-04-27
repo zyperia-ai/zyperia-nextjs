@@ -28,7 +28,13 @@ async function runStage1() {
   console.log(`Started at: ${new Date().toISOString()}`);
 
   try {
-    const { data: apps } = await getSupabase().from('theme_config').select('app_id, articles_per_day');
+    console.log('Tentando conectar ao Supabase...')
+    console.log('SUPABASE_URL presente:', !!process.env.SUPABASE_URL)
+    console.log('SUPABASE_KEY presente:', !!process.env.SUPABASE_KEY)
+
+    const { data: apps, error: appsError } = await getSupabase().from('theme_config').select('app_id, articles_per_day');
+
+    console.log('theme_config query result:', JSON.stringify({ apps, error: appsError?.message }))
 
     for (const app of apps || []) {
       console.log(`\nSelecting topics for: ${app.app_id} (${app.articles_per_day} articles)`);
