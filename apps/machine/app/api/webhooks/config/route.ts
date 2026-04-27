@@ -4,7 +4,7 @@
  * Usage: GET/POST /api/webhooks/config?appId=crypto&token=ADMIN_TOKEN
  */
 
-import { registerWebhook } from '../../../lib/webhook-manager';
+import { registerWebhook } from '@/lib/webhook-manager';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.SUPABASE_URL || '';

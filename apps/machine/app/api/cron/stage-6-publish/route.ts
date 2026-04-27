@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { runQualityPipeline } from '../../../lib/quality-gates'
-import { checkDailyLimit, checkCircuitBreaker } from '../../../lib/circuit-breaker'
+import { runQualityPipeline } from '@/lib/quality-gates'
+import { checkDailyLimit, checkCircuitBreaker } from '@/lib/circuit-breaker'
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,

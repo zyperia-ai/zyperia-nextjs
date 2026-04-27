@@ -14,7 +14,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { generateWithClaude } from '../../../lib/ai-router';
+import { generateWithClaude } from '@/lib/ai-router';
 
 const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_KEY || '';

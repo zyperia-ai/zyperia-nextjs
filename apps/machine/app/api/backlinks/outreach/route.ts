@@ -4,7 +4,7 @@
  * Usage: GET /api/backlinks/outreach?appId=crypto&action=status|start|track
  */
 
-import { generateOutreachMessage, trackBacklinkAcquired } from '../../../lib/backlink-hunter';
+import { generateOutreachMessage, trackBacklinkAcquired } from '@/lib/backlink-hunter';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.SUPABASE_URL || '';

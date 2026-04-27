@@ -4,7 +4,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import { runBrainTick } from '../../../lib/nexus-brain'
+import { runBrainTick } from '@/lib/nexus-brain'
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization')
