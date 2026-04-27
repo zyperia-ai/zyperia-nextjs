@@ -4,13 +4,9 @@ import { createClient } from '@supabase/supabase-js'
 function getSupabase() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
 }
+
 import { runQualityPipeline } from '@/lib/quality-gates'
 import { checkDailyLimit, checkCircuitBreaker } from '@/lib/circuit-breaker'
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_KEY!
-)
 
 export async function GET(request: Request) {
   // Auth
