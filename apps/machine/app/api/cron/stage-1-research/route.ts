@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic'
+export const fetchCache = 'force-no-store'
+
 /**
  * Vercel Cron Job - Stage 1: Research & Topic Selection
  * Runs daily at 00:30 UTC
