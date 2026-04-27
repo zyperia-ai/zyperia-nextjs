@@ -1,111 +1,164 @@
-/**
- * Vercel Cron Job - Stage 6: Publishing & Indexing
- * Runs daily at 09:00, 14:00, and 18:00 UTC
- */
+import { NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+import { runQualityPipeline } from '../../../lib/quality-gates'
+import { checkDailyLimit, checkCircuitBreaker } from '../../../lib/circuit-breaker'
 
-import { createClient } from '@supabase/supabase-js';
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_KEY!
+)
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
+export async function GET(request: Request) {
+  // Auth
+  const authHeader = request.headers.get('authorization')
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-async function runStage6() {
-  console.log('\n=== STAGE 6: PUBLISHING (CRON JOB) ===');
-  console.log(`Started at: ${new Date().toISOString()}`);
+  const results = {
+    published: 0,
+    rejected: 0,
+    skipped_rate_limit: false,
+    skipped_circuit_breaker: false,
+    errors: [] as string[],
+  }
 
   try {
-    const { data: articles } = await supabase
-      .from('blog_posts')
-      .select('id, app_id, slug, title, status, plagiarism_score, last_verified_at')
-      .eq('status', 'draft')
-      .isNotNull('last_verified_at')
-      .gte('plagiarism_score', 70)
-      .order('created_at', { ascending: true })
-      .limit(3); // Publish max 3 per cron run
-
-    if (!articles || articles.length === 0) {
-      console.log('No articles ready to publish');
-      return { statusCode: 200, body: 'No articles ready' };
+    // ── Camada 5a: Circuit Breaker ───────────────────────────────────────────
+    const cb = await checkCircuitBreaker()
+    if (cb.open) {
+      results.skipped_circuit_breaker = true
+      return NextResponse.json({
+        success: false,
+        reason: `Circuit breaker aberto: ${cb.consecutive_rejections} rejeições consecutivas`,
+        results,
+      })
     }
 
-    for (const article of articles) {
-      try {
-        const publishedAt = new Date();
-        const articleUrl = `https://${article.app_id}.zyperia.ai/${article.slug}`;
+    // ── Camada 5b: Rate Limit ────────────────────────────────────────────────
+    const rl = await checkDailyLimit()
+    if (!rl.allowed) {
+      results.skipped_rate_limit = true
+      return NextResponse.json({
+        success: true,
+        reason: `Daily limit atingido: ${rl.published_today}/${rl.limit}`,
+        results,
+      })
+    }
 
-        // Update article status to published
+    const slots = rl.limit - rl.published_today
+
+    // ── Buscar candidatos a publicar ─────────────────────────────────────────
+    const { data: candidates, error: fetchError } = await supabase
+      .from('blog_posts')
+      .select('id, title, content, app_name')
+      .eq('status', 'draft')
+      .not('last_verified_at', 'is', null)
+      .order('created_at', { ascending: true })
+      .limit(slots)
+
+    if (fetchError) {
+      throw new Error(`Erro ao buscar candidatos: ${fetchError.message}`)
+    }
+
+    if (!candidates || candidates.length === 0) {
+      return NextResponse.json({ success: true, reason: 'Sem artigos candidatos', results })
+    }
+
+    // ── Processar cada candidato ─────────────────────────────────────────────
+    for (const article of candidates) {
+      try {
+        // Camadas 1-4: Quality Pipeline
+        const quality = await runQualityPipeline({
+          id: article.id,
+          content: article.content ?? '',
+          title: article.title ?? 'Sem título',
+          app_name: article.app_name ?? 'crypto',
+        })
+
+        if (!quality.approved) {
+          results.rejected++
+
+          // Log em generation_logs
+          await supabase.from('generation_logs').insert({
+            blog_post_id: article.id,
+            stage: 'stage-6-publish',
+            status: 'rejected',
+            error_message: quality.reason,
+            ai_model_used: 'quality-pipeline',
+            cost_usd: 0.01, // custo do auto-review Haiku
+          })
+
+          continue
+        }
+
+        // ── Publicar ────────────────────────────────────────────────────────
+        const now = new Date().toISOString()
+
         const { error: publishError } = await supabase
           .from('blog_posts')
           .update({
             status: 'published',
-            published_at: publishedAt.toISOString(),
+            published_at: now,
           })
-          .eq('id', article.id);
+          .eq('id', article.id)
 
         if (publishError) {
-          console.error(`✗ Error publishing article: ${publishError.message}`);
-          continue;
+          results.errors.push(`Erro ao publicar ${article.id}: ${publishError.message}`)
+          continue
         }
 
-        console.log(`✓ Published: ${article.title}`);
-        console.log(`  URL: ${articleUrl}`);
-
-        // Create blog_performance entry for tracking
-        await supabase.from('blog_performance').insert({
-          post_id: article.id,
-          date: publishedAt.toISOString().split('T')[0],
+        // Criar entrada em article_performance (NEXUS tracking)
+        await supabase.from('article_performance').insert({
+          article_id: article.id,
           views: 0,
-          unique_visitors: 0,
-          avg_time_on_page: 0,
-          bounce_rate: 0,
-          scroll_depth: 0,
+          unique_views: 0,
+          dwell_time_seconds: 0,
+          scroll_depth_percent: 0,
+          newsletter_signups: 0,
           affiliate_clicks: 0,
-          adsense_impressions: 0,
-          adsense_clicks: 0,
-          adsense_revenue: 0,
-          created_at: publishedAt.toISOString(),
-        });
+        })
 
-        // Log to generation_logs
+        // Log sucesso
         await supabase.from('generation_logs').insert({
-          app_id: article.app_id,
-          article_id: article.id,
-          stage: 'publishing',
+          blog_post_id: article.id,
+          stage: 'stage-6-publish',
           status: 'success',
-          duration_seconds: 1,
-        });
-      } catch (error) {
-        console.error('Error publishing article:', error);
+          ai_model_used: 'quality-pipeline',
+          cost_usd: 0.01,
+        })
+
+        // Escrever decisão NEXUS
+        await supabase.from('nexus_decisions').insert({
+          decision_type: 'article_published',
+          decision_data: {
+            article_id: article.id,
+            app_name: article.app_name,
+            quality_layers_passed: quality.results.length,
+          },
+          reason: 'Todas as camadas de qualidade aprovadas',
+          articles_affected: 1,
+        })
+
+        results.published++
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err)
+        results.errors.push(`Artigo ${article.id}: ${msg}`)
 
         await supabase.from('generation_logs').insert({
-          app_id: article.app_id,
-          article_id: article.id,
-          stage: 'publishing',
+          blog_post_id: article.id,
+          stage: 'stage-6-publish',
           status: 'failed',
-          duration_seconds: 0,
-          error_message: (error as Error).message,
-        });
+          error_message: msg,
+          ai_model_used: 'quality-pipeline',
+          cost_usd: 0,
+        })
       }
     }
 
-    console.log('\n=== STAGE 6 COMPLETE ===');
-    return { statusCode: 200, body: 'Stage 6 complete' };
-  } catch (error) {
-    console.error('STAGE 6 FAILED:', error);
-    return { statusCode: 500, body: (error as Error).message };
+    return NextResponse.json({ success: true, results })
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    return NextResponse.json({ success: false, error: msg, results }, { status: 500 })
   }
-}
-
-export async function GET(request: Request) {
-  const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return new Response('Unauthorized', { status: 401 });
-  }
-
-  const result = await runStage6();
-  return new Response(JSON.stringify(result), {
-    status: result.statusCode,
-    headers: { 'Content-Type': 'application/json' },
-  });
 }
