@@ -35,57 +35,140 @@ export interface ArticlePayload {
 // ─── CAMADA 1: AUTO-REVIEW CLAUDE ─────────────────────────────────────────────
 
 export async function camada1AutoReview(article: ArticlePayload): Promise<QualityResult> {
-  const prompt = `És um editor sénior de publicações digitais portuguesas. Revê este artigo e avalia-o com rigor.
+  const contentSnippet = article.content.slice(0, 4000)
+
+  const promptCetico = `És um fact-checker implacável de publicações digitais portuguesas. O teu trabalho é encontrar problemas — não aprovar artigos.
 
 ARTIGO (título: "${article.title}"):
-${article.content.slice(0, 4000)}
+${contentSnippet}
 
-Responde APENAS com JSON válido, sem texto adicional:
+Analisa APENAS: factualidade e compliance.
+- Há afirmações sem fonte verificável?
+- Há hype, promessas exageradas, linguagem de "garante", "100% seguro", "fique rico"?
+- Há erros factuais evidentes?
+
+Responde APENAS com JSON válido:
 {
-  "approved": boolean,
   "scores": {
     "factualidade": 1-10,
-    "estrutura": 1-10,
-    "voz_editorial": 1-10,
-    "originalidade": 1-10,
     "compliance": 1-10
   },
-  "issues": ["lista de problemas encontrados, ou array vazio se não houver"]
+  "issues": ["problemas encontrados, ou array vazio"]
 }
 
-Critérios de aprovação: todos os scores >= 7.
-Sê crítico. Se houver afirmações sem fonte, penaliza factualidade.
-Se usar linguagem de hype ("garante", "100% seguro", "fique rico"), penaliza compliance para 1.`
+Sê implacável. Score 7+ só se não houver problemas reais.`
 
-  const response = await anthropic.messages.create({
-    model: 'claude-3-5-haiku-20241022',
-    max_tokens: 512,
-    messages: [{ role: 'user', content: prompt }],
-  })
+  const promptLeitor = `És um leitor português sem conhecimento prévio do tema. Avalia se este artigo te é útil e compreensível.
 
-  const raw = response.content[0].type === 'text' ? response.content[0].text : ''
+ARTIGO (título: "${article.title}"):
+${contentSnippet}
 
-  let parsed: { approved: boolean; scores: Record<string, number>; issues: string[] }
-  try {
-    parsed = JSON.parse(raw)
-  } catch {
-    return {
-      approved: false,
-      layer: 1,
-      reason: 'Auto-review falhou a parsear resposta JSON',
-      issues: [raw.slice(0, 200)],
+Analisa APENAS: clareza e estrutura.
+- Consegues perceber o artigo sem conhecimento prévio?
+- A estrutura é lógica? Tem introdução, desenvolvimento, conclusão?
+- Há jargão não explicado?
+- O título corresponde ao conteúdo?
+
+Responde APENAS com JSON válido:
+{
+  "scores": {
+    "estrutura": 1-10,
+    "clareza_leitor": 1-10
+  },
+  "issues": ["problemas encontrados, ou array vazio"]
+}
+
+Score 7+ só se um leitor iniciante consegue realmente beneficiar do artigo.`
+
+  const promptEditor = `És o editor-chefe de uma publicação digital portuguesa séria. Avalias se este artigo merece ser publicado sob o nome da publicação.
+
+ARTIGO (título: "${article.title}"):
+${contentSnippet}
+APP: ${article.app_name}
+
+Analisa APENAS: voz editorial e originalidade.
+- A voz é consistente, sem hype de IA ("abrangente", "mergulhar", "navegar")?
+- O ângulo é diferenciador ou é conteúdo genérico que existe em milhares de blogs?
+- O artigo acrescenta algo ao leitor ou é enchimento?
+- Tem disclosure de IA e disclaimers adequados ao tema (especialmente se crypto)?
+
+Responde APENAS com JSON válido:
+{
+  "scores": {
+    "voz_editorial": 1-10,
+    "originalidade": 1-10
+  },
+  "issues": ["problemas encontrados, ou array vazio"]
+}
+
+Score 7+ só se publicarias isto com o teu nome como editor.`
+
+  // Correr as 3 personas em paralelo
+  const [resCetico, resLeitor, resEditor] = await Promise.all([
+    anthropic.messages.create({
+      model: 'claude-3-5-haiku-20241022',
+      max_tokens: 512,
+      messages: [{ role: 'user', content: promptCetico }],
+    }),
+    anthropic.messages.create({
+      model: 'claude-3-5-haiku-20241022',
+      max_tokens: 512,
+      messages: [{ role: 'user', content: promptLeitor }],
+    }),
+    anthropic.messages.create({
+      model: 'claude-3-5-haiku-20241022',
+      max_tokens: 512,
+      messages: [{ role: 'user', content: promptEditor }],
+    }),
+  ])
+
+  const parseResponse = (res: typeof resCetico): { scores: Record<string, number>; issues: string[] } | null => {
+    const raw = res.content[0].type === 'text' ? res.content[0].text : ''
+    try {
+      return JSON.parse(raw)
+    } catch {
+      return null
     }
   }
 
-  const minScore = Math.min(...Object.values(parsed.scores))
-  const approved = parsed.approved && minScore >= 7
+  const parsedCetico = parseResponse(resCetico)
+  const parsedLeitor = parseResponse(resLeitor)
+  const parsedEditor = parseResponse(resEditor)
+
+  // Se alguma persona falhou a parsear, rejeitar
+  if (!parsedCetico || !parsedLeitor || !parsedEditor) {
+    return {
+      approved: false,
+      layer: 1,
+      reason: 'Uma ou mais personas do council falhou a parsear resposta JSON',
+      issues: ['Erro de parsing no council de review'],
+    }
+  }
+
+  // Consolidar scores e issues das 3 personas
+  const allScores: Record<string, number> = {
+    ...parsedCetico.scores,
+    ...parsedLeitor.scores,
+    ...parsedEditor.scores,
+  }
+
+  const allIssues: string[] = [
+    ...parsedCetico.issues,
+    ...parsedLeitor.issues,
+    ...parsedEditor.issues,
+  ]
+
+  const minScore = Math.min(...Object.values(allScores))
+  const approved = minScore >= 7
 
   return {
     approved,
     layer: 1,
-    scores: parsed.scores,
-    issues: parsed.issues,
-    reason: approved ? undefined : `Score mínimo: ${minScore}/10. Issues: ${parsed.issues.join('; ')}`,
+    scores: allScores,
+    issues: allIssues,
+    reason: approved
+      ? undefined
+      : `Council rejeitou. Score mínimo: ${minScore}/10. Issues: ${allIssues.filter(Boolean).join('; ')}`,
   }
 }
 
