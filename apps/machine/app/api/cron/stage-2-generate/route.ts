@@ -21,12 +21,23 @@ const supabaseKey = process.env.SUPABASE_KEY || '';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+async function getNexusArticleLength(): Promise<{ min: number; max: number }> {
+  const { data } = await supabase
+    .from('nexus_config')
+    .select('config_value')
+    .eq('config_key', 'article_length')
+    .single()
+
+  return (data?.config_value as { min: number; max: number }) ?? { min: 800, max: 3000 }
+}
+
 async function generateArticleContent(
   topic: string,
   approach: string,
   systemPrompt: string,
   researchData: any,
-  competitorUrl?: string
+  competitorUrl?: string,
+  articleLength: { min: number; max: number } = { min: 800, max: 3000 }
 ) {
   try {
     let userPrompt = '';
@@ -39,6 +50,7 @@ ${researchData?.sources?.join(', ') || 'N/A'}
 
 Requirements:
 - Write a unique, valuable article from scratch
+- Length: between ${articleLength.min} and ${articleLength.max} words
 - Include 3-4 main sections with detailed explanations
 - Use markdown formatting with H2 headers
 - Include practical examples and actionable tips
@@ -136,12 +148,14 @@ async function runStage2() {
     for (const app of apps || []) {
       console.log(`\nGenerating articles for: ${app.app_id}`);
 
+      const articleLength = await getNexusArticleLength()
       const mix = {
         original: Math.ceil(app.articles_per_day * 0.4),
         transformed: Math.ceil(app.articles_per_day * 0.5),
         aggregated: Math.ceil(app.articles_per_day * 0.1),
-      };
+      }
 
+      console.log(`[NEXUS] article_length: ${articleLength.min}-${articleLength.max} palavras`)
       console.log(`Content mix: ${mix.original} original, ${mix.transformed} transformed, ${mix.aggregated} aggregated`);
 
       const { data: researchItems } = await supabase
@@ -170,7 +184,9 @@ async function runStage2() {
             research.topic,
             'original',
             app.generation_system_prompt,
-            research.research_data
+            research.research_data,
+            undefined,
+            articleLength
           );
 
           await supabase.from('blog_posts').insert({
@@ -230,7 +246,8 @@ async function runStage2() {
             'transformed',
             app.transformation_system_prompt,
             research.research_data,
-            competitorUrl
+            competitorUrl,
+            articleLength
           );
 
           await supabase.from('blog_posts').insert({
@@ -290,7 +307,9 @@ async function runStage2() {
             research.topic,
             'aggregated',
             app.aggregation_system_prompt,
-            research.research_data
+            research.research_data,
+            undefined,
+            articleLength
           );
 
           await supabase.from('blog_posts').insert({

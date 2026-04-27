@@ -10,6 +10,20 @@ const supabaseKey = process.env.SUPABASE_KEY || '';
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+async function getNexusAudienceFocus(): Promise<Record<string, number>> {
+  const { data } = await supabase
+    .from('nexus_config')
+    .select('config_value')
+    .eq('config_key', 'audience_focus')
+    .single()
+
+  return (data?.config_value as Record<string, number>) ?? {
+    iniciante: 0.5,
+    intermédio: 0.4,
+    avançado: 0.1,
+  }
+}
+
 async function runStage1() {
   console.log('\n=== STAGE 1: RESEARCH & TOPIC SELECTION (CRON JOB) ===');
   console.log(`Started at: ${new Date().toISOString()}`);
@@ -20,14 +34,39 @@ async function runStage1() {
     for (const app of apps || []) {
       console.log(`\nSelecting topics for: ${app.app_id} (${app.articles_per_day} articles)`);
 
-      const { data: topics } = await supabase
+      const audienceFocus = await getNexusAudienceFocus()
+
+      // Determinar audience_level preferido pelo NEXUS (maior peso)
+      const preferredAudience = Object.entries(audienceFocus).sort((a, b) => b[1] - a[1])[0][0]
+
+      // Tentar primeiro tópicos com o audience_level preferido
+      let { data: topics } = await supabase
         .from('content_topics')
-        .select('id, title, priority, search_volume')
+        .select('id, title, priority, search_volume, audience_level')
         .eq('app_id', app.app_id)
         .is('last_used_at', null)
+        .eq('audience_level', preferredAudience)
         .order('priority', { ascending: false })
         .order('search_volume', { ascending: false })
-        .limit(app.articles_per_day);
+        .limit(app.articles_per_day)
+
+      // Fallback: se não há tópicos com o audience preferido, pegar todos
+      if (!topics || topics.length < app.articles_per_day) {
+        const needed = app.articles_per_day - (topics?.length ?? 0)
+        const existingIds = topics?.map((t: { id: string }) => t.id) ?? []
+
+        const { data: fallbackTopics } = await supabase
+          .from('content_topics')
+          .select('id, title, priority, search_volume, audience_level')
+          .eq('app_id', app.app_id)
+          .is('last_used_at', null)
+          .not('id', 'in', existingIds.length > 0 ? `(${existingIds.join(',')})` : '()')
+          .order('priority', { ascending: false })
+          .order('search_volume', { ascending: false })
+          .limit(needed)
+
+        topics = [...(topics ?? []), ...(fallbackTopics ?? [])]
+      }
 
       if (!topics || topics.length === 0) {
         console.log(`⚠ No topics available for ${app.app_id}`);
