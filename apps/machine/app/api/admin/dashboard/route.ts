@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Admin Dashboard API
  * Provides comprehensive pipeline monitoring and analytics
  * Usage: GET /api/admin/dashboard?token=YOUR_ADMIN_TOKEN
@@ -7,6 +7,10 @@
 export const dynamic = 'force-dynamic';
 
 import { createClient } from '@supabase/supabase-js';
+
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_KEY || '';
@@ -75,30 +79,30 @@ async function getDashboardData(): Promise<DashboardData> {
 
   try {
     // Overview stats
-    const { data: allArticles, count: totalCount } = await supabase
+    const { data: allArticles, count: totalCount } = await getSupabase()
       .from('blog_posts')
       .select('*', { count: 'exact' });
 
-    const { count: publishedCount } = await supabase
+    const { count: publishedCount } = await getSupabase()
       .from('blog_posts')
       .select('*', { count: 'exact' })
       .eq('status', 'published');
 
-    const { count: draftCount } = await supabase
+    const { count: draftCount } = await getSupabase()
       .from('blog_posts')
       .select('*', { count: 'exact' })
       .eq('status', 'draft');
 
-    const { count: topicCount } = await supabase
+    const { count: topicCount } = await getSupabase()
       .from('content_topics')
       .select('*', { count: 'exact' });
 
-    const { data: themeConfigs } = await supabase.from('theme_config').select('articles_per_day');
+    const { data: themeConfigs } = await getSupabase().from('theme_config').select('articles_per_day');
     const totalArticlesPerDay = themeConfigs?.reduce((sum: number, c: any) => sum + (c.articles_per_day || 0), 0) || 10;
     const remainingDays = Math.floor((topicCount || 0) / totalArticlesPerDay);
 
     // Content metrics
-    const { data: articles } = await supabase
+    const { data: articles } = await getSupabase()
       .from('blog_posts')
       .select('generation_approach, views')
       .eq('status', 'published');
@@ -106,13 +110,13 @@ async function getDashboardData(): Promise<DashboardData> {
     const approachMetrics = calculateApproachMetrics(articles || []);
 
     // Daily activity
-    const { count: publishedToday } = await supabase
+    const { count: publishedToday } = await getSupabase()
       .from('blog_posts')
       .select('*', { count: 'exact' })
       .eq('status', 'published')
       .gte('published_at', `${today}T00:00:00`);
 
-    const { data: todayLogs } = await supabase
+    const { data: todayLogs } = await getSupabase()
       .from('generation_logs')
       .select('status, stage')
       .gte('created_at', `${today}T00:00:00`);
@@ -121,7 +125,7 @@ async function getDashboardData(): Promise<DashboardData> {
     const failurestoday = todayLogs?.filter((l: any) => l.status === 'failed').length || 0;
 
     // Revenue tracking
-    const { data: performance } = await supabase
+    const { data: performance } = await getSupabase()
       .from('blog_performance')
       .select('adsense_impressions, adsense_revenue, affiliate_clicks')
       .gte('date', thirtyDaysAgo.toISOString().split('T')[0]);
@@ -132,7 +136,7 @@ async function getDashboardData(): Promise<DashboardData> {
     const estimatedMonthlyRevenue = totalAdSenseRevenue * 1.5; // Rough estimate assuming growth
 
     // System health
-    const { data: logs } = await supabase
+    const { data: logs } = await getSupabase()
       .from('generation_logs')
       .select('status, duration_seconds, created_at')
       .gte('created_at', thirtyDaysAgo.toISOString());
@@ -150,7 +154,7 @@ async function getDashboardData(): Promise<DashboardData> {
     const systemStatus = errorRate > 20 ? 'error' : errorRate > 5 ? 'warning' : 'healthy';
 
     // Top performers
-    const { data: topArticles } = await supabase
+    const { data: topArticles } = await getSupabase()
       .from('blog_posts')
       .select('title, views, generation_approach, engagement_score')
       .eq('status', 'published')
@@ -166,19 +170,19 @@ async function getDashboardData(): Promise<DashboardData> {
     }));
 
     // Queue status
-    const { count: cryptoTopics } = await supabase
+    const { count: cryptoTopics } = await getSupabase()
       .from('content_topics')
       .select('*', { count: 'exact' })
       .eq('app_id', 'crypto')
       .is('last_used_at', null);
 
-    const { count: intTopics } = await supabase
+    const { count: intTopics } = await getSupabase()
       .from('content_topics')
       .select('*', { count: 'exact' })
       .eq('app_id', 'intelligence')
       .is('last_used_at', null);
 
-    const { count: bizTopics } = await supabase
+    const { count: bizTopics } = await getSupabase()
       .from('content_topics')
       .select('*', { count: 'exact' })
       .eq('app_id', 'onlinebiz')
@@ -303,3 +307,5 @@ export async function GET(request: Request) {
     );
   }
 }
+
+

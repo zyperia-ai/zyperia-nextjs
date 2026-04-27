@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Real-time Pipeline Status API
  * Returns current state of content generation pipeline
  * Usage: GET /api/pipeline-status
@@ -8,10 +8,9 @@ export const dynamic = 'force-dynamic';
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 interface PipelineStatus {
   status: 'healthy' | 'degraded' | 'error';
@@ -48,11 +47,11 @@ async function getPipelineStatus(): Promise<PipelineStatus> {
     const today = now.toISOString().split('T')[0];
 
     // Get article stats
-    const { data: articles } = await supabase
+    const { data: articles } = await getSupabase()
       .from('blog_posts')
       .select('status, published_at', { count: 'exact' });
 
-    const { data: draftArticles, count: draftCount } = await supabase
+    const { data: draftArticles, count: draftCount } = await getSupabase()
       .from('blog_posts')
       .select('id', { count: 'exact' })
       .eq('status', 'draft');
@@ -60,7 +59,7 @@ async function getPipelineStatus(): Promise<PipelineStatus> {
     const publishedToday = articles?.filter((a: any) => a.published_at?.startsWith(today)).length || 0;
 
     // Get generation logs
-    const { data: logs } = await supabase
+    const { data: logs } = await getSupabase()
       .from('generation_logs')
       .select('stage, status, duration_seconds, created_at')
       .order('created_at', { ascending: false })
@@ -74,19 +73,19 @@ async function getPipelineStatus(): Promise<PipelineStatus> {
         : 0;
 
     // Get topic queue
-    const { data: cryptoTopics, count: cryptoCount } = await supabase
+    const { data: cryptoTopics, count: cryptoCount } = await getSupabase()
       .from('content_topics')
       .select('id', { count: 'exact' })
       .eq('app_id', 'crypto')
       .is('last_used_at', null);
 
-    const { data: intTopics, count: intCount } = await supabase
+    const { data: intTopics, count: intCount } = await getSupabase()
       .from('content_topics')
       .select('id', { count: 'exact' })
       .eq('app_id', 'intelligence')
       .is('last_used_at', null);
 
-    const { data: bizTopics, count: bizCount } = await supabase
+    const { data: bizTopics, count: bizCount } = await getSupabase()
       .from('content_topics')
       .select('id', { count: 'exact' })
       .eq('app_id', 'onlinebiz')
@@ -199,3 +198,4 @@ export async function GET(request: Request) {
     );
   }
 }
+

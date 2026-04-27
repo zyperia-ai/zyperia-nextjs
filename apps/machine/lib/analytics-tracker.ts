@@ -1,14 +1,13 @@
-/**
+﻿/**
  * Analytics Tracking Library
  * Tracks article performance metrics for optimization
  */
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 export interface ArticleMetrics {
   postId: string;
@@ -35,7 +34,7 @@ export async function trackArticleView(
     // Get or create blog_performance entry for today
     const today = new Date().toISOString().split('T')[0];
 
-    const { data: existing } = await supabase
+    const { data: existing } = await getSupabase()
       .from('blog_performance')
       .select('id, views')
       .eq('post_id', postId)
@@ -44,7 +43,7 @@ export async function trackArticleView(
 
     if (existing && existing.length > 0) {
       // Update existing
-      await supabase
+      await getSupabase()
         .from('blog_performance')
         .update({
           views: (existing[0].views || 0) + 1,
@@ -53,7 +52,7 @@ export async function trackArticleView(
         .eq('id', existing[0].id);
     } else {
       // Create new
-      await supabase.from('blog_performance').insert({
+      await getSupabase().from('blog_performance').insert({
         post_id: postId,
         date: today,
         views: 1,
@@ -78,7 +77,7 @@ export async function trackAffiliateClick(
   try {
     const today = new Date().toISOString().split('T')[0];
 
-    const { data: existing } = await supabase
+    const { data: existing } = await getSupabase()
       .from('blog_performance')
       .select('id, affiliate_clicks')
       .eq('post_id', postId)
@@ -86,7 +85,7 @@ export async function trackAffiliateClick(
       .limit(1);
 
     if (existing && existing.length > 0) {
-      await supabase
+      await getSupabase()
         .from('blog_performance')
         .update({
           affiliate_clicks: (existing[0].affiliate_clicks || 0) + 1,
@@ -95,7 +94,7 @@ export async function trackAffiliateClick(
     }
 
     // Also log to affiliate_clicks table
-    await supabase.from('affiliate_clicks').insert({
+    await getSupabase().from('affiliate_clicks').insert({
       post_id: postId,
       affiliate_program: affiliateProgram,
       affiliate_url: affiliateUrl,
@@ -113,7 +112,7 @@ export async function trackAdSenseImpression(postId: string, revenue: number) {
   try {
     const today = new Date().toISOString().split('T')[0];
 
-    const { data: existing } = await supabase
+    const { data: existing } = await getSupabase()
       .from('blog_performance')
       .select('id, adsense_impressions, adsense_revenue')
       .eq('post_id', postId)
@@ -121,7 +120,7 @@ export async function trackAdSenseImpression(postId: string, revenue: number) {
       .limit(1);
 
     if (existing && existing.length > 0) {
-      await supabase
+      await getSupabase()
         .from('blog_performance')
         .update({
           adsense_impressions: (existing[0].adsense_impressions || 0) + 1,
@@ -140,7 +139,7 @@ export async function trackAdSenseImpression(postId: string, revenue: number) {
 export async function getArticleMetrics(postId: string): Promise<ArticleMetrics | null> {
   try {
     // Get last 30 days of data
-    const { data } = await supabase
+    const { data } = await getSupabase()
       .from('blog_performance')
       .select('*')
       .eq('post_id', postId)
@@ -197,7 +196,7 @@ export async function getArticleMetrics(postId: string): Promise<ArticleMetrics 
  */
 export async function getTopArticles(appId: string, limit: number = 10) {
   try {
-    const { data } = await supabase.rpc('get_top_articles', {
+    const { data } = await getSupabase().rpc('get_top_articles', {
       p_app_id: appId,
       p_limit: limit,
     });
@@ -205,7 +204,7 @@ export async function getTopArticles(appId: string, limit: number = 10) {
     return data || [];
   } catch (error) {
     // Fallback: simple query
-    const { data } = await supabase
+    const { data } = await getSupabase()
       .from('blog_posts')
       .select('id, title, views, engagement_score')
       .eq('app_id', appId)
@@ -222,7 +221,7 @@ export async function getTopArticles(appId: string, limit: number = 10) {
  */
 export async function getPerformanceByApproach(appId: string) {
   try {
-    const { data } = await supabase
+    const { data } = await getSupabase()
       .from('blog_posts')
       .select('generation_approach, views, engagement_score')
       .eq('app_id', appId)
@@ -262,7 +261,7 @@ export async function getPerformanceByApproach(appId: string) {
 
 /**
  * Calculate engagement score
- * Formula: (views × time_on_page) / average_site_time
+ * Formula: (views Ã— time_on_page) / average_site_time
  */
 export function calculateEngagementScore(
   views: number,
@@ -271,3 +270,4 @@ export function calculateEngagementScore(
 ): number {
   return Math.round((views * avgTimeOnPage) / siteAverageTime);
 }
+

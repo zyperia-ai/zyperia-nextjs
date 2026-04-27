@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Stage 7b: Backlink Hunting & Automated Outreach
  * Finds link-building opportunities and manages outreach campaigns
  * Only runs after FASE 2 revenue validation (manual trigger for now)
@@ -6,9 +6,9 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 export interface BacklinkOpportunity {
   id?: string;
@@ -44,7 +44,7 @@ export async function findBacklinkOpportunities(
 
   try {
     // Get top articles from app
-    const { data: topArticles } = await supabase
+    const { data: topArticles } = await getSupabase()
       .from('blog_posts')
       .select('id, title, slug, views, engagement_score')
       .eq('app_id', appId)
@@ -67,7 +67,7 @@ export async function findBacklinkOpportunities(
       opportunities.push(...mockProspects);
     }
 
-    // Score and rank opportunities by impact × feasibility
+    // Score and rank opportunities by impact Ã— feasibility
     const scoredOpportunities = opportunities
       .map((opp) => ({
         ...opp,
@@ -128,7 +128,7 @@ export async function sendOutreachEmail(
     // 4. Set up follow-up sequences
 
     // For now: log to database + return success
-    const { error } = await supabase.from('backlink_outreach').insert({
+    const { error } = await getSupabase().from('backlink_outreach').insert({
       opportunity_id: opportunity.id,
       prospect_domain: opportunity.prospect_domain,
       outreach_message: message,
@@ -158,7 +158,7 @@ export async function trackBacklinkAcquired(
   discovered_at: string
 ): Promise<void> {
   try {
-    const { error } = await supabase
+    const { error } = await getSupabase()
       .from('backlink_acquisitions')
       .insert({
         opportunity_id: opportunityId,
@@ -170,7 +170,7 @@ export async function trackBacklinkAcquired(
     if (error) throw error;
 
     // Update opportunity status
-    await supabase
+    await getSupabase()
       .from('backlink_opportunities')
       .update({ outreach_status: 'linked', linked_at: new Date().toISOString() })
       .eq('id', opportunityId);
@@ -184,12 +184,12 @@ export async function trackBacklinkAcquired(
  */
 export async function getBacklinkAnalytics(appId: string) {
   try {
-    const { data: opportunities } = await supabase
+    const { data: opportunities } = await getSupabase()
       .from('backlink_opportunities')
       .select('outreach_status')
       .eq('app_id', appId);
 
-    const { data: acquisitions } = await supabase
+    const { data: acquisitions } = await getSupabase()
       .from('backlink_acquisitions')
       .select('*')
       .eq('status', 'verified');
@@ -276,7 +276,7 @@ export async function trackRankingImpact(appId: string, keyword: string) {
     // - Ranking position after backlink
     // - Traffic increase from backlink
 
-    const { data } = await supabase
+    const { data } = await getSupabase()
       .from('ranking_history')
       .select('*')
       .eq('app_id', appId)
@@ -305,3 +305,4 @@ export async function trackRankingImpact(appId: string, keyword: string) {
     return null;
   }
 }
+

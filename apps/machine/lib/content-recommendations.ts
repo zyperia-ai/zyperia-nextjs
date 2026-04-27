@@ -1,14 +1,13 @@
-/**
+﻿/**
  * Content Recommendations Engine
  * Analyzes performance and suggests optimization opportunities
  */
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 export interface ContentRecommendation {
   type: 'high_demand' | 'expansion' | 'optimization' | 'rewrite' | 'archive';
@@ -28,7 +27,7 @@ export async function generateRecommendations(appId: string): Promise<ContentRec
 
   try {
     // 1. Find high-performing topics that need expansion
-    const { data: topArticles } = await supabase
+    const { data: topArticles } = await getSupabase()
       .from('blog_posts')
       .select('title, views, engagement_score, app_id')
       .eq('app_id', appId)
@@ -56,7 +55,7 @@ export async function generateRecommendations(appId: string): Promise<ContentRec
     }
 
     // 2. Find underperforming articles that need rewriting
-    const { data: underperformers } = await supabase
+    const { data: underperformers } = await getSupabase()
       .from('blog_performance')
       .select('post_id, views, bounce_rate')
       .gt('bounce_rate', 0.7)
@@ -66,7 +65,7 @@ export async function generateRecommendations(appId: string): Promise<ContentRec
 
     if (underperformers && underperformers.length > 0) {
       for (const article of underperformers.slice(0, 2)) {
-        const { data: articleData } = await supabase
+        const { data: articleData } = await getSupabase()
           .from('blog_posts')
           .select('title')
           .eq('id', article.post_id)
@@ -91,7 +90,7 @@ export async function generateRecommendations(appId: string): Promise<ContentRec
     }
 
     // 3. Identify trending topics from competitive analysis
-    const { data: trendingGaps } = await supabase
+    const { data: trendingGaps } = await getSupabase()
       .from('content_research')
       .select('content_gaps, topic')
       .eq('app_id', appId)
@@ -123,7 +122,7 @@ export async function generateRecommendations(appId: string): Promise<ContentRec
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const { data: archiveCandidates } = await supabase
+    const { data: archiveCandidates } = await getSupabase()
       .from('blog_posts')
       .select('id, title, views')
       .eq('app_id', appId)
@@ -151,7 +150,7 @@ export async function generateRecommendations(appId: string): Promise<ContentRec
     }
 
     // 5. Recommend content mix rebalancing
-    const { data: allArticles } = await supabase
+    const { data: allArticles } = await getSupabase()
       .from('blog_posts')
       .select('generation_approach, views')
       .eq('app_id', appId)
@@ -267,3 +266,4 @@ export async function suggestNextTopic(appId: string): Promise<string | null> {
     return null;
   }
 }
+

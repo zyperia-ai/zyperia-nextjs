@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Detailed Performance Analytics API
  * Provides in-depth metrics for each blog
  * Usage: GET /api/analytics/performance?appId=crypto&days=30
@@ -8,10 +8,9 @@ export const dynamic = 'force-dynamic';
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 interface PerformanceMetrics {
   appId: string;
@@ -79,31 +78,31 @@ async function getPerformanceMetrics(appId: string, days: number = 30): Promise<
 
   try {
     // Article counts
-    const { count: totalCount } = await supabase
+    const { count: totalCount } = await getSupabase()
       .from('blog_posts')
       .select('*', { count: 'exact' })
       .eq('app_id', appId);
 
-    const { count: publishedCount } = await supabase
+    const { count: publishedCount } = await getSupabase()
       .from('blog_posts')
       .select('*', { count: 'exact' })
       .eq('app_id', appId)
       .eq('status', 'published');
 
-    const { count: draftCount } = await supabase
+    const { count: draftCount } = await getSupabase()
       .from('blog_posts')
       .select('*', { count: 'exact' })
       .eq('app_id', appId)
       .eq('status', 'draft');
 
-    const { count: archivedCount } = await supabase
+    const { count: archivedCount } = await getSupabase()
       .from('blog_posts')
       .select('*', { count: 'exact' })
       .eq('app_id', appId)
       .eq('status', 'archived');
 
     // Traffic metrics
-    const { data: performanceData } = await supabase
+    const { data: performanceData } = await getSupabase()
       .from('blog_performance')
       .select('*')
       .gte('date', from.toISOString().split('T')[0]);
@@ -111,7 +110,7 @@ async function getPerformanceMetrics(appId: string, days: number = 30): Promise<
     const trafficMetrics = calculateTrafficMetrics(performanceData || []);
 
     // Content quality
-    const { data: articles } = await supabase
+    const { data: articles } = await getSupabase()
       .from('blog_posts')
       .select('plagiarism_score, engagement_score, generation_approach, views')
       .eq('app_id', appId)
@@ -137,13 +136,13 @@ async function getPerformanceMetrics(appId: string, days: number = 30): Promise<
     // Trends
     const {
       data: earlyData,
-    } = await supabase
+    } = await getSupabase()
       .from('blog_performance')
       .select('views')
       .gte('date', from.toISOString().split('T')[0])
       .lt('date', midpoint.toISOString().split('T')[0]);
 
-    const { data: lateData } = await supabase
+    const { data: lateData } = await getSupabase()
       .from('blog_performance')
       .select('views')
       .gte('date', midpoint.toISOString().split('T')[0]);
@@ -264,15 +263,15 @@ function generateRecommendations(quality: any, traffic: any, approaches: any): s
   const recs: string[] = [];
 
   if (quality.avgPlagiarismScore < 75) {
-    recs.push('⚠️ Average plagiarism score is low - consider improving content uniqueness');
+    recs.push('âš ï¸ Average plagiarism score is low - consider improving content uniqueness');
   }
 
   if (traffic.avgBounceRate > 0.6) {
-    recs.push('📌 High bounce rate detected - improve article introductions and clarity');
+    recs.push('ðŸ“Œ High bounce rate detected - improve article introductions and clarity');
   }
 
   if (traffic.avgTimeOnPage < 60) {
-    recs.push('⏱️ Readers spending less than 1 min - expand content depth and add visuals');
+    recs.push('â±ï¸ Readers spending less than 1 min - expand content depth and add visuals');
   }
 
   // Find best performing approach
@@ -286,7 +285,7 @@ function generateRecommendations(quality: any, traffic: any, approaches: any): s
   });
 
   if (bestApproach && bestApproach !== 'unknown') {
-    recs.push(`📈 "${bestApproach}" content performs best - increase focus on this approach`);
+    recs.push(`ðŸ“ˆ "${bestApproach}" content performs best - increase focus on this approach`);
   }
 
   return recs;
@@ -321,3 +320,4 @@ export async function GET(request: Request) {
     );
   }
 }
+

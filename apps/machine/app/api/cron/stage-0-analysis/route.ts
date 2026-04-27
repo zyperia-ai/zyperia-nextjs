@@ -1,21 +1,20 @@
-/**
+﻿/**
  * Vercel Cron Job - Stage 0: Competitive Analysis
  * Runs daily at 23:00 UTC
  */
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 async function runStage0() {
   console.log('\n=== STAGE 0: COMPETITIVE ANALYSIS (CRON JOB) ===');
   console.log(`Started at: ${new Date().toISOString()}`);
 
   try {
-    const { data: themeConfigs } = await supabase.from('theme_config').select('app_id, brutal_system');
+    const { data: themeConfigs } = await getSupabase().from('theme_config').select('app_id, brutal_system');
 
     for (const config of themeConfigs || []) {
       const keywords = config.brutal_system?.competitive_analysis?.serp_api_keywords || [];
@@ -39,7 +38,7 @@ async function runStage0() {
           recommendedApproach: 'transformed',
         };
 
-        const { error: insertError } = await supabase.from('content_research').insert({
+        const { error: insertError } = await getSupabase().from('content_research').insert({
           app_id: config.app_id,
           topic: keyword,
           research_type: 'competitive_analysis',
@@ -51,7 +50,7 @@ async function runStage0() {
         });
 
         if (!insertError) {
-          console.log(`✓ Analyzed "${keyword}": 1 top article, ${analysis.contentGaps.length} gaps`);
+          console.log(`âœ“ Analyzed "${keyword}": 1 top article, ${analysis.contentGaps.length} gaps`);
         }
       }
     }
@@ -76,3 +75,4 @@ export async function GET(request: Request) {
     headers: { 'Content-Type': 'application/json' },
   });
 }
+

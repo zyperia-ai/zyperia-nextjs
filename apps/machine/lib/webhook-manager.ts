@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Webhook Manager
  * Sends notifications to Slack, Discord, and custom webhooks
  * Integrates with pipeline stages for real-time alerts
@@ -6,9 +6,9 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 export interface WebhookConfig {
   appId: string;
@@ -42,7 +42,7 @@ export interface WebhookPayload {
 export async function sendWebhook(payload: WebhookPayload): Promise<boolean> {
   try {
     // Get configured webhooks for this app
-    const { data: webhooks } = await supabase
+    const { data: webhooks } = await getSupabase()
       .from('webhook_config')
       .select('*')
       .eq('app_id', payload.appId)
@@ -106,15 +106,15 @@ function formatSlackWebhook(payload: WebhookPayload) {
   };
 
   const titles: Record<WebhookEvent, string> = {
-    article_published: '📄 Article Published',
-    article_generated: '✍️ Article Generated',
-    stage_completed: '✅ Stage Completed',
-    stage_failed: '❌ Stage Failed',
-    high_revenue: '💰 High Revenue',
-    high_traffic: '📈 High Traffic',
-    ranking_improved: '📊 Ranking Improved',
-    backlink_acquired: '🔗 Backlink Acquired',
-    error_alert: '⚠️ Error Alert',
+    article_published: 'ðŸ“„ Article Published',
+    article_generated: 'âœï¸ Article Generated',
+    stage_completed: 'âœ… Stage Completed',
+    stage_failed: 'âŒ Stage Failed',
+    high_revenue: 'ðŸ’° High Revenue',
+    high_traffic: 'ðŸ“ˆ High Traffic',
+    ranking_improved: 'ðŸ“Š Ranking Improved',
+    backlink_acquired: 'ðŸ”— Backlink Acquired',
+    error_alert: 'âš ï¸ Error Alert',
   };
 
   return {
@@ -152,15 +152,15 @@ function formatDiscordWebhook(payload: WebhookPayload) {
   };
 
   const titles: Record<WebhookEvent, string> = {
-    article_published: '📄 Article Published',
-    article_generated: '✍️ Article Generated',
-    stage_completed: '✅ Stage Completed',
-    stage_failed: '❌ Stage Failed',
-    high_revenue: '💰 High Revenue',
-    high_traffic: '📈 High Traffic',
-    ranking_improved: '📊 Ranking Improved',
-    backlink_acquired: '🔗 Backlink Acquired',
-    error_alert: '⚠️ Error Alert',
+    article_published: 'ðŸ“„ Article Published',
+    article_generated: 'âœï¸ Article Generated',
+    stage_completed: 'âœ… Stage Completed',
+    stage_failed: 'âŒ Stage Failed',
+    high_revenue: 'ðŸ’° High Revenue',
+    high_traffic: 'ðŸ“ˆ High Traffic',
+    ranking_improved: 'ðŸ“Š Ranking Improved',
+    backlink_acquired: 'ðŸ”— Backlink Acquired',
+    error_alert: 'âš ï¸ Error Alert',
   };
 
   return {
@@ -190,7 +190,7 @@ function formatDiscordWebhook(payload: WebhookPayload) {
  */
 export async function registerWebhook(config: WebhookConfig): Promise<boolean> {
   try {
-    const { error } = await supabase.from('webhook_config').insert({
+    const { error } = await getSupabase().from('webhook_config').insert({
       app_id: config.appId,
       webhook_url: config.webhookUrl,
       webhook_type: config.webhookType,
@@ -243,7 +243,7 @@ export async function notifyStageFailed(appId: string, stage: string, error: str
     appId,
     timestamp: new Date().toISOString(),
     data: {
-      message: `⚠️ Stage failed: ${stage}`,
+      message: `âš ï¸ Stage failed: ${stage}`,
       stage,
       error: error.substring(0, 200),
     },
@@ -266,10 +266,10 @@ export async function notifyHighRevenue(
     appId,
     timestamp: new Date().toISOString(),
     data: {
-      message: `💰 Strong revenue day: €${data.todayRevenue}`,
-      today: `€${data.todayRevenue}`,
-      week: `€${data.weekRevenue}`,
-      month: `€${data.monthRevenue}`,
+      message: `ðŸ’° Strong revenue day: â‚¬${data.todayRevenue}`,
+      today: `â‚¬${data.todayRevenue}`,
+      week: `â‚¬${data.weekRevenue}`,
+      month: `â‚¬${data.monthRevenue}`,
     },
   });
 }
@@ -290,7 +290,7 @@ export async function notifyBacklinkAcquired(
     appId,
     timestamp: new Date().toISOString(),
     data: {
-      message: `🔗 New backlink acquired from ${data.sourceDomain}`,
+      message: `ðŸ”— New backlink acquired from ${data.sourceDomain}`,
       source_domain: data.sourceDomain,
       target_article: data.targetArticle,
       link_type: data.linkType,
@@ -315,7 +315,7 @@ export async function notifyRankingImproved(
     appId,
     timestamp: new Date().toISOString(),
     data: {
-      message: `📊 Ranking improved: "${data.keyword}" (#${data.previousRank} → #${data.newRank})`,
+      message: `ðŸ“Š Ranking improved: "${data.keyword}" (#${data.previousRank} â†’ #${data.newRank})`,
       keyword: data.keyword,
       previous_rank: data.previousRank,
       new_rank: data.newRank,
@@ -323,3 +323,4 @@ export async function notifyRankingImproved(
     },
   });
 }
+

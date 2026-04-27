@@ -5,6 +5,10 @@
 
 import { createClient } from '@supabase/supabase-js';
 
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
+
 const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_KEY || '';
 const resendApiKey = process.env.RESEND_API_KEY || '';
@@ -27,13 +31,13 @@ export async function sendDailyPipelineSummary(email: string) {
     const today = new Date().toISOString().split('T')[0];
 
     // Get stats
-    const { count: publishedToday } = await supabase
+    const { count: publishedToday } = await getSupabase()
       .from('blog_posts')
       .select('*', { count: 'exact' })
       .eq('status', 'published')
       .gte('published_at', `${today}T00:00:00`);
 
-    const { data: logs } = await supabase
+    const { data: logs } = await getSupabase()
       .from('generation_logs')
       .select('status, stage')
       .gte('created_at', `${today}T00:00:00`);
@@ -147,13 +151,13 @@ export async function sendWeeklyReport(email: string) {
     weekAgo.setDate(weekAgo.getDate() - 7);
 
     // Get stats
-    const { data: articles } = await supabase
+    const { data: articles } = await getSupabase()
       .from('blog_posts')
       .select('app_id, views, engagement_score, generation_approach')
       .eq('status', 'published')
       .gte('published_at', weekAgo.toISOString());
 
-    const { data: performance } = await supabase
+    const { data: performance } = await getSupabase()
       .from('blog_performance')
       .select('*')
       .gte('date', weekAgo.toISOString().split('T')[0]);

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * POST /api/affiliate/create
  * Create affiliate links for an article
  *
@@ -31,10 +31,12 @@ export const dynamic = 'force-dynamic';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+function getSupabase() {
+  return createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 export async function POST(request: Request) {
   try {
@@ -64,7 +66,7 @@ export async function POST(request: Request) {
     let platformsToLink: string[] = platform_ids || [];
 
     if (platforms && platforms.length > 0) {
-      const { data: platformData, error: platformError } = await supabase
+      const { data: platformData, error: platformError } = await getSupabase()
         .from('affiliate_platforms')
         .select('id')
         .in('name', platforms)
@@ -89,7 +91,7 @@ export async function POST(request: Request) {
     }
 
     // Check if article exists
-    const { data: post, error: postError } = await supabase
+    const { data: post, error: postError } = await getSupabase()
       .from('blog_posts')
       .select('id, title')
       .eq('id', post_id)
@@ -115,7 +117,7 @@ export async function POST(request: Request) {
       };
     });
 
-    const { data: createdLinks, error: linkError } = await supabase
+    const { data: createdLinks, error: linkError } = await getSupabase()
       .from('affiliate_links')
       .insert(affiliateLinks)
       .select(
@@ -176,7 +178,7 @@ export async function GET(request: Request) {
     }
 
     // Check existing links for this post
-    const { data: existingLinks, error: existError } = await supabase
+    const { data: existingLinks, error: existError } = await getSupabase()
       .from('affiliate_links')
       .select(
         `
@@ -247,3 +249,4 @@ export async function GET(request: Request) {
     );
   }
 }
+

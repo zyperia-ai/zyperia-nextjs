@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Vercel Cron Job - Stage 2: Content Generation
  * Runs daily at 02:00 UTC
  *
@@ -16,13 +16,12 @@
 import { createClient } from '@supabase/supabase-js';
 import { generateWithClaude } from '@/lib/ai-router';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 async function getNexusArticleLength(): Promise<{ min: number; max: number }> {
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from('nexus_config')
     .select('config_value')
     .eq('config_key', 'article_length')
@@ -105,7 +104,7 @@ Format as markdown with H1 title.`;
       }
     }
 
-    const title = titleLine || `${topic} – Complete Guide 2026`;
+    const title = titleLine || `${topic} â€“ Complete Guide 2026`;
     const slug = topic.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     const content = lines.slice(contentStartIdx).join('\n').trim();
 
@@ -125,7 +124,7 @@ Format as markdown with H1 title.`;
     return { title, slug, content, excerpt, metaDescription, keywords };
   } catch (error) {
     console.error('Error generating article:', error);
-    const title = `${topic} – Complete Guide 2026`;
+    const title = `${topic} â€“ Complete Guide 2026`;
     const slug = topic.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     return {
       title,
@@ -143,7 +142,7 @@ async function runStage2() {
   console.log(`Started at: ${new Date().toISOString()}`);
 
   try {
-    const { data: apps } = await supabase.from('theme_config').select('*');
+    const { data: apps } = await getSupabase().from('theme_config').select('*');
 
     for (const app of apps || []) {
       console.log(`\nGenerating articles for: ${app.app_id}`);
@@ -158,7 +157,7 @@ async function runStage2() {
       console.log(`[NEXUS] article_length: ${articleLength.min}-${articleLength.max} palavras`)
       console.log(`Content mix: ${mix.original} original, ${mix.transformed} transformed, ${mix.aggregated} aggregated`);
 
-      const { data: researchItems } = await supabase
+      const { data: researchItems } = await getSupabase()
         .from('content_research')
         .select('id, topic, research_data, content_gaps, competitive_analysis')
         .eq('app_id', app.app_id)
@@ -167,7 +166,7 @@ async function runStage2() {
         .limit(mix.original + mix.transformed + mix.aggregated);
 
       if (!researchItems || researchItems.length === 0) {
-        console.log(`⚠ No research data available for ${app.app_id}`);
+        console.log(`âš  No research data available for ${app.app_id}`);
         continue;
       }
 
@@ -189,7 +188,7 @@ async function runStage2() {
             articleLength
           );
 
-          await supabase.from('blog_posts').insert({
+          await getSupabase().from('blog_posts').insert({
             app_id: app.app_id,
             title: articleData.title,
             slug: articleData.slug,
@@ -206,10 +205,10 @@ async function runStage2() {
           });
 
           const duration = Math.round((Date.now() - startTime) / 1000);
-          console.log(`✓ Generated original article: "${articleData.title}" (${duration}s)`);
+          console.log(`âœ“ Generated original article: "${articleData.title}" (${duration}s)`);
           generatedCount.original++;
 
-          await supabase.from('generation_logs').insert({
+          await getSupabase().from('generation_logs').insert({
             app_id: app.app_id,
             stage: 'generation',
             status: 'success',
@@ -220,9 +219,9 @@ async function runStage2() {
           });
         } catch (error) {
           const duration = Math.round((Date.now() - startTime) / 1000);
-          console.error(`✗ Error generating original article:`, error);
+          console.error(`âœ— Error generating original article:`, error);
 
-          await supabase.from('generation_logs').insert({
+          await getSupabase().from('generation_logs').insert({
             app_id: app.app_id,
             stage: 'generation',
             status: 'failed',
@@ -250,7 +249,7 @@ async function runStage2() {
             articleLength
           );
 
-          await supabase.from('blog_posts').insert({
+          await getSupabase().from('blog_posts').insert({
             app_id: app.app_id,
             title: articleData.title,
             slug: articleData.slug,
@@ -268,10 +267,10 @@ async function runStage2() {
           });
 
           const duration = Math.round((Date.now() - startTime) / 1000);
-          console.log(`✓ Generated transformed article: "${articleData.title}" (${duration}s)`);
+          console.log(`âœ“ Generated transformed article: "${articleData.title}" (${duration}s)`);
           generatedCount.transformed++;
 
-          await supabase.from('generation_logs').insert({
+          await getSupabase().from('generation_logs').insert({
             app_id: app.app_id,
             stage: 'generation',
             status: 'success',
@@ -283,9 +282,9 @@ async function runStage2() {
           });
         } catch (error) {
           const duration = Math.round((Date.now() - startTime) / 1000);
-          console.error(`✗ Error generating transformed article:`, error);
+          console.error(`âœ— Error generating transformed article:`, error);
 
-          await supabase.from('generation_logs').insert({
+          await getSupabase().from('generation_logs').insert({
             app_id: app.app_id,
             stage: 'generation',
             status: 'failed',
@@ -312,7 +311,7 @@ async function runStage2() {
             articleLength
           );
 
-          await supabase.from('blog_posts').insert({
+          await getSupabase().from('blog_posts').insert({
             app_id: app.app_id,
             title: articleData.title,
             slug: articleData.slug,
@@ -329,10 +328,10 @@ async function runStage2() {
           });
 
           const duration = Math.round((Date.now() - startTime) / 1000);
-          console.log(`✓ Generated aggregated article: "${articleData.title}" (${duration}s)`);
+          console.log(`âœ“ Generated aggregated article: "${articleData.title}" (${duration}s)`);
           generatedCount.aggregated++;
 
-          await supabase.from('generation_logs').insert({
+          await getSupabase().from('generation_logs').insert({
             app_id: app.app_id,
             stage: 'generation',
             status: 'success',
@@ -343,9 +342,9 @@ async function runStage2() {
           });
         } catch (error) {
           const duration = Math.round((Date.now() - startTime) / 1000);
-          console.error(`✗ Error generating aggregated article:`, error);
+          console.error(`âœ— Error generating aggregated article:`, error);
 
-          await supabase.from('generation_logs').insert({
+          await getSupabase().from('generation_logs').insert({
             app_id: app.app_id,
             stage: 'generation',
             status: 'failed',
@@ -384,3 +383,4 @@ export async function GET(request: Request) {
     headers: { 'Content-Type': 'application/json' },
   });
 }
+

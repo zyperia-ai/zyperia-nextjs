@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 import { runQualityPipeline } from '@/lib/quality-gates'
 import { checkDailyLimit, checkCircuitBreaker } from '@/lib/circuit-breaker'
 
@@ -49,7 +53,7 @@ export async function GET(request: Request) {
     const slots = rl.limit - rl.published_today
 
     // ── Buscar candidatos a publicar ─────────────────────────────────────────
-    const { data: candidates, error: fetchError } = await supabase
+    const { data: candidates, error: fetchError } = await getSupabase()
       .from('blog_posts')
       .select('id, title, content, app_name')
       .eq('status', 'draft')
@@ -80,7 +84,7 @@ export async function GET(request: Request) {
           results.rejected++
 
           // Log em generation_logs
-          await supabase.from('generation_logs').insert({
+          await getSupabase().from('generation_logs').insert({
             blog_post_id: article.id,
             stage: 'stage-6-publish',
             status: 'rejected',
@@ -95,7 +99,7 @@ export async function GET(request: Request) {
         // ── Publicar ────────────────────────────────────────────────────────
         const now = new Date().toISOString()
 
-        const { error: publishError } = await supabase
+        const { error: publishError } = await getSupabase()
           .from('blog_posts')
           .update({
             status: 'published',
@@ -109,7 +113,7 @@ export async function GET(request: Request) {
         }
 
         // Criar entrada em article_performance (NEXUS tracking)
-        await supabase.from('article_performance').insert({
+        await getSupabase().from('article_performance').insert({
           article_id: article.id,
           views: 0,
           unique_views: 0,
@@ -120,7 +124,7 @@ export async function GET(request: Request) {
         })
 
         // Log sucesso
-        await supabase.from('generation_logs').insert({
+        await getSupabase().from('generation_logs').insert({
           blog_post_id: article.id,
           stage: 'stage-6-publish',
           status: 'success',
@@ -129,7 +133,7 @@ export async function GET(request: Request) {
         })
 
         // Escrever decisão NEXUS
-        await supabase.from('nexus_decisions').insert({
+        await getSupabase().from('nexus_decisions').insert({
           decision_type: 'article_published',
           decision_data: {
             article_id: article.id,
@@ -145,7 +149,7 @@ export async function GET(request: Request) {
         const msg = err instanceof Error ? err.message : String(err)
         results.errors.push(`Artigo ${article.id}: ${msg}`)
 
-        await supabase.from('generation_logs').insert({
+        await getSupabase().from('generation_logs').insert({
           blog_post_id: article.id,
           stage: 'stage-6-publish',
           status: 'failed',

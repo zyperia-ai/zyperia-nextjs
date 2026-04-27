@@ -1,4 +1,4 @@
-/**
+﻿/**
  * A/B Testing System
  * Test different content variations, headlines, CTAs, layouts
  * Measure impact on engagement, CTR, conversion
@@ -6,9 +6,9 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 export interface ABTest {
   id?: string;
@@ -41,7 +41,7 @@ export async function createABTest(
   variationB: string
 ): Promise<boolean> {
   try {
-    const { error } = await supabase.from('ab_tests').insert({
+    const { error } = await getSupabase().from('ab_tests').insert({
       app_id: appId,
       article_id: articleId,
       test_type: testType,
@@ -74,13 +74,13 @@ export function assignVariant(testId: string): 'a' | 'b' {
 export async function recordImpression(testId: string, variant: 'a' | 'b'): Promise<void> {
   try {
     const column = variant === 'a' ? 'variant_a_views' : 'variant_b_views';
-    const { data } = await supabase
+    const { data } = await getSupabase()
       .from('ab_tests')
       .select(column)
       .eq('id', testId)
       .single();
     if (!data) return;
-    await supabase
+    await getSupabase()
       .from('ab_tests')
       .update({ [column]: (data[column] || 0) + 1 })
       .eq('id', testId);
@@ -99,13 +99,13 @@ export async function recordEngagement(
 ): Promise<void> {
   try {
     const column = metric === 'engagement' ? `variant_${variant}_engagement` : `variant_${variant}_ctr`;
-    const { data } = await supabase
+    const { data } = await getSupabase()
       .from('ab_tests')
       .select(column)
       .eq('id', testId)
       .single();
     if (!data) return;
-    await supabase
+    await getSupabase()
       .from('ab_tests')
       .update({ [column]: (data[column] || 0) + 1 })
       .eq('id', testId);
@@ -119,7 +119,7 @@ export async function recordEngagement(
  */
 export async function analyzeTest(testId: string): Promise<any> {
   try {
-    const { data: test } = await supabase.from('ab_tests').select('*').eq('id', testId).single();
+    const { data: test } = await getSupabase().from('ab_tests').select('*').eq('id', testId).single();
 
     if (!test) return null;
 
@@ -197,7 +197,7 @@ export async function getHeadlineVariations(
 ): Promise<Array<{ headline: string; predictedEngagement: number }>> {
   try {
     // Get top performing articles on similar topics
-    const { data: topArticles } = await supabase
+    const { data: topArticles } = await getSupabase()
       .from('blog_posts')
       .select('title, engagement_score, keywords')
       .eq('app_id', appId)
@@ -341,3 +341,4 @@ function generateDefaultVariations(
     { headline: `Everything About ${topic} You Need to Know`, predictedEngagement: 0.60 },
   ];
 }
+

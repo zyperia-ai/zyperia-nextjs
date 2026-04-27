@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Webhook Configuration API
  * Manage Slack, Discord, and custom webhook integrations
  * Usage: GET/POST /api/webhooks/config?appId=crypto&token=ADMIN_TOKEN
@@ -7,9 +7,9 @@
 import { registerWebhook } from '@/lib/webhook-manager';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 export async function GET(request: Request) {
   try {
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
     }
 
     // Get all webhooks for this app
-    const { data: webhooks, error } = await supabase
+    const { data: webhooks, error } = await getSupabase()
       .from('webhook_config')
       .select('id, webhook_type, webhook_url, events, enabled, last_tested_at, test_successful')
       .eq('app_id', appId);
@@ -39,7 +39,7 @@ export async function GET(request: Request) {
     }
 
     // Get recent webhook logs
-    const { data: logs } = await supabase
+    const { data: logs } = await getSupabase()
       .from('webhook_logs')
       .select('webhook_id, event_type, success, sent_at')
       .in(
@@ -191,7 +191,7 @@ async function testWebhook(appId: string, body: any) {
 
   try {
     // Get webhook config
-    const { data: webhook } = await supabase
+    const { data: webhook } = await getSupabase()
       .from('webhook_config')
       .select('*')
       .eq('id', webhookId)
@@ -215,7 +215,7 @@ async function testWebhook(appId: string, body: any) {
             attachments: [
               {
                 color: '0099ff',
-                title: '🧪 Test Notification',
+                title: 'ðŸ§ª Test Notification',
                 text: 'This is a test notification from ZYPERIA',
                 footer: `ZYPERIA ${appId}`,
               },
@@ -225,7 +225,7 @@ async function testWebhook(appId: string, body: any) {
           ? {
               embeds: [
                 {
-                  title: '🧪 Test Notification',
+                  title: 'ðŸ§ª Test Notification',
                   description: 'This is a test notification from ZYPERIA',
                   color: 52479,
                 },
@@ -242,7 +242,7 @@ async function testWebhook(appId: string, body: any) {
     const success = response.ok;
 
     // Log the test
-    await supabase.from('webhook_logs').insert({
+    await getSupabase().from('webhook_logs').insert({
       webhook_id: webhookId,
       event_type: 'test',
       payload: testPayload,
@@ -252,7 +252,7 @@ async function testWebhook(appId: string, body: any) {
     });
 
     // Update last tested
-    await supabase
+    await getSupabase()
       .from('webhook_config')
       .update({
         last_tested_at: new Date().toISOString(),
@@ -300,7 +300,7 @@ async function deleteWebhook(appId: string, body: any) {
     );
   }
 
-  const { error } = await supabase
+  const { error } = await getSupabase()
     .from('webhook_config')
     .delete()
     .eq('id', webhookId)
@@ -327,3 +327,4 @@ async function deleteWebhook(appId: string, body: any) {
     }
   );
 }
+

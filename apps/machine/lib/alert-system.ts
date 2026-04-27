@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Intelligent Alert System
  * Monitors pipeline health, revenue, rankings, and performance
  * Sends alerts to owner via email, Slack, or webhooks
@@ -8,9 +8,9 @@ import { createClient } from '@supabase/supabase-js';
 import { sendErrorAlert } from './email-notifications';
 import { sendWebhook } from './webhook-manager';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 export interface AlertConfig {
   appId: string;
@@ -83,7 +83,7 @@ export async function checkAlerts(appId: string): Promise<AlertTrigger[]> {
  * Alert: Pipeline error rate too high
  */
 async function checkErrorRateAlert(appId: string): Promise<AlertTrigger[]> {
-  const { data: logs } = await supabase
+  const { data: logs } = await getSupabase()
     .from('generation_logs')
     .select('status, created_at')
     .eq('app_id', appId)
@@ -118,7 +118,7 @@ async function checkErrorRateAlert(appId: string): Promise<AlertTrigger[]> {
  * Alert: Traffic drop detected
  */
 async function checkTrafficAlert(appId: string): Promise<AlertTrigger[]> {
-  const { data: perfData } = await supabase
+  const { data: perfData } = await getSupabase()
     .from('blog_performance')
     .select('views')
     .eq('app_id', appId)
@@ -156,7 +156,7 @@ async function checkTrafficAlert(appId: string): Promise<AlertTrigger[]> {
  * Alert: Generation errors in specific stage
  */
 async function checkGenerationErrorAlert(appId: string): Promise<AlertTrigger[]> {
-  const { data: logs } = await supabase
+  const { data: logs } = await getSupabase()
     .from('generation_logs')
     .select('stage, status')
     .eq('app_id', appId)
@@ -190,7 +190,7 @@ async function checkGenerationErrorAlert(appId: string): Promise<AlertTrigger[]>
  * Alert: Keyword ranking drop
  */
 async function checkRankingDropAlert(appId: string): Promise<AlertTrigger[]> {
-  const { data: rankings } = await supabase
+  const { data: rankings } = await getSupabase()
     .from('ranking_history')
     .select('keyword, rank')
     .eq('app_id', appId)
@@ -234,7 +234,7 @@ async function checkRankingDropAlert(appId: string): Promise<AlertTrigger[]> {
  * Alert: Low engagement on articles
  */
 async function checkEngagementAlert(appId: string): Promise<AlertTrigger[]> {
-  const { data: articles } = await supabase
+  const { data: articles } = await getSupabase()
     .from('blog_posts')
     .select('id, title, engagement_score, views')
     .eq('app_id', appId)
@@ -271,7 +271,7 @@ async function checkEngagementAlert(appId: string): Promise<AlertTrigger[]> {
  * Alert: Revenue drop
  */
 async function checkRevenueAlert(appId: string): Promise<AlertTrigger[]> {
-  const { data: perfData } = await supabase
+  const { data: perfData } = await getSupabase()
     .from('blog_performance')
     .select('adsense_revenue')
     .eq('app_id', appId)
@@ -308,7 +308,7 @@ async function checkRevenueAlert(appId: string): Promise<AlertTrigger[]> {
  * Alert: Quality issues (plagiarism/uniqueness score)
  */
 async function checkQualityAlert(appId: string): Promise<AlertTrigger[]> {
-  const { data: articles } = await supabase
+  const { data: articles } = await getSupabase()
     .from('blog_posts')
     .select('id, title, plagiarism_score')
     .eq('app_id', appId)
@@ -340,7 +340,7 @@ async function checkQualityAlert(appId: string): Promise<AlertTrigger[]> {
  * Alert: Backlink acquired (positive alert)
  */
 async function checkBacklinkAlert(appId: string): Promise<AlertTrigger[]> {
-  const { data: recentBacklinks } = await supabase
+  const { data: recentBacklinks } = await getSupabase()
     .from('backlink_acquisitions')
     .select('source_domain, anchor_text, discovered_at')
     .eq('app_id', appId)
@@ -353,7 +353,7 @@ async function checkBacklinkAlert(appId: string): Promise<AlertTrigger[]> {
     appId,
     alertType: 'backlink_acquired',
     severity: 'info',
-    message: `🎉 New backlink acquired from ${bl.source_domain}`,
+    message: `ðŸŽ‰ New backlink acquired from ${bl.source_domain}`,
     data: {
       sourceDomain: bl.source_domain,
       anchorText: bl.anchor_text || '(not specified)',
@@ -370,7 +370,7 @@ async function filterRecentAlerts(alerts: AlertTrigger[]): Promise<AlertTrigger[
 
   for (const alert of alerts) {
     // Check if similar alert was sent recently
-    const { data: recent } = await supabase
+    const { data: recent } = await getSupabase()
       .from('alert_logs')
       .select('*')
       .eq('app_id', alert.appId)
@@ -390,7 +390,7 @@ async function filterRecentAlerts(alerts: AlertTrigger[]): Promise<AlertTrigger[
  */
 async function logAlert(alert: AlertTrigger): Promise<void> {
   try {
-    await supabase.from('alert_logs').insert({
+    await getSupabase().from('alert_logs').insert({
       app_id: alert.appId,
       alert_type: alert.alertType,
       severity: alert.severity,
@@ -410,10 +410,10 @@ export async function sendAlert(alert: AlertTrigger, email?: string): Promise<bo
   try {
     const emailSubject =
       alert.severity === 'critical'
-        ? `🚨 CRITICAL: ${alert.message}`
+        ? `ðŸš¨ CRITICAL: ${alert.message}`
         : alert.severity === 'warning'
-          ? `⚠️ WARNING: ${alert.message}`
-          : `ℹ️ ${alert.message}`;
+          ? `âš ï¸ WARNING: ${alert.message}`
+          : `â„¹ï¸ ${alert.message}`;
 
     // Send email if provided
     if (email) {
@@ -445,7 +445,7 @@ export async function sendAlert(alert: AlertTrigger, email?: string): Promise<bo
  */
 export async function getAlertHistory(appId: string, days: number = 7) {
   try {
-    const { data: logs } = await supabase
+    const { data: logs } = await getSupabase()
       .from('alert_logs')
       .select('*')
       .eq('app_id', appId)
@@ -472,3 +472,4 @@ export async function getAlertHistory(appId: string, days: number = 7) {
     return null;
   }
 }
+

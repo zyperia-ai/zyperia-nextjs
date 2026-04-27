@@ -1,27 +1,30 @@
-/**
+﻿/**
  * ZYPERIA Newsletter Service
  * Manages: Resend (transactional), SendGrid (bulk), Supabase (data), Beehiiv (optional ads)
  *
  * Cost Breakdown:
- * - Resend: €0.01 per email (confirmations, reminders) = ~€5-10/month
- * - SendGrid: €15/month (unlimited sends for newsletters)
+ * - Resend: â‚¬0.01 per email (confirmations, reminders) = ~â‚¬5-10/month
+ * - SendGrid: â‚¬15/month (unlimited sends for newsletters)
  * - Supabase: Free tier (newsletter_subscriptions table)
- * - Total: €20-25/month for full newsletter system
+ * - Total: â‚¬20-25/month for full newsletter system
  *
  * Revenue:
  * - Google AdSense on blogs + newsletter CTR
  * - Affiliate links in articles + newsletters
- * - Optional Beehiiv ads in newsletters (€0 if they get 30% commission on ads)
+ * - Optional Beehiiv ads in newsletters (â‚¬0 if they get 30% commission on ads)
  */
 
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+
+function getSupabase() {
+  return createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 // Types
 export interface NewsletterSubscriber {
@@ -57,9 +60,9 @@ export async function sendConfirmationEmail(
     const confirmUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/newsletter/confirm?token=${confirmationToken}`;
 
     const themeLabels: Record<string, string> = {
-      crypto: '🔐 Crypto & Blockchain',
-      intelligence: '🧠 AI & Business Automation',
-      onlinebiz: '💰 Earn Money Online',
+      crypto: 'ðŸ” Crypto & Blockchain',
+      intelligence: 'ðŸ§  AI & Business Automation',
+      onlinebiz: 'ðŸ’° Earn Money Online',
     };
 
     const themesHtml = themes
@@ -69,7 +72,7 @@ export async function sendConfirmationEmail(
     const htmlContent = `
       <div style="font-family: 'Syne', sans-serif; max-width: 600px; margin: 0 auto;">
         <h2 style="color: #0a0520; font-size: 28px; margin-bottom: 16px;">
-          Welcome to ZYPERIA! 🎉
+          Welcome to ZYPERIA! ðŸŽ‰
         </h2>
 
         <p style="color: #333; font-size: 16px; line-height: 1.6;">
@@ -99,7 +102,7 @@ export async function sendConfirmationEmail(
         </p>
 
         <p style="color: #999; font-size: 12px; margin-top: 16px;">
-          © 2026 ZYPERIA. All rights reserved.<br/>
+          Â© 2026 ZYPERIA. All rights reserved.<br/>
           <a href="${process.env.NEXT_PUBLIC_APP_URL}/unsubscribe?email=${encodeURIComponent(email)}"
              style="color: #999; text-decoration: none;">
             Unsubscribe from all
@@ -111,7 +114,7 @@ export async function sendConfirmationEmail(
     const result = await resend.emails.send({
       from: 'ZYPERIA <noreply@zyperia.ai>',
       to: email,
-      subject: '✓ Confirm your ZYPERIA newsletter subscriptions',
+      subject: 'âœ“ Confirm your ZYPERIA newsletter subscriptions',
       html: htmlContent,
     });
 
@@ -142,7 +145,7 @@ export async function sendReminderEmail(
     const htmlContent = `
       <div style="font-family: 'Syne', sans-serif; max-width: 600px; margin: 0 auto;">
         <h3 style="color: #0a0520; font-size: 20px; margin-bottom: 16px;">
-          Don't miss out! 📧
+          Don't miss out! ðŸ“§
         </h3>
 
         <p style="color: #333; font-size: 15px; line-height: 1.6;">
@@ -167,7 +170,7 @@ export async function sendReminderEmail(
         </div>
 
         <p style="color: #999; font-size: 12px; margin-top: 24px;">
-          © 2026 ZYPERIA
+          Â© 2026 ZYPERIA
         </p>
       </div>
     `;
@@ -219,7 +222,7 @@ export async function sendNewsletter(
 ) {
   try {
     // Get all confirmed subscribers for this theme
-    const { data: subscribers, error: subscribeError } = await supabase
+    const { data: subscribers, error: subscribeError } = await getSupabase()
       .from('newsletter_subscriptions')
       .select('email')
       .eq(theme, true)
@@ -233,9 +236,9 @@ export async function sendNewsletter(
 
     // Build email content
     const themeLabels: Record<string, { name: string; color: string; icon: string }> = {
-      crypto: { name: 'Crypto & Blockchain', color: '#7C6FF7', icon: '🔐' },
-      intelligence: { name: 'AI & Business Automation', color: '#7C6FF7', icon: '🧠' },
-      onlinebiz: { name: 'Earn Money Online', color: '#7C6FF7', icon: '💰' },
+      crypto: { name: 'Crypto & Blockchain', color: '#7C6FF7', icon: 'ðŸ”' },
+      intelligence: { name: 'AI & Business Automation', color: '#7C6FF7', icon: 'ðŸ§ ' },
+      onlinebiz: { name: 'Earn Money Online', color: '#7C6FF7', icon: 'ðŸ’°' },
     };
 
     const themeInfo = themeLabels[theme];
@@ -257,7 +260,7 @@ export async function sendNewsletter(
 
         <a href="${blogUrl}/${article.slug}"
            style="color: ${themeInfo.color}; text-decoration: none; font-weight: bold; font-size: 14px;">
-          Read More →
+          Read More â†’
         </a>
 
         ${article.affiliateLink ? `<p style="margin-top: 8px;"><a href="${article.affiliateLink}" style="color: #00C9A7; font-size: 13px; text-decoration: none;">Recommended: ${article.title}</a></p>` : ''}
@@ -301,7 +304,7 @@ export async function sendNewsletter(
           <!-- Affiliate call-out -->
           <div style="background: #F0EFFA; padding: 16px; border-radius: 6px; margin: 24px 0; text-align: center;">
             <p style="color: #0a0520; font-size: 14px; margin: 0;">
-              <strong>💡 Pro Tip:</strong> We include affiliate links to products we genuinely use and recommend.
+              <strong>ðŸ’¡ Pro Tip:</strong> We include affiliate links to products we genuinely use and recommend.
               <br/>When you buy through our links, we earn a small commission at no extra cost to you.
             </p>
           </div>
@@ -309,12 +312,12 @@ export async function sendNewsletter(
           <!-- Footer -->
           <div style="border-top: 1px solid #eee; padding-top: 24px; margin-top: 32px;">
             <p style="color: #666; font-size: 13px; margin: 0 0 12px 0;">
-              © 2026 ZYPERIA. All content is educational and for information purposes only.
+              Â© 2026 ZYPERIA. All content is educational and for information purposes only.
             </p>
 
             <p style="color: #999; font-size: 12px; margin: 0;">
-              <a href="${blogUrl}/privacy" style="color: #999; text-decoration: none;">Privacy Policy</a> •
-              <a href="${blogUrl}/terms" style="color: #999; text-decoration: none;">Terms</a> •
+              <a href="${blogUrl}/privacy" style="color: #999; text-decoration: none;">Privacy Policy</a> â€¢
+              <a href="${blogUrl}/terms" style="color: #999; text-decoration: none;">Terms</a> â€¢
               <a href="${process.env.NEXT_PUBLIC_APP_URL}/unsubscribe" style="color: #999; text-decoration: none;">Unsubscribe</a>
             </p>
           </div>
@@ -355,7 +358,7 @@ export async function sendNewsletter(
     }
 
     // Log newsletter send
-    await supabase.from('generation_logs').insert({
+    await getSupabase().from('generation_logs').insert({
       app_id: theme,
       stage: 'newsletter_send',
       status: 'success',
@@ -385,7 +388,7 @@ export async function sendNewsletter(
  */
 export async function getNewsletterStats(theme: string, days: number = 7) {
   try {
-    const { data: stats } = await supabase
+    const { data: stats } = await getSupabase()
       .from('newsletter_performance')
       .select('*')
       .eq('theme', theme)
@@ -416,7 +419,7 @@ export async function getNewsletterStats(theme: string, days: number = 7) {
 }
 
 export async function getSubscriberCount(theme: string) {
-  const { count } = await supabase
+  const { count } = await getSupabase()
     .from('newsletter_subscriptions')
     .select('*', { count: 'exact', head: true })
     .eq(theme, true)
@@ -424,3 +427,4 @@ export async function getSubscriberCount(theme: string) {
 
   return count || 0;
 }
+

@@ -1,21 +1,20 @@
-/**
+﻿/**
  * Vercel Cron Job - Stage 5: Editorial Review & E-E-A-T Enhancement
  * Runs daily at 05:00 UTC
  */
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 async function runStage5() {
   console.log('\n=== STAGE 5: EDITORIAL REVIEW (CRON JOB) ===');
   console.log(`Started at: ${new Date().toISOString()}`);
 
   try {
-    const { data: articles } = await supabase
+    const { data: articles } = await getSupabase()
       .from('blog_posts')
       .select('id, app_id, title, content, plagiarism_score, plagiarism_checked_at')
       .eq('status', 'draft')
@@ -47,7 +46,7 @@ This article was researched and written by industry experts with 10+ years of ex
 This content is for educational purposes. Always conduct your own research before making important decisions.`;
 
         // Update article
-        const { error: updateError } = await supabase
+        const { error: updateError } = await getSupabase()
           .from('blog_posts')
           .update({
             content: eeatContent,
@@ -56,13 +55,13 @@ This content is for educational purposes. Always conduct your own research befor
           .eq('id', article.id);
 
         if (!updateError) {
-          console.log(`✓ Enhanced "${article.title}" with E-E-A-T signals`);
+          console.log(`âœ“ Enhanced "${article.title}" with E-E-A-T signals`);
         } else {
-          console.error(`✗ Error enhancing article: ${updateError.message}`);
+          console.error(`âœ— Error enhancing article: ${updateError.message}`);
         }
 
         // Log to generation_logs
-        await supabase.from('generation_logs').insert({
+        await getSupabase().from('generation_logs').insert({
           app_id: article.app_id,
           article_id: article.id,
           stage: 'editorial_review',
@@ -95,3 +94,4 @@ export async function GET(request: Request) {
     headers: { 'Content-Type': 'application/json' },
   });
 }
+

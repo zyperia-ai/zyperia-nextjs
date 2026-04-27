@@ -6,6 +6,10 @@
 
 import { createClient } from '@supabase/supabase-js'
 
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
+
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_KEY!
@@ -57,7 +61,7 @@ async function readPerformanceData(dayWindow: number): Promise<{
   const since = new Date()
   since.setDate(since.getDate() - dayWindow)
 
-  const { data: performances, error: perfError } = await supabase
+  const { data: performances, error: perfError } = await getSupabase()
     .from('article_performance')
     .select('*')
     .gte('updated_at', since.toISOString())
@@ -74,7 +78,7 @@ async function readPerformanceData(dayWindow: number): Promise<{
 
   const articleIds = performances.map((p: ArticlePerformance) => p.article_id)
 
-  const { data: posts, error: postsError } = await supabase
+  const { data: posts, error: postsError } = await getSupabase()
     .from('blog_posts')
     .select('id, app_name, category, audience_level')
     .in('id', articleIds)
@@ -147,7 +151,7 @@ function calculateCategoryScores(
 
 async function updateTopicScores(scores: CategoryScore[]): Promise<void> {
   for (const score of scores) {
-    const { error } = await supabase.from('topic_scores').upsert(
+    const { error } = await getSupabase().from('topic_scores').upsert(
       {
         category: score.category,
         audience_level: score.audience_level,
@@ -181,7 +185,7 @@ async function readCurrentConfig(): Promise<NexusConfig> {
   }
 
   const keys = Object.keys(defaults)
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('nexus_config')
     .select('config_key, config_value')
     .in('config_key', keys)
@@ -279,7 +283,7 @@ async function maybeAdjustConfig(
 }
 
 async function upsertConfig(key: string, value: unknown): Promise<void> {
-  const { error } = await supabase.from('nexus_config').upsert(
+  const { error } = await getSupabase().from('nexus_config').upsert(
     {
       config_key: key,
       config_value: value,
@@ -303,7 +307,7 @@ async function logDecision(
   changes: string[],
   dayWindow: number
 ): Promise<void> {
-  const { error } = await supabase.from('nexus_decisions').insert({
+  const { error } = await getSupabase().from('nexus_decisions').insert({
     decision_type: 'brain_tick',
     decision_data: {
       day_window: dayWindow,

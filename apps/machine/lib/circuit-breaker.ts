@@ -1,4 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
+
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 import { sendCircuitBreakerAlert } from './email-notifications'
 
 const supabase = createClient(
@@ -18,7 +22,7 @@ export async function checkDailyLimit(): Promise<{
   const today = new Date()
   today.setUTCHours(0, 0, 0, 0)
 
-  const { count, error } = await supabase
+  const { count, error } = await getSupabase()
     .from('blog_posts')
     .select('*', { count: 'exact', head: true })
     .eq('status', 'published')
@@ -54,7 +58,7 @@ export async function checkCircuitBreaker(): Promise<{
   const threshold = await getCircuitBreakerThreshold()
 
   // Conta artigos rejeitados consecutivos (sem published entretanto)
-  const { data: recentLogs, error } = await supabase
+  const { data: recentLogs, error } = await getSupabase()
     .from('generation_logs')
     .select('status, created_at')
     .order('created_at', { ascending: false })
@@ -101,7 +105,7 @@ export async function checkCircuitBreaker(): Promise<{
 // ─── NEXUS CONFIG HELPERS ─────────────────────────────────────────────────────
 
 async function getDailyLimit(): Promise<number> {
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from('nexus_config')
     .select('config_value')
     .eq('config_key', 'daily_publish_limit')
@@ -111,7 +115,7 @@ async function getDailyLimit(): Promise<number> {
 }
 
 async function getCircuitBreakerThreshold(): Promise<number> {
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from('nexus_config')
     .select('config_value')
     .eq('config_key', 'circuit_breaker_threshold')
@@ -124,7 +128,7 @@ async function logNexusDecision(
   decision_type: string,
   decision_data: Record<string, unknown>
 ): Promise<void> {
-  const { error } = await supabase.from('nexus_decisions').insert({
+  const { error } = await getSupabase().from('nexus_decisions').insert({
     decision_type,
     decision_data,
     reason: `Automático — ${decision_type}`,

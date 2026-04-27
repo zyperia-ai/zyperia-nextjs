@@ -5,13 +5,12 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 async function getNexusAudienceFocus(): Promise<Record<string, number>> {
-  const { data } = await supabase
+  const { data } = await getSupabase()
     .from('nexus_config')
     .select('config_value')
     .eq('config_key', 'audience_focus')
@@ -19,7 +18,7 @@ async function getNexusAudienceFocus(): Promise<Record<string, number>> {
 
   return (data?.config_value as Record<string, number>) ?? {
     iniciante: 0.5,
-    intermédio: 0.4,
+    intermediário: 0.4,
     avançado: 0.1,
   }
 }
@@ -29,7 +28,7 @@ async function runStage1() {
   console.log(`Started at: ${new Date().toISOString()}`);
 
   try {
-    const { data: apps } = await supabase.from('theme_config').select('app_id, articles_per_day');
+    const { data: apps } = await getSupabase().from('theme_config').select('app_id, articles_per_day');
 
     for (const app of apps || []) {
       console.log(`\nSelecting topics for: ${app.app_id} (${app.articles_per_day} articles)`);
@@ -40,7 +39,7 @@ async function runStage1() {
       const preferredAudience = Object.entries(audienceFocus).sort((a, b) => b[1] - a[1])[0][0]
 
       // Tentar primeiro tópicos com o audience_level preferido
-      let { data: topics } = await supabase
+      let { data: topics } = await getSupabase()
         .from('content_topics')
         .select('id, title, priority, search_volume, audience_level')
         .eq('app_id', app.app_id)
@@ -55,7 +54,7 @@ async function runStage1() {
         const needed = app.articles_per_day - (topics?.length ?? 0)
         const existingIds = topics?.map((t: { id: string }) => t.id) ?? []
 
-        const { data: fallbackTopics } = await supabase
+        const { data: fallbackTopics } = await getSupabase()
           .from('content_topics')
           .select('id, title, priority, search_volume, audience_level')
           .eq('app_id', app.app_id)
@@ -69,7 +68,7 @@ async function runStage1() {
       }
 
       if (!topics || topics.length === 0) {
-        console.log(`⚠ No topics available for ${app.app_id}`);
+        console.log(`⚠️  No topics available for ${app.app_id}`);
         continue;
       }
 
@@ -87,7 +86,7 @@ async function runStage1() {
           };
 
           // Get competitive analysis from Stage 0
-          const { data: competitiveData } = await supabase
+          const { data: competitiveData } = await getSupabase()
             .from('content_research')
             .select('competitive_analysis, content_gaps')
             .eq('app_id', app.app_id)
@@ -97,7 +96,7 @@ async function runStage1() {
             .limit(1);
 
           // Store research
-          const { error: insertError } = await supabase.from('content_research').insert({
+          const { error: insertError } = await getSupabase().from('content_research').insert({
             app_id: app.app_id,
             topic: topic.title,
             research_type: 'original',
@@ -111,7 +110,7 @@ async function runStage1() {
 
           if (insertError) {
             console.error(`✗ Error researching "${topic.title}":`, insertError.message);
-            await supabase.from('generation_logs').insert({
+            await getSupabase().from('generation_logs').insert({
               app_id: app.app_id,
               stage: 'research',
               status: 'failed',
@@ -122,13 +121,13 @@ async function runStage1() {
             console.log(`✓ Researched "${topic.title}" (${duration}s)`);
 
             // Mark topic as used
-            await supabase
+            await getSupabase()
               .from('content_topics')
               .update({ last_used_at: new Date().toISOString() })
               .eq('id', topic.id);
 
             // Log success
-            await supabase.from('generation_logs').insert({
+            await getSupabase().from('generation_logs').insert({
               app_id: app.app_id,
               stage: 'research',
               status: 'success',
@@ -139,7 +138,7 @@ async function runStage1() {
           const duration = Math.round((Date.now() - startTime) / 1000);
           console.error(`✗ Error in topic research:`, error);
 
-          await supabase.from('generation_logs').insert({
+          await getSupabase().from('generation_logs').insert({
             app_id: app.app_id,
             stage: 'research',
             status: 'failed',

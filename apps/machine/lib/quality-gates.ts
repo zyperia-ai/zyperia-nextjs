@@ -1,6 +1,10 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
 
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
+
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_KEY!
@@ -215,7 +219,7 @@ export async function camada4QualityGate(
   const firstFail = failed[0]
 
   // Inserir em rejected_articles
-  const { error } = await supabase.from('rejected_articles').insert({
+  const { error } = await getSupabase().from('rejected_articles').insert({
     blog_post_id: article.id,
     rejection_layer: firstFail.layer,
     rejection_reason: firstFail.reason ?? 'Motivo desconhecido',
@@ -231,7 +235,7 @@ export async function camada4QualityGate(
   }
 
   // Actualizar status do artigo para 'rejected'
-  await supabase
+  await getSupabase()
     .from('blog_posts')
     .update({ status: 'rejected' })
     .eq('id', article.id)

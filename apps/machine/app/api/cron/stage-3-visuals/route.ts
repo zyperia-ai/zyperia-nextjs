@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Vercel Cron Job - Stage 3: Visual Enrichment
  * Runs daily at 03:00 UTC
  * Adds hero images, visualizations, and OG images to draft articles
@@ -6,17 +6,16 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 async function runStage3() {
   console.log('\n=== STAGE 3: VISUAL ENRICHMENT (CRON JOB) ===');
   console.log(`Started at: ${new Date().toISOString()}`);
 
   try {
-    const { data: articles } = await supabase
+    const { data: articles } = await getSupabase()
       .from('blog_posts')
       .select('id, app_id, title, content, hero_image_url')
       .eq('status', 'draft')
@@ -35,7 +34,7 @@ async function runStage3() {
         const ogUrl = `https://via.placeholder.com/1200x630?text=${encodeURIComponent(article.title)}`;
 
         // Update article with visual URLs
-        const { error: updateError } = await supabase
+        const { error: updateError } = await getSupabase()
           .from('blog_posts')
           .update({
             hero_image_url: heroUrl,
@@ -48,13 +47,13 @@ async function runStage3() {
           .eq('id', article.id);
 
         if (!updateError) {
-          console.log(`✓ Enriched article: ${article.title}`);
+          console.log(`âœ“ Enriched article: ${article.title}`);
         } else {
-          console.error(`✗ Error enriching article: ${updateError.message}`);
+          console.error(`âœ— Error enriching article: ${updateError.message}`);
         }
 
         // Log to generation_logs
-        await supabase.from('generation_logs').insert({
+        await getSupabase().from('generation_logs').insert({
           app_id: article.app_id,
           article_id: article.id,
           stage: 'visual_enrichment',
@@ -92,3 +91,4 @@ export async function GET(request: Request) {
     headers: { 'Content-Type': 'application/json' },
   });
 }
+

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Backlink Outreach Management API
  * Track and manage outreach campaigns
  * Usage: GET /api/backlinks/outreach?appId=crypto&action=status|start|track
@@ -7,9 +7,9 @@
 import { generateOutreachMessage, trackBacklinkAcquired } from '@/lib/backlink-hunter';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 export async function GET(request: Request) {
   try {
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
 }
 
 async function getOutreachStatus(appId: string) {
-  const { data: outreach } = await supabase
+  const { data: outreach } = await getSupabase()
     .from('backlink_outreach')
     .select('status')
     .eq('app_id', appId);
@@ -124,7 +124,7 @@ async function getOutreachStatus(appId: string) {
 }
 
 async function getCampaignDetails(appId: string) {
-  const { data: campaigns } = await supabase
+  const { data: campaigns } = await getSupabase()
     .from('backlink_campaigns')
     .select('*')
     .eq('app_id', appId)
@@ -175,7 +175,7 @@ async function startOutreachCampaign(body: any) {
   }
 
   // Create campaign record
-  const { data: campaign, error } = await supabase
+  const { data: campaign, error } = await getSupabase()
     .from('backlink_campaigns')
     .insert({
       app_id: appId,
@@ -206,3 +206,4 @@ async function startOutreachCampaign(body: any) {
     }
   );
 }
+

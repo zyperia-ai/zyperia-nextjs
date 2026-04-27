@@ -1,21 +1,20 @@
-/**
+﻿/**
  * Vercel Cron Job - Stage 4: Plagiarism Check & Verification
  * Runs daily at 04:00 UTC
  */
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getSupabase() {
+  return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
+}
 
 async function runStage4() {
   console.log('\n=== STAGE 4: PLAGIARISM CHECK (CRON JOB) ===');
   console.log(`Started at: ${new Date().toISOString()}`);
 
   try {
-    const { data: articles } = await supabase
+    const { data: articles } = await getSupabase()
       .from('blog_posts')
       .select('id, app_id, title, content, generation_approach, plagiarism_checked_at')
       .eq('status', 'draft')
@@ -38,7 +37,7 @@ async function runStage4() {
         }
 
         // Update article with plagiarism score
-        const { error: updateError } = await supabase
+        const { error: updateError } = await getSupabase()
           .from('blog_posts')
           .update({
             plagiarism_score: Math.max(100 - plagiarismScore, 0), // Invert: lower is better
@@ -47,13 +46,13 @@ async function runStage4() {
           .eq('id', article.id);
 
         if (!updateError) {
-          console.log(`✓ Verified "${article.title}" - ${plagiarismScore}% unique`);
+          console.log(`âœ“ Verified "${article.title}" - ${plagiarismScore}% unique`);
         } else {
-          console.error(`✗ Error verifying article: ${updateError.message}`);
+          console.error(`âœ— Error verifying article: ${updateError.message}`);
         }
 
         // Log to generation_logs
-        await supabase.from('generation_logs').insert({
+        await getSupabase().from('generation_logs').insert({
           app_id: article.app_id,
           article_id: article.id,
           stage: 'plagiarism_check',
@@ -91,3 +90,4 @@ export async function GET(request: Request) {
     headers: { 'Content-Type': 'application/json' },
   });
 }
+
