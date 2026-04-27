@@ -268,3 +268,38 @@ function getMostPopularApproach(articles: any[]): string {
 
   return topApproach;
 }
+
+export async function sendCircuitBreakerAlert({
+  consecutive_rejections,
+  threshold,
+}: {
+  consecutive_rejections: number
+  threshold: number
+}) {
+  const ownerEmail = process.env.OWNER_EMAIL || 'luis@zyperia.ai'
+
+  const htmlBody = `
+    <h2>🔴 Circuit Breaker Aberto — Pipeline Pausado</h2>
+
+    <p>O pipeline de publicação automática foi pausado porque detectou <strong>${consecutive_rejections} rejeições consecutivas</strong> (threshold: ${threshold}).</p>
+
+    <h3>O que aconteceu</h3>
+    <p>Os últimos ${consecutive_rejections} artigos gerados falharam as verificações de qualidade (Camadas 1-4). Para proteger a qualidade editorial, o pipeline foi suspenso automaticamente.</p>
+
+    <h3>Próximos passos</h3>
+    <ol>
+      <li>Verifica a tabela <code>rejected_articles</code> no Supabase para perceber os motivos de rejeição.</li>
+      <li>Verifica os logs em <code>generation_logs</code> com status <code>rejected</code>.</li>
+      <li>Se o problema for nos prompts ou na qualidade do conteúdo, ajusta o <code>theme-config.json</code>.</li>
+      <li>O pipeline retoma automaticamente quando a contagem de rejeições consecutivas for interrompida por um sucesso.</li>
+    </ol>
+
+    <p><strong>Hora:</strong> ${new Date().toISOString()}</p>
+  `
+
+  await sendEmail({
+    to: ownerEmail,
+    subject: `🔴 Circuit Breaker Aberto — ${consecutive_rejections} rejeições consecutivas`,
+    html: htmlBody,
+  })
+}
