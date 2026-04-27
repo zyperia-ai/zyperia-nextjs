@@ -4,7 +4,9 @@
  * Usage: GET /api/alerts/status?appId=crypto&token=ADMIN_TOKEN
  */
 
-import { checkAlerts, getAlertHistory } from '../../../lib/alert-system';
+export const dynamic = 'force-dynamic';
+
+import { checkAlerts, getAlertHistory } from '@/lib/alert-system';
 
 export async function GET(request: Request) {
   try {

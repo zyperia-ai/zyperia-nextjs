@@ -74,11 +74,15 @@ export function assignVariant(testId: string): 'a' | 'b' {
 export async function recordImpression(testId: string, variant: 'a' | 'b'): Promise<void> {
   try {
     const column = variant === 'a' ? 'variant_a_views' : 'variant_b_views';
+    const { data } = await supabase
+      .from('ab_tests')
+      .select(column)
+      .eq('id', testId)
+      .single();
+    if (!data) return;
     await supabase
       .from('ab_tests')
-      .update({
-        [column]: supabase.sql`${column} + 1`,
-      })
+      .update({ [column]: (data[column] || 0) + 1 })
       .eq('id', testId);
   } catch (error) {
     console.error('Error recording impression:', error);
@@ -95,11 +99,15 @@ export async function recordEngagement(
 ): Promise<void> {
   try {
     const column = metric === 'engagement' ? `variant_${variant}_engagement` : `variant_${variant}_ctr`;
+    const { data } = await supabase
+      .from('ab_tests')
+      .select(column)
+      .eq('id', testId)
+      .single();
+    if (!data) return;
     await supabase
       .from('ab_tests')
-      .update({
-        [column]: supabase.sql`${column} + 1`,
-      })
+      .update({ [column]: (data[column] || 0) + 1 })
       .eq('id', testId);
   } catch (error) {
     console.error('Error recording engagement:', error);

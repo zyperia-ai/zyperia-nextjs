@@ -5,7 +5,7 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { sendEmail } from './email-notifications';
+import { sendErrorAlert } from './email-notifications';
 import { sendWebhook } from './webhook-manager';
 
 const supabaseUrl = process.env.SUPABASE_URL || '';
@@ -85,7 +85,7 @@ export async function checkAlerts(appId: string): Promise<AlertTrigger[]> {
 async function checkErrorRateAlert(appId: string): Promise<AlertTrigger[]> {
   const { data: logs } = await supabase
     .from('generation_logs')
-    .select('status')
+    .select('status, created_at')
     .eq('app_id', appId)
     .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()); // Last 24h
 
@@ -417,19 +417,7 @@ export async function sendAlert(alert: AlertTrigger, email?: string): Promise<bo
 
     // Send email if provided
     if (email) {
-      await sendEmail({
-        to: email,
-        subject: emailSubject,
-        html: `
-          <h2>${alert.message}</h2>
-          <p><strong>Alert Type:</strong> ${alert.alertType}</p>
-          <p><strong>Severity:</strong> ${alert.severity}</p>
-          <p><strong>Time:</strong> ${new Date().toISOString()}</p>
-          <h3>Details:</h3>
-          <pre>${JSON.stringify(alert.data, null, 2)}</pre>
-          <p><a href="https://${alert.appId}.zyperia.ai/api/pipeline-status">View Dashboard</a></p>
-        `,
-      });
+      await sendErrorAlert(email, alert.alertType, alert.message);
     }
 
     // Send webhook

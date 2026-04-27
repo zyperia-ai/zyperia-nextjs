@@ -66,7 +66,7 @@ export async function checkPlagiarismCopyscape(
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         u: copyscapeUsername,
-        t: copyscapeApiToken,
+        a: copyscapeApiToken,
         o: 'csearch',
         e: 'UTF-8',
         t: content, // Content to check

@@ -4,7 +4,9 @@
  * Usage: GET /api/recommendations?appId=crypto
  */
 
-import { generateRecommendations, getQuickInsights, suggestNextTopic } from '../../lib/content-recommendations';
+export const dynamic = 'force-dynamic';
+
+import { generateRecommendations, getQuickInsights, suggestNextTopic } from '@/lib/content-recommendations';
 
 export async function GET(request: Request) {
   try {

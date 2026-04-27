@@ -4,7 +4,9 @@
  * Usage: GET /api/backlinks/opportunities?appId=crypto&limit=50
  */
 
-import { findBacklinkOpportunities, getBacklinkAnalytics } from '../../../lib/backlink-hunter';
+export const dynamic = 'force-dynamic';
+
+import { findBacklinkOpportunities, getBacklinkAnalytics } from '@/lib/backlink-hunter';
 
 export async function GET(request: Request) {
   try {

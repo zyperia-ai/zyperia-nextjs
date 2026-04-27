@@ -4,6 +4,8 @@
  * Usage: GET /api/admin/dashboard?token=YOUR_ADMIN_TOKEN
  */
 
+export const dynamic = 'force-dynamic';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.SUPABASE_URL || '';

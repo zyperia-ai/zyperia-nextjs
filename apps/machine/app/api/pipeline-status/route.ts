@@ -4,6 +4,8 @@
  * Usage: GET /api/pipeline-status
  */
 
+export const dynamic = 'force-dynamic';
+
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.SUPABASE_URL || '';
