@@ -47,14 +47,11 @@ Analisa APENAS: factualidade e compliance.
 - Há hype, promessas exageradas, linguagem de "garante", "100% seguro", "fique rico"?
 - Há erros factuais evidentes?
 
-Responde APENAS com JSON válido:
-{
-  "scores": {
-    "factualidade": 1-10,
-    "compliance": 1-10
-  },
-  "issues": ["problemas encontrados, ou array vazio"]
-}
+Responde APENAS com JSON válido. Usa aspas duplas. Sem caracteres especiais nas strings.
+Formato exacto:
+{"scores":{"factualidade":0,"compliance":0},"issues":["issue 1","issue 2"]}
+Substitui 0 pelos scores reais (1-10). Maximum 3 issues curtos (menos de 80 caracteres cada).
+Sem aspas simples, sem hífens duplos, sem caracteres especiais dentro das strings dos issues.
 
 Sê implacável. Score 7+ só se não houver problemas reais.`
 
@@ -69,14 +66,11 @@ Analisa APENAS: clareza e estrutura.
 - Há jargão não explicado?
 - O título corresponde ao conteúdo?
 
-Responde APENAS com JSON válido:
-{
-  "scores": {
-    "estrutura": 1-10,
-    "clareza_leitor": 1-10
-  },
-  "issues": ["problemas encontrados, ou array vazio"]
-}
+Responde APENAS com JSON válido. Usa aspas duplas. Sem caracteres especiais nas strings.
+Formato exacto:
+{"scores":{"estrutura":0,"clareza_leitor":0},"issues":["issue 1","issue 2"]}
+Substitui 0 pelos scores reais (1-10). Maximum 3 issues curtos (menos de 80 caracteres cada).
+Sem aspas simples, sem hífens duplos, sem caracteres especiais dentro das strings dos issues.
 
 Score 7+ só se um leitor iniciante consegue realmente beneficiar do artigo.`
 
@@ -92,14 +86,11 @@ Analisa APENAS: voz editorial e originalidade.
 - O artigo acrescenta algo ao leitor ou é enchimento?
 - Tem disclosure de IA e disclaimers adequados ao tema (especialmente se crypto)?
 
-Responde APENAS com JSON válido:
-{
-  "scores": {
-    "voz_editorial": 1-10,
-    "originalidade": 1-10
-  },
-  "issues": ["problemas encontrados, ou array vazio"]
-}
+Responde APENAS com JSON válido. Usa aspas duplas. Sem caracteres especiais nas strings.
+Formato exacto:
+{"scores":{"voz_editorial":0,"originalidade":0},"issues":["issue 1","issue 2"]}
+Substitui 0 pelos scores reais (1-10). Maximum 3 issues curtos (menos de 80 caracteres cada).
+Sem aspas simples, sem hífens duplos, sem caracteres especiais dentro das strings dos issues.
 
 Score 7+ só se publicarias isto com o teu nome como editor.`
 
