@@ -156,11 +156,13 @@ async function runStage2(appFilter: string | null = null) {
       console.log(`\nGenerating articles for: ${app.app_id}`);
 
       const articleLength = await getNexusArticleLength()
-      const mix = {
-        original: Math.ceil(app.articles_per_day * 0.4),
-        transformed: Math.ceil(app.articles_per_day * 0.5),
-        aggregated: Math.ceil(app.articles_per_day * 0.1),
-      }
+      const mix = app.articles_per_day === 1
+        ? { original: 1, transformed: 0, aggregated: 0 }
+        : {
+            original: Math.ceil(app.articles_per_day * 0.4),
+            transformed: Math.ceil(app.articles_per_day * 0.5),
+            aggregated: Math.ceil(app.articles_per_day * 0.1),
+          }
 
       console.log(`[NEXUS] article_length: ${articleLength.min}-${articleLength.max} palavras`)
       console.log(`Content mix: ${mix.original} original, ${mix.transformed} transformed, ${mix.aggregated} aggregated`);
