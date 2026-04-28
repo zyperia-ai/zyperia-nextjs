@@ -125,7 +125,11 @@ Score 7+ só se publicarias isto com o teu nome como editor.`
   const parseResponse = (res: typeof resCetico): { scores: Record<string, number>; issues: string[] } | null => {
     const raw = res.content[0].type === 'text' ? res.content[0].text : ''
     try {
-      return JSON.parse(raw)
+      const cleaned = raw
+        .replace(/```json\n?/gi, '')
+        .replace(/```\n?/gi, '')
+        .trim()
+      return JSON.parse(cleaned)
     } catch {
       return null
     }
