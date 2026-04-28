@@ -21,7 +21,7 @@ async function runStage5() {
       .from('blog_posts')
       .select('id, app_id, title, content, plagiarism_score, plagiarism_checked_at')
       .eq('status', 'draft')
-      .gte('plagiarism_score', 70) // Only if passed plagiarism check
+      .lte('plagiarism_score', 30) // Only if passed plagiarism check (low originality threshold)
       .is('last_verified_at', null)
       .limit(20);
 
