@@ -165,13 +165,20 @@ async function runStage2(appFilter: string | null = null) {
       console.log(`[NEXUS] article_length: ${articleLength.min}-${articleLength.max} palavras`)
       console.log(`Content mix: ${mix.original} original, ${mix.transformed} transformed, ${mix.aggregated} aggregated`);
 
-      const { data: researchItems } = await getSupabase()
+      const { data: researchItems, error: researchError } = await getSupabase()
         .from('content_research')
         .select('id, topic, research_data, content_gaps, competitive_analysis')
         .eq('app_id', app.app_id)
         .eq('research_type', 'original')
         .order('created_at', { ascending: false })
         .limit(mix.original + mix.transformed + mix.aggregated);
+
+      console.log(`content_research query — app: ${app.app_id}, count: ${researchItems?.length}, error: ${researchError?.message}`);
+
+      if (researchError) {
+        console.error(`Query error for ${app.app_id}:`, researchError.message);
+        continue;
+      }
 
       if (!researchItems || researchItems.length === 0) {
         console.log(`âš  No research data available for ${app.app_id}`);
