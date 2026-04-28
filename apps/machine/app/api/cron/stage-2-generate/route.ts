@@ -45,21 +45,29 @@ async function generateArticleContent(
     let userPrompt = '';
 
     if (approach === 'original') {
-      userPrompt = `Create a comprehensive, original article about: "${topic}"
+      userPrompt = `Escreve um artigo completo sobre: "${topic}"
 
-Use the following research context:
-${researchData?.sources?.join(', ') || 'N/A'}
+ANTES DE COMEÇAR: planeia mentalmente a estrutura completa do artigo.
+Só começa a escrever quando tens a certeza que consegues completar todas as secções.
 
-Requirements:
-- Write a unique, valuable article from scratch
-- Length: between ${articleLength.min} and ${articleLength.max} words
-- Include 3-4 main sections with detailed explanations
-- Use markdown formatting with H2 headers
-- Include practical examples and actionable tips
-- Add a strong introduction and conclusion
-- Include a Sources section citing the research
+ESTRUTURA OBRIGATÓRIA:
+1. Título H1 — claro, específico, em português, sem sufixos em inglês
+2. Aviso/disclaimer obrigatório (se crypto ou investimento)
+3. Introdução (150 palavras) — apresenta o problema e o que o leitor vai aprender
+4. Secção 1 H2 — contexto e fundamentos com jargão explicado
+5. Secção 2 H2 — aplicação prática com exemplos concretos
+6. Secção 3 H2 — erros comuns ou o que evitar
+7. Secção 4 H2 — ferramentas, recursos ou próximos passos
+8. Conclusão H2 (100 palavras) — síntese + uma acção concreta para hoje
+9. Meta description (máx 155 caracteres, começa com a keyword principal)
+10. Keywords: 5 termos relevantes separados por vírgula
 
-Format your response as valid markdown starting with the title as H1.`;
+REGRA CRÍTICA: Cada secção que começas DEVE ser terminada completamente.
+É melhor ter 3 secções perfeitas do que 5 secções onde as últimas ficam incompletas.
+O artigo deve ter entre 1000 e 1500 palavras — qualidade acima de quantidade.
+
+Escreve em português de forma acessível ao mercado lusófono global
+(Portugal, Brasil, Angola, Cabo Verde, Moçambique).`;
     } else if (approach === 'transformed') {
       userPrompt = `Transform and improve an article about: "${topic}"
 

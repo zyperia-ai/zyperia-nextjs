@@ -15,6 +15,8 @@ export interface AIResponse {
   model: AIModel;
   costUsd: number;
   duration: number;
+  inputTokens?: number;
+  outputTokens?: number;
 }
 
 const anthropic = new Anthropic({
@@ -33,7 +35,7 @@ export async function generateWithClaude(
   try {
     const message = await anthropic.messages.create({
       model: 'claude-sonnet-4-5',
-      max_tokens: 8192,
+      max_tokens: 16000,
       system: systemPrompt,
       messages: [
         {
@@ -51,11 +53,14 @@ export async function generateWithClaude(
     const outputTokens = message.usage.output_tokens;
     const costUsd = (inputTokens * 3 + outputTokens * 15) / 1_000_000;
 
+    console.log(`[AI Router] input_tokens: ${inputTokens}, output_tokens: ${outputTokens}, max: 16000, stop_reason: ${message.stop_reason}`)
     return {
       content,
       model: 'claude-sonnet-4-5',
       costUsd,
       duration,
+      inputTokens,
+      outputTokens,
     };
   } catch (error) {
     console.error('Claude API error:', error);
