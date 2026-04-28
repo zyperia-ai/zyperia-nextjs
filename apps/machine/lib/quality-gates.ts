@@ -106,17 +106,17 @@ Score 7+ só se publicarias isto com o teu nome como editor.`
   // Correr as 3 personas em paralelo
   const [resCetico, resLeitor, resEditor] = await Promise.all([
     anthropic.messages.create({
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 512,
       messages: [{ role: 'user', content: promptCetico }],
     }),
     anthropic.messages.create({
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 512,
       messages: [{ role: 'user', content: promptLeitor }],
     }),
     anthropic.messages.create({
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 512,
       messages: [{ role: 'user', content: promptEditor }],
     }),

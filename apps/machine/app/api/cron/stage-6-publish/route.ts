@@ -54,7 +54,7 @@ export async function GET(request: Request) {
     // ── Buscar candidatos a publicar ─────────────────────────────────────────
     const { data: candidates, error: fetchError } = await getSupabase()
       .from('blog_posts')
-      .select('id, title, content, app_name')
+      .select('id, title, content, app_id')
       .eq('status', 'draft')
       .not('last_verified_at', 'is', null)
       .order('created_at', { ascending: true })
@@ -76,7 +76,7 @@ export async function GET(request: Request) {
           id: article.id,
           content: article.content ?? '',
           title: article.title ?? 'Sem título',
-          app_name: article.app_name ?? 'crypto',
+          app_name: article.app_id ?? 'crypto',
         })
 
         if (!quality.approved) {
@@ -136,7 +136,7 @@ export async function GET(request: Request) {
           decision_type: 'article_published',
           decision_data: {
             article_id: article.id,
-            app_name: article.app_name,
+            app_id: article.app_id,
             quality_layers_passed: quality.results.length,
           },
           reason: 'Todas as camadas de qualidade aprovadas',
