@@ -140,14 +140,19 @@ Format as markdown with H1 title.`;
   }
 }
 
-async function runStage2() {
+async function runStage2(appFilter: string | null = null) {
   console.log('\n=== STAGE 2: CONTENT GENERATION (CRON JOB) ===');
   console.log(`Started at: ${new Date().toISOString()}`);
+  if (appFilter) console.log(`Filtering by app: ${appFilter}`);
 
   try {
     const { data: apps } = await getSupabase().from('theme_config').select('*');
 
-    for (const app of apps || []) {
+    const filteredApps = appFilter
+      ? (apps || []).filter(a => a.app_id === appFilter)
+      : (apps || []);
+
+    for (const app of filteredApps) {
       console.log(`\nGenerating articles for: ${app.app_id}`);
 
       const articleLength = await getNexusArticleLength()
@@ -380,7 +385,9 @@ export async function GET(request: Request) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const result = await runStage2();
+  const url = new URL(request.url);
+  const appFilter = url.searchParams.get('app') || null;
+  const result = await runStage2(appFilter);
   return new Response(JSON.stringify(result), {
     status: result.statusCode,
     headers: { 'Content-Type': 'application/json' },

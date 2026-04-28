@@ -1,4 +1,10 @@
 {
+  "functions": {
+    "app/api/cron/stage-2-generate/route.ts": {"maxDuration": 300},
+    "app/api/cron/stage-5-editorial/route.ts": {"maxDuration": 300},
+    "app/api/cron/stage-6-publish/route.ts": {"maxDuration": 300},
+    "app/api/cron/stage-4-plagiarism/route.ts": {"maxDuration": 300}
+  },
   "crons": [
     {
       "path": "/api/cron/stage-0-analysis",
@@ -9,8 +15,16 @@
       "schedule": "30 0 * * *"
     },
     {
-      "path": "/api/cron/stage-2-generate",
+      "path": "/api/cron/stage-2-generate?app=crypto",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/stage-2-generate?app=intelligence",
+      "schedule": "10 2 * * *"
+    },
+    {
+      "path": "/api/cron/stage-2-generate?app=onlinebiz",
+      "schedule": "20 2 * * *"
     },
     {
       "path": "/api/cron/stage-4-plagiarism",
