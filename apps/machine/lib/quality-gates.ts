@@ -124,13 +124,16 @@ Score 7+ só se publicarias isto com o teu nome como editor.`
 
   const parseResponse = (res: typeof resCetico): { scores: Record<string, number>; issues: string[] } | null => {
     const raw = res.content[0].type === 'text' ? res.content[0].text : ''
+    console.log('[Quality] RAW response:', JSON.stringify(raw.substring(0, 500)))
     try {
       const cleaned = raw
         .replace(/```json\n?/gi, '')
         .replace(/```\n?/gi, '')
         .trim()
+      console.log('[Quality] Cleaned:', JSON.stringify(cleaned.substring(0, 500)))
       return JSON.parse(cleaned)
-    } catch {
+    } catch (e) {
+      console.error('[Quality] Parse error:', e, 'Raw was:', raw.substring(0, 200))
       return null
     }
   }
