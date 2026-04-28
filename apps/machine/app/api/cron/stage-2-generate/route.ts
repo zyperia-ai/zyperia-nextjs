@@ -217,7 +217,7 @@ async function runStage2() {
             status: 'success',
             generation_approach: 'original',
             duration_seconds: duration,
-            ai_model_used: 'claude-3-5-sonnet',
+            ai_model_used: 'claude-sonnet-4-5',
             cost_usd: 0.01,
           });
         } catch (error) {
@@ -231,7 +231,7 @@ async function runStage2() {
             generation_approach: 'original',
             duration_seconds: duration,
             error_message: (error as Error).message,
-            ai_model_used: 'claude-3-5-sonnet',
+            ai_model_used: 'claude-sonnet-4-5',
           });
         }
       }
@@ -280,7 +280,7 @@ async function runStage2() {
             generation_approach: 'transformed',
             duration_seconds: duration,
             transformation_source_url: competitorUrl,
-            ai_model_used: 'claude-3-5-sonnet',
+            ai_model_used: 'claude-sonnet-4-5',
             cost_usd: 0.01,
           });
         } catch (error) {
@@ -294,7 +294,7 @@ async function runStage2() {
             generation_approach: 'transformed',
             duration_seconds: duration,
             error_message: (error as Error).message,
-            ai_model_used: 'claude-3-5-sonnet',
+            ai_model_used: 'claude-sonnet-4-5',
           });
         }
       }
@@ -340,7 +340,7 @@ async function runStage2() {
             status: 'success',
             generation_approach: 'aggregated',
             duration_seconds: duration,
-            ai_model_used: 'claude-3-5-sonnet',
+            ai_model_used: 'claude-sonnet-4-5',
             cost_usd: 0.01,
           });
         } catch (error) {
@@ -354,7 +354,7 @@ async function runStage2() {
             generation_approach: 'aggregated',
             duration_seconds: duration,
             error_message: (error as Error).message,
-            ai_model_used: 'claude-3-5-sonnet',
+            ai_model_used: 'claude-sonnet-4-5',
           });
         }
       }

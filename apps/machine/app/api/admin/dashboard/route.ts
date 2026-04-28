@@ -12,11 +12,7 @@ function getSupabase() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
 }
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
 const adminToken = process.env.ADMIN_TOKEN || 'default-insecure-token';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 interface DashboardData {
   timestamp: string;

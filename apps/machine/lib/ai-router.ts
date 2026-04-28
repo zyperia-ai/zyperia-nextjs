@@ -8,7 +8,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 
-export type AIModel = 'claude-3-5-sonnet' | 'gemini-flash';
+export type AIModel = 'claude-sonnet-4-5' | 'gemini-flash';
 
 export interface AIResponse {
   content: string;
@@ -32,7 +32,7 @@ export async function generateWithClaude(
 
   try {
     const message = await anthropic.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
+      model: 'claude-sonnet-4-5',
       max_tokens: 4096,
       system: systemPrompt,
       messages: [
@@ -46,14 +46,14 @@ export async function generateWithClaude(
     const duration = Math.round((Date.now() - startTime) / 1000);
     const content = message.content[0].type === 'text' ? message.content[0].text : '';
 
-    // Rough cost estimation: Claude 3.5 Sonnet is ~$3/MTok input, $15/MTok output
+    // Rough cost estimation: Claude Sonnet 4.5 is ~$3/MTok input, $15/MTok output
     const inputTokens = message.usage.input_tokens;
     const outputTokens = message.usage.output_tokens;
     const costUsd = (inputTokens * 3 + outputTokens * 15) / 1_000_000;
 
     return {
       content,
-      model: 'claude-3-5-sonnet',
+      model: 'claude-sonnet-4-5',
       costUsd,
       duration,
     };
