@@ -235,16 +235,17 @@ async function runStage1(appFilter?: string | null) {
 
                 const dynamicMatches = dynamicIndicators.filter(pattern => pattern.test(cleanText)).length
 
-                if (dynamicMatches >= 2) {
+                if (dynamicMatches >= 3) {
                   console.log(`✗ Rejeitada (página dinâmica, ${dynamicMatches} indicadores): ${url.slice(0, 60)}`)
                   continue
                 }
 
-                // Verifica se tem estrutura editorial mínima
-                const paragraphs = cleanText.split(/\n\n+/).filter(p => p.split(/\s+/).length > 50)
-
-                if (paragraphs.length < 3) {
-                  console.log(`✗ Rejeitada (sem estrutura editorial, ${paragraphs.length} parágrafos): ${url.slice(0, 60)}`)
+                // Verifica se tem conteúdo mínimo substancial
+                // (pelo menos 500 palavras já verificado acima)
+                // Verifica se não é uma lista de links apenas
+                const sentenceCount = (cleanText.match(/[.!?]+/g) || []).length
+                if (sentenceCount < 10) {
+                  console.log(`✗ Rejeitada (conteúdo insuficiente, ${sentenceCount} frases): ${url.slice(0, 60)}`)
                   continue
                 }
 
