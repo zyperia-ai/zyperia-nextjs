@@ -158,10 +158,35 @@ async function runStage1(appFilter?: string | null) {
           let articleFound = false
 
           if (extracted.sources && extracted.sources.length > 0) {
+            // Lista de domínios a rejeitar directamente
+            const rejectedDomains = [
+              'etherscan.io',
+              'bscscan.com',
+              'polygonscan.com',
+              'coinmarketcap.com',
+              'coingecko.com',
+              'tradingview.com',
+              'binance.com',
+              'coinbase.com',
+              'kraken.com',
+              'bybit.com',
+              'okx.com',
+              'dexscreener.com',
+              'dextools.io',
+            ]
+
             // Tenta fetch das primeiras 3 sources até encontrar conteúdo
             for (const url of extracted.sources.slice(0, 3)) {
               try {
                 if (!url || !url.startsWith('http')) continue
+
+                // Rejeita domínios bloqueados
+                const isRejectedDomain = rejectedDomains.some(domain => url.includes(domain))
+                if (isRejectedDomain) {
+                  console.log(`✗ Rejeitada (domínio bloqueado): ${url.slice(0, 60)}`)
+                  continue
+                }
+
                 const response = await fetch(url, {
                   headers: { 'User-Agent': 'ZyperiaBot/1.0' },
                   signal: AbortSignal.timeout(10000),
@@ -190,6 +215,36 @@ async function runStage1(appFilter?: string | null) {
 
                 if (wordCount > 4000) {
                   console.log(`✗ Rejeitada (${wordCount} palavras > 4000): ${url.slice(0, 60)}`)
+                  continue
+                }
+
+                // Rejeita páginas dinâmicas e de dados
+                const dynamicIndicators = [
+                  /\$[\d,]+\.\d{2}/g,           // preços como $2,293.77
+                  /gwei/gi,                      // taxas de gas
+                  /gas price/gi,
+                  /live price/gi,
+                  /price today/gi,
+                  /buy.*sell.*crypto/gi,
+                  /trade now/gi,
+                  /market cap.*volume/gi,
+                  /showing \d+ results/gi,
+                  /filter by/gi,
+                  /sort by/gi,
+                ]
+
+                const dynamicMatches = dynamicIndicators.filter(pattern => pattern.test(cleanText)).length
+
+                if (dynamicMatches >= 2) {
+                  console.log(`✗ Rejeitada (página dinâmica, ${dynamicMatches} indicadores): ${url.slice(0, 60)}`)
+                  continue
+                }
+
+                // Verifica se tem estrutura editorial mínima
+                const paragraphs = cleanText.split(/\n\n+/).filter(p => p.split(/\s+/).length > 50)
+
+                if (paragraphs.length < 3) {
+                  console.log(`✗ Rejeitada (sem estrutura editorial, ${paragraphs.length} parágrafos): ${url.slice(0, 60)}`)
                   continue
                 }
 

@@ -59,36 +59,38 @@ function generateSlug(title: string): string {
 
 function getSystemPrompt(contentType: string): string {
   if (contentType === 'tipo1') {
-    return `És um tradutor especializado. Traduz fielmente para português europeu.
-REGRAS ABSOLUTAS:
-- Traduz TODO o conteúdo da fonte — não omites nada
-- Preservas todos os factos, dados e números do original
-- Citas a fonte quando apresentas factos: "Segundo [fonte]..."
-- NUNCA inventas informação que não está na fonte
-- NUNCA acrescenta informação que não existe na fonte`
+    return `És um tradutor. Traduz o texto para português europeu.
+REGRAS:
+- Traduz frase a frase — não acrescenta nem remove nada
+- O artigo traduzido deve ter aproximadamente o mesmo número de palavras que o original
+- NUNCA acrescenta explicações, exemplos ou contexto novo
+- NUNCA expandes parágrafos — traduz apenas o que está escrito
+- Se o original tem 700 palavras, a tradução deve ter 650-750 palavras
+- Preservas todos os factos, dados e números exactamente como estão
+- NUNCA inventas informação que não está na fonte`
   }
 
   if (contentType === 'tipo2') {
-    return `És um tradutor e editor especializado. Traduz fielmente para português europeu.
-REGRAS ABSOLUTAS:
-- Traduz TODO o conteúdo — não omites nada
-- Preservas todos os factos, dados e números do original
-- Adaptas minimamente a estrutura de parágrafos para não ser plágio
-  (reordena parágrafos, parafraseia frases mantendo o mesmo significado)
-- NUNCA mencionas o canal, criador ou newsletter de origem
-- NUNCA inventas informação que não está na fonte
-- NUNCA acrescenta informação que não existe na fonte`
+    return `És um tradutor. Traduz o texto para português europeu.
+REGRAS:
+- Traduz frase a frase — não acrescenta nem remove nada
+- O artigo traduzido deve ter aproximadamente o mesmo número de palavras que o original
+- NUNCA acrescenta explicações, exemplos ou contexto novo
+- NUNCA expandes parágrafos — traduz apenas o que está escrito
+- Se o original tem 700 palavras, a tradução deve ter 650-750 palavras
+- Preservas todos os factos, dados e números exactamente como estão
+- NUNCA inventas informação que não está na fonte`
   }
 
-  return `És um tradutor e editor especializado. Traduz fielmente para português europeu.
-REGRAS ABSOLUTAS:
-- Traduz TODO o conteúdo — não omites nada
-- Preservas todos os factos, dados e números do original
-- Adaptas minimamente a estrutura de parágrafos para não ser plágio
-  (reordena parágrafos, parafraseia frases mantendo o mesmo significado)
-- NUNCA mencionas ou citas as fontes EN originais
-- NUNCA inventas informação que não está na fonte
-- NUNCA acrescenta informação que não existe na fonte`
+  return `És um tradutor. Traduz o texto para português europeu.
+REGRAS:
+- Traduz frase a frase — não acrescenta nem remove nada
+- O artigo traduzido deve ter aproximadamente o mesmo número de palavras que o original
+- NUNCA acrescenta explicações, exemplos ou contexto novo
+- NUNCA expandes parágrafos — traduz apenas o que está escrito
+- Se o original tem 700 palavras, a tradução deve ter 650-750 palavras
+- Preservas todos os factos, dados e números exactamente como estão
+- NUNCA inventas informação que não está na fonte`
 }
 
 // ── Prompt por chunk ──────────────────────────────────────────────────────────
