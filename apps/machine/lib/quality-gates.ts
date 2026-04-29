@@ -37,83 +37,67 @@ export interface ArticlePayload {
 export async function camada1AutoReview(article: ArticlePayload): Promise<QualityResult> {
   const contentSnippet = article.content.slice(0, 4000)
 
-  const promptCetico = `És o Céptico — persona de revisão editorial do ZYPERIA.
-A tua função é verificar a integridade do artigo.
+  const prompttradutor = `És o TRADUTOR — persona de revisão editorial do ZYPERIA.
+A tua função é verificar a qualidade da tradução para português.
 
 ARTIGO (título: "${article.title}"):
 ${contentSnippet}
 
-Verifica:
-- O artigo vai além do óbvio ou é conteúdo genérico que existe em milhares de blogs?
-- Há afirmações que claramente não têm base factual?
-- Para artigos de breaking news: o artigo inventa detalhes que a fonte não confirmou?
-- Para artigos de transformação: a transformação é real ou é apenas paráfrase?
-- Os factos apresentados são plausíveis e coerentes entre si?
+Avalia APENAS:
+1. FIDELIDADE — A tradução preserva fidedignamente os factos, dados e números do original?
+   - Nenhum facto foi omitido ou distorcido?
+   - Os números e estatísticas estão correctos?
+   - O significado é fiel ao original?
+
+2. FLUÊNCIA — O português é fluente, natural e legível?
+   - Não parece tradução automática óbvia?
+   - A prosa flui naturalmente?
+   - O vocabulário é apropriado e consistente?
+
+NÃO avalies: contexto lusófono, exemplos locais, originalidade da adaptação, ângulo único.
 
 Responde APENAS com JSON válido. Usa aspas duplas. Sem caracteres especiais nas strings.
 Formato exacto:
-{"scores":{"integridade":0,"originalidade":0},"issues":["issue 1","issue 2"]}
+{"scores":{"fidelidade":0,"fluencia":0},"issues":["issue 1","issue 2"]}
 Substitui 0 pelos scores reais (1-10). Maximum 3 issues curtos (menos de 80 caracteres cada).
 Sem aspas simples, sem hífens duplos, sem caracteres especiais dentro das strings dos issues.
 
-Score 7+ só se o artigo passa genuinamente nestes critérios.`
+Score >= 6 é aprovação para tradução. Scores < 6 só se houver problemas reais.`
 
-  const promptLeitor = `És o Leitor — persona de revisão editorial do ZYPERIA.
-Representas um lusófono entre 25-45 anos (Portugal, Brasil, Angola, Cabo Verde).
-Não és especialista no tema. Tens educação média e curiosidade genuína.
+  const promptEditor = `És o EDITOR — persona de revisão editorial do ZYPERIA.
+A tua função é verificar a estrutura e coerência do artigo.
 
 ARTIGO (título: "${article.title}"):
 ${contentSnippet}
 
-Verifica:
-- Consegues beneficiar deste artigo sem conhecimento prévio do tema?
-- Todo o jargão técnico está explicado na primeira vez que aparece?
-- O artigo menciona como o tema se aplica especificamente ao teu país lusófono?
-- A linguagem é clara e directa, sem ser condescendente?
-- O artigo tem uma conclusão clara com algo que podes fazer hoje?
+Avalia APENAS:
+1. COMPLETUDE — O artigo tem estrutura clara de início, meio e fim?
+   - Tem introdução que contextualiza o tema?
+   - Tem desenvolvimento com ideias conectadas?
+   - Tem conclusão que encerra o artigo?
+   - Os parágrafos estão completos (não cortados no meio)?
+
+2. COERÊNCIA — Os factos são consistentes e lógicos entre si?
+   - Não há contradições internas?
+   - O argumento flui logicamente?
+   - Os factos citados são plausíveis?
+
+NÃO avalies: contexto lusófono, adaptação local, tom criativo, originalidade da escrita.
 
 Responde APENAS com JSON válido. Usa aspas duplas. Sem caracteres especiais nas strings.
 Formato exacto:
-{"scores":{"acessibilidade":0,"contexto_lusofono":0},"issues":["issue 1","issue 2"]}
+{"scores":{"completude":0,"coerencia":0},"issues":["issue 1","issue 2"]}
 Substitui 0 pelos scores reais (1-10). Maximum 3 issues curtos (menos de 80 caracteres cada).
 Sem aspas simples, sem hífens duplos, sem caracteres especiais dentro das strings dos issues.
 
-Score 7+ só se um lusófono iniciante consegue genuinamente beneficiar do artigo.`
+Score >= 6 é aprovação para estrutura. Scores < 6 só se houver problemas reais.`
 
-  const promptEditor = `És o Editor — persona de revisão editorial do ZYPERIA.
-Tens 15 anos de experiência em media digital lusófona.
-Sabes exactamente o que separa conteúdo editorial de qualidade de conteúdo medíocre.
-
-ARTIGO (título: "${article.title}"):
-${contentSnippet}
-APP: ${article.app_name}
-
-Verifica:
-- A voz é consistente e autêntica — soa como um editor sénior lusófono, não como IA genérica?
-- A transformação é suficiente — ou é óbvio que veio de uma fonte anglófona?
-- O ângulo lusófono é genuinamente diferente e acrescenta valor que a fonte original não tem?
-- O artigo está completo — introdução, desenvolvimento e conclusão sem secções a meio?
-- O título promete algo que o artigo cumpre completamente?
-
-Responde APENAS com JSON válido. Usa aspas duplas. Sem caracteres especiais nas strings.
-Formato exacto:
-{"scores":{"voz_editorial":0,"transformacao":0},"issues":["issue 1","issue 2"]}
-Substitui 0 pelos scores reais (1-10). Maximum 3 issues curtos (menos de 80 caracteres cada).
-Sem aspas simples, sem hífens duplos, sem caracteres especiais dentro das strings dos issues.
-
-Score 7+ só se publicarias isto com o teu nome como editor sénior.`
-
-  // Correr as 3 personas em paralelo
-  const [resCetico, resLeitor, resEditor] = await Promise.all([
+  // Correr as 2 personas em paralelo
+  const [resTradutor, resEditor] = await Promise.all([
     anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 512,
-      messages: [{ role: 'user', content: promptCetico }],
-    }),
-    anthropic.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 512,
-      messages: [{ role: 'user', content: promptLeitor }],
+      messages: [{ role: 'user', content: prompttradutor }],
     }),
     anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
@@ -122,10 +106,9 @@ Score 7+ só se publicarias isto com o teu nome como editor sénior.`
     }),
   ])
 
-  const parseResponse = (res: typeof resCetico): { scores: Record<string, number>; issues: string[] } | null => {
+  const parseResponse = (res: typeof resTradutor): { scores: Record<string, number>; issues: string[] } | null => {
     const raw = res.content[0].type === 'text' ? res.content[0].text : ''
     try {
-      // Extrair o primeiro bloco JSON válido da resposta
       const jsonMatch = raw.match(/\{[\s\S]*\}/)
       if (!jsonMatch) {
         console.error('[Quality] Nenhum JSON encontrado no raw:', raw.substring(0, 100))
@@ -138,12 +121,11 @@ Score 7+ só se publicarias isto com o teu nome como editor sénior.`
     }
   }
 
-  const parsedCetico = parseResponse(resCetico)
-  const parsedLeitor = parseResponse(resLeitor)
+  const parsedTradutor = parseResponse(resTradutor)
   const parsedEditor = parseResponse(resEditor)
 
   // Se alguma persona falhou a parsear, rejeitar
-  if (!parsedCetico || !parsedLeitor || !parsedEditor) {
+  if (!parsedTradutor || !parsedEditor) {
     return {
       approved: false,
       layer: 1,
@@ -152,21 +134,19 @@ Score 7+ só se publicarias isto com o teu nome como editor sénior.`
     }
   }
 
-  // Consolidar scores e issues das 3 personas
+  // Consolidar scores e issues das 2 personas
   const allScores: Record<string, number> = {
-    ...parsedCetico.scores,
-    ...parsedLeitor.scores,
+    ...parsedTradutor.scores,
     ...parsedEditor.scores,
   }
 
   const allIssues: string[] = [
-    ...parsedCetico.issues,
-    ...parsedLeitor.issues,
+    ...parsedTradutor.issues,
     ...parsedEditor.issues,
   ]
 
   const minScore = Math.min(...Object.values(allScores))
-  const approved = minScore >= 7
+  const approved = minScore >= 6
 
   return {
     approved,

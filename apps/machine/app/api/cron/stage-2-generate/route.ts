@@ -155,7 +155,9 @@ REGRAS:
 - Garante transicoes naturais entre partes
 - Remove repeticoes acidentais se existirem
 - Garante exactamente 1 titulo H1 (# Titulo) no inicio do artigo
-- Termina com conclusao clara${citationNote}
+- O artigo DEVE terminar com uma conclusao completa
+- NUNCA terminas a meio de uma frase ou secção
+- Se o conteudo fonte terminar a meio, escreve uma conclusao natural baseada no que foi traduzido${citationNote}
 
 Escreve o artigo final completo.`
 }
