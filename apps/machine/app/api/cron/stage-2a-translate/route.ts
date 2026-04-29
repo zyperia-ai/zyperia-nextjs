@@ -483,7 +483,7 @@ export async function GET(request: Request) {
         scramble_applied: false,
         status: 'translated',
         created_at: new Date().toISOString(),
-      })
+      }, { onConflict: 'research_id,chunk_index' })
 
       if (upsertError) {
         console.error(`[Stage 2a] Upsert error for chunk ${i + 1}: ${upsertError.message}`)
