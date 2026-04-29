@@ -479,26 +479,41 @@ async function processContent(
     const translated = await translateChunk(
       chunks[i], i, chunks.length, topic, contentType, sourceRef, appId, previousContext
     )
-    if (!translated || translated.length < 50) {
-      throw new Error(`Chunk ${i + 1} devolveu conteudo insuficiente`)
+
+    // Salvaguarda chunk truncado: se output < 30% do input em palavras, pede retry uma vez
+    const inputWords = chunks[i].split(/\s+/).filter(w => w.length > 0).length
+    const outputWords = translated ? translated.split(/\s+/).filter(w => w.length > 0).length : 0
+    const ratio = outputWords / Math.max(inputWords, 1)
+
+    let finalTranslated = translated
+    if (!translated || translated.length < 50 || ratio < 0.3) {
+      console.warn(`Chunk ${i + 1} suspeito (${outputWords}/${inputWords} palavras, ratio ${ratio.toFixed(2)}) — retry`)
+      const retry = await translateChunk(
+        chunks[i], i, chunks.length, topic, contentType, sourceRef, appId, previousContext
+      )
+      if (!retry || retry.length < 50) {
+        throw new Error(`Chunk ${i + 1} devolveu conteudo insuficiente após retry`)
+      }
+      finalTranslated = retry
     }
-    translatedParts.push(translated)
-    previousContext = translated
-    console.log(`Chunk ${i + 1} traduzido: ${translated.length} chars`)
+
+    // Aplicar scramble nível 6 ao chunk individual
+    console.log(`A aplicar scramble ao chunk ${i + 1}/${chunks.length}...`)
+    const scrambleResult = await scrambleArticle(finalTranslated)
+    const scrambledChunk = scrambleResult.output
+    console.log(`Chunk ${i + 1} scramble: ${scrambleResult.scrambleApplied ? 'aplicado ✓' : `skipped (${scrambleResult.reason})`}`)
+
+    translatedParts.push(scrambledChunk)
+    previousContext = scrambledChunk
+    console.log(`Chunk ${i + 1} processado: ${scrambledChunk.length} chars`)
   }
 
   console.log(`Fazendo merge de ${translatedParts.length} parte(s)...`)
   const finalContent = await mergeChunks(translatedParts, contentType, sourceRef)
   console.log(`Artigo final: ${finalContent.length} chars`)
 
-  // Aplicar scramble nível 6
-  console.log(`A aplicar scramble nível 6...`)
-  const scrambleResult = await scrambleArticle(finalContent)
-  const articleContent = scrambleResult.output
-  console.log(`Scramble: ${scrambleResult.scrambleApplied ? 'aplicado ✓' : `skipped (${scrambleResult.reason})`}`)
-
-  // Resto do processo continua, mas usar articleContent em vez de finalContent
-  const titleMatch = articleContent.match(/^#\s+(.+)$/m)
+  // Scramble já foi aplicado por chunk; finalContent é o output final
+  const titleMatch = finalContent.match(/^#\s+(.+)$/m)
   const title = titleMatch ? titleMatch[1].trim() : topic
   const slug = generateSlug(title)
 
@@ -508,7 +523,7 @@ async function processContent(
       app_id: appId,
       title,
       slug,
-      content: articleContent,
+      content: finalContent,
       status: 'draft',
       source_url: sourceUrl || null,
       created_at: new Date().toISOString(),
