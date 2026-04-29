@@ -232,11 +232,38 @@ function extractNumbers(text: string): string[] {
 }
 
 function extractProperNouns(text: string): string[] {
+  // captura sequências de palavras com inicial maiúscula, EXCLUINDO início de frase
+  // heurística: nome próprio = palavra com maiúscula que tenha pelo menos 4 chars,
+  // OU duas+ palavras com maiúscula consecutivas
   const candidates = new Set<string>()
-  const matches = Array.from(text.matchAll(/(?<=[a-z]\s|[a-z][.,]\s)([A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+)*)/g))
-  for (const m of matches) {
-    candidates.add(m[1].trim())
+
+  // Stop-words que aparecem em início de frase (PT-PT)
+  const sentenceStarters = new Set([
+    'Por', 'Na', 'No', 'Nos', 'Nas', 'Em', 'Para', 'Com', 'De', 'Da', 'Do', 'Dos', 'Das',
+    'A', 'O', 'As', 'Os', 'Um', 'Uma', 'Uns', 'Umas',
+    'Isto', 'Isso', 'Aquilo', 'Este', 'Esta', 'Estes', 'Estas',
+    'Esse', 'Essa', 'Esses', 'Essas', 'Aquele', 'Aquela',
+    'Mas', 'Se', 'Ou', 'E', 'Quando', 'Onde', 'Como', 'Porque', 'Porquê',
+    'Hoje', 'Ontem', 'Amanhã', 'Depois', 'Antes', 'Agora',
+    'Embora', 'Ainda', 'Já', 'Não', 'Sim', 'Talvez',
+    'Adicionalmente', 'Além', 'Ap', 'Cortar', 'Mais',
+  ])
+
+  // Sequências de 2+ palavras consecutivas em maiúscula (quase sempre nomes próprios)
+  const multiWord = Array.from(text.matchAll(/\b([A-ZÀ-Ý][a-zà-ÿ]+(?:\s+[A-ZÀ-Ý][a-zà-ÿ]+)+)\b/g))
+  for (const m of multiWord) candidates.add(m[1].trim())
+
+  // Palavras isoladas em maiúscula com 4+ chars que NÃO são stop-words
+  const single = Array.from(text.matchAll(/\b([A-ZÀ-Ý][a-zà-ÿ]{3,})\b/g))
+  for (const m of single) {
+    const word = m[1].trim()
+    if (!sentenceStarters.has(word)) candidates.add(word)
   }
+
+  // Acrónimos (BTC, ETF, SEC, etc.)
+  const acronyms = Array.from(text.matchAll(/\b([A-Z]{2,})\b/g))
+  for (const m of acronyms) candidates.add(m[1].trim())
+
   return Array.from(candidates)
 }
 
