@@ -481,7 +481,7 @@ export async function GET(request: Request) {
         scramble_applied: false,
         status: 'translated',
         created_at: new Date().toISOString(),
-      }, { onConflict: 'research_id,chunk_index' })
+      })
 
       previousContext = finalTranslated
       processedCount++
