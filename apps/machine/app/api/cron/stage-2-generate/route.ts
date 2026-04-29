@@ -45,29 +45,34 @@ async function generateArticleContent(
     let userPrompt = '';
 
     if (approach === 'original') {
+      const factsSection = researchData?.keyFacts?.length > 0
+        ? `FACTOS VERIFICADOS PARA USAR NO ARTIGO:
+${researchData.keyFacts.map((f: string, i: number) => `${i + 1}. ${f}`).join('\n')}
+
+CONTEXTO LUSÓFONO IDENTIFICADO:
+${researchData.lusophoneContext || 'Adapta o conteúdo para Portugal, Brasil, Angola, Cabo Verde e Moçambique.'}`
+        : `Adapta o conteúdo para o mercado lusófono (Portugal, Brasil, Angola, Cabo Verde, Moçambique).`
+
       userPrompt = `Escreve um artigo completo sobre: "${topic}"
 
-ANTES DE COMEÇAR: planeia mentalmente a estrutura completa do artigo.
-Só começa a escrever quando tens a certeza que consegues completar todas as secções.
+${factsSection}
 
-ESTRUTURA OBRIGATÓRIA:
-1. Título H1 — claro, específico, em português, sem sufixos em inglês
-2. Aviso/disclaimer obrigatório (se crypto ou investimento)
-3. Introdução (150 palavras) — apresenta o problema e o que o leitor vai aprender
-4. Secção 1 H2 — contexto e fundamentos com jargão explicado
-5. Secção 2 H2 — aplicação prática com exemplos concretos
-6. Secção 3 H2 — erros comuns ou o que evitar
-7. Secção 4 H2 — ferramentas, recursos ou próximos passos
-8. Conclusão H2 (100 palavras) — síntese + uma acção concreta para hoje
-9. Meta description (máx 155 caracteres, começa com a keyword principal)
-10. Keywords: 5 termos relevantes separados por vírgula
+REGRAS FUNDAMENTAIS:
+- Idioma: português acessível ao mercado lusófono global
+- USA APENAS os factos verificados fornecidos acima — nunca inventes dados
+- Se não tens facto verificado sobre algo, usa linguagem qualitativa: tipicamente, geralmente, na maioria dos casos
+- Cada termo técnico DEVE ser explicado na primeira vez que aparece
+- NUNCA deixes uma secção incompleta
 
-REGRA CRÍTICA: Cada secção que começas DEVE ser terminada completamente.
-É melhor ter 3 secções perfeitas do que 5 secções onde as últimas ficam incompletas.
-O artigo deve ter entre 1000 e 1500 palavras — qualidade acima de quantidade.
+ESTRUTURA OBRIGATÓRIA (5 partes, todas completas):
+1. Título H1 em português — claro, específico, sem sufixos em inglês
+2. Introdução — o problema real e o que o leitor vai aprender
+3. Desenvolvimento — 3 secções H2 com factos verificados, exemplos concretos, jargão explicado
+4. Conclusão completa — síntese + uma acção concreta que o leitor pode fazer hoje
+5. Meta description (máx 155 caracteres) + 5 keywords separadas por vírgula
 
-Escreve em português de forma acessível ao mercado lusófono global
-(Portugal, Brasil, Angola, Cabo Verde, Moçambique).`;
+ANTES DE TERMINAR: confirma que cada uma das 5 partes está completa e que usaste apenas factos verificados.
+Formata em markdown válido.`;
     } else if (approach === 'transformed') {
       userPrompt = `Transform and improve an article about: "${topic}"
 

@@ -7,6 +7,7 @@ export const fetchCache = 'force-no-store'
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { searchAndExtractWithClaude } from '@/lib/ai-router';
 
 function getSupabase() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
@@ -31,13 +32,7 @@ async function runStage1() {
   console.log(`Started at: ${new Date().toISOString()}`);
 
   try {
-    console.log('Tentando conectar ao Supabase...')
-    console.log('SUPABASE_URL presente:', !!process.env.SUPABASE_URL)
-    console.log('SUPABASE_KEY presente:', !!process.env.SUPABASE_KEY)
-
-    console.log('ENV CHECK:', !!process.env.SUPABASE_URL, !!process.env.SUPABASE_KEY)
     const { data: apps, error: appsError } = await getSupabase().from('theme_config').select('app_id, articles_per_day');
-    console.log('theme_config result:', apps?.length, appsError?.message)
 
     for (const app of apps || []) {
       console.log(`\nSelecting topics for: ${app.app_id} (${app.articles_per_day} articles)`);
@@ -71,14 +66,22 @@ async function runStage1() {
         const startTime = Date.now();
 
         try {
+          console.log(`Researching: "${topic.title}"...`)
+
+          const extracted = await searchAndExtractWithClaude(topic.title, app.app_id)
+
           const researchData = {
             topic: topic.title,
             keywords: topic.title.split(' '),
             search_volume: topic.search_volume,
-            recent_news: [],
-            official_sources: [],
+            sources: extracted.sources,
+            keyFacts: extracted.keyFacts,
+            lusophoneContext: extracted.lusophoneContext,
+            searchQueries: extracted.searchQueries,
             updated_at: new Date().toISOString(),
-          };
+          }
+
+          console.log(`Found ${extracted.sources.length} sources, ${extracted.keyFacts.length} key facts`)
 
           // Get competitive analysis from Stage 0
           const { data: competitiveData } = await getSupabase()

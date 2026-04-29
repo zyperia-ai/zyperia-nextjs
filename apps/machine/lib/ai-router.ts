@@ -68,6 +68,112 @@ export async function generateWithClaude(
   }
 }
 
+export async function searchAndExtractWithClaude(
+  topic: string,
+  appId: string
+): Promise<{
+  sources: string[]
+  keyFacts: string[]
+  lusophoneContext: string
+  searchQueries: string[]
+}> {
+  const searchQueries = buildSearchQueries(topic, appId)
+
+  const systemPrompt = `És um investigador editorial do ZYPERIA — media publisher lusófono global.
+A tua função é encontrar os melhores artigos em inglês sobre um tópico
+e extrair os factos mais relevantes para transformar em conteúdo lusófono de qualidade.
+
+REGRAS:
+- Procura artigos de fontes credíveis (publicações especializadas, não blogs genéricos)
+- Extrai apenas factos verificáveis — nunca inventes dados
+- Identifica o que é único para o mercado lusófono (Portugal, Brasil, Angola, Cabo Verde, Moçambique)
+- Foca em conteúdo que ainda não existe em português de qualidade`
+
+  const userPrompt = `Pesquisa informação sobre: "${topic}"
+
+Usa as seguintes queries de pesquisa:
+${searchQueries.map((q, i) => `${i + 1}. ${q}`).join('\n')}
+
+Após pesquisar, extrai e devolve em JSON:
+{
+  "sources": ["URL ou título dos melhores artigos encontrados"],
+  "keyFacts": [
+    "Facto verificável 1 com contexto",
+    "Facto verificável 2 com contexto",
+    "Facto verificável 3 com contexto"
+  ],
+  "lusophoneContext": "O que é único/relevante sobre este tema para Portugal, Brasil, Angola e outros países lusófonos que os artigos em inglês não cobrem",
+  "searchQueries": ["queries usadas"]
+}
+
+IMPORTANTE: Se não encontrares factos verificáveis sobre algo, omite-o.
+Nunca inventas dados. Prefere menos factos sólidos a muitos factos duvidosos.`
+
+  try {
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-4-5',
+      max_tokens: 4096,
+      tools: [
+        {
+          type: 'web_search_20250305' as any,
+          name: 'web_search',
+        } as any,
+      ],
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userPrompt }],
+    })
+
+    const textContent = response.content
+      .filter((block: any) => block.type === 'text')
+      .map((block: any) => block.text)
+      .join('')
+
+    const jsonMatch = textContent.match(/\{[\s\S]*\}/)
+    if (jsonMatch) {
+      const parsed = JSON.parse(jsonMatch[0])
+      return {
+        sources: parsed.sources || [],
+        keyFacts: parsed.keyFacts || [],
+        lusophoneContext: parsed.lusophoneContext || '',
+        searchQueries: parsed.searchQueries || searchQueries,
+      }
+    }
+  } catch (error) {
+    console.error('[AI Router] Web search error:', error)
+  }
+
+  return {
+    sources: [],
+    keyFacts: [],
+    lusophoneContext: '',
+    searchQueries,
+  }
+}
+
+function buildSearchQueries(topic: string, appId: string): string[] {
+  const baseQueries = [
+    `${topic} explained 2025 2026`,
+    `${topic} guide tutorial`,
+  ]
+
+  const appQueries: Record<string, string[]> = {
+    crypto: [
+      `${topic} site:coindesk.com OR site:theblock.co OR site:decrypt.co`,
+      `${topic} Portugal Brazil regulation 2025 2026`,
+    ],
+    intelligence: [
+      `${topic} site:techcrunch.com OR site:venturebeat.com OR site:huggingface.co`,
+      `${topic} GDPR LGPD Europe Brazil 2025 2026`,
+    ],
+    onlinebiz: [
+      `${topic} site:indiehackers.com OR site:failory.com OR site:starterstory.com`,
+      `${topic} Portugal Brazil online business 2025 2026`,
+    ],
+  }
+
+  return [...baseQueries, ...(appQueries[appId] || [])]
+}
+
 /**
  * Route content generation based on task type
  */
