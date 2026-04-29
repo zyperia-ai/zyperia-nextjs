@@ -169,20 +169,35 @@ async function runStage1(appFilter?: string | null) {
                 if (!response.ok) continue
                 const html = await response.text()
                 // Extrai texto limpo do HTML
-                const text = html
+                const cleanText = html
                   .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
                   .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
                   .replace(/<[^>]+>/g, ' ')
+                  .replace(/&amp;/g, '&')
+                  .replace(/&lt;/g, '<')
+                  .replace(/&gt;/g, '>')
+                  .replace(/&nbsp;/g, ' ')
+                  .replace(/&#\d+;/g, ' ')
                   .replace(/\s+/g, ' ')
                   .trim()
-                  .slice(0, 8000)
-                if (text.length > 500) {
-                  sourceContent = text
-                  sourceUrl = url
-                  articleFound = true
-                  console.log(`✓ Fetched content from: ${url.slice(0, 60)} (${text.length} chars)`)
-                  break
+
+                const wordCount = cleanText.split(/\s+/).filter((w: string) => w.length > 0).length
+
+                if (wordCount < 500) {
+                  console.log(`✗ Rejeitada (${wordCount} palavras < 500): ${url.slice(0, 60)}`)
+                  continue
                 }
+
+                if (wordCount > 4000) {
+                  console.log(`✗ Rejeitada (${wordCount} palavras > 4000): ${url.slice(0, 60)}`)
+                  continue
+                }
+
+                sourceContent = cleanText
+                sourceUrl = url
+                articleFound = true
+                console.log(`✓ Aceite (${wordCount} palavras): ${url.slice(0, 60)}`)
+                break
               } catch (e) {
                 console.log(`✗ Failed to fetch: ${url.slice(0, 60)}`)
               }

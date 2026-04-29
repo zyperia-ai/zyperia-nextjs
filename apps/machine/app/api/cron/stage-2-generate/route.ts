@@ -1,481 +1,373 @@
-﻿export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
+export const maxDuration = 300
 
-/**
- * Vercel Cron Job - Stage 2: Content Generation
- * Runs daily at 02:00 UTC
- *
- * Trigger: https://your-domain.vercel.app/api/cron/stage-2-generate
- *
- * Configure in vercel.json:
- * {
- *   "crons": [{
- *     "path": "/api/cron/stage-2-generate",
- *     "schedule": "0 2 * * *"
- *   }]
- * }
- */
-
-import { createClient } from '@supabase/supabase-js';
-import { generateWithClaude } from '@/lib/ai-router';
+import { NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
+import Anthropic from '@anthropic-ai/sdk'
+import { splitIntoChunks } from '@/lib/chunker'
 
 function getSupabase() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
 }
 
-async function getNexusArticleLength(): Promise<{ min: number; max: number }> {
-  const { data } = await getSupabase()
-    .from('nexus_config')
-    .select('config_value')
-    .eq('config_key', 'article_length')
-    .single()
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
-  return (data?.config_value as { min: number; max: number }) ?? { min: 800, max: 3000 }
+// ── Helper: fetch do artigo completo ──────────────────────────────────────────
+
+async function fetchArticleContent(url: string): Promise<string> {
+  try {
+    const response = await fetch(url, {
+      headers: { 'User-Agent': 'ZyperiaBot/1.0' },
+      signal: AbortSignal.timeout(10000),
+    })
+    if (!response.ok) return ''
+    const html = await response.text()
+    const clean = html
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&#\d+;/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+    return clean
+  } catch {
+    return ''
+  }
 }
 
-async function generateArticleContent(
-  topic: string,
-  approach: string,
-  systemPrompt: string,
-  researchData: any,
-  competitorUrl?: string,
-  articleLength: { min: number; max: number } = { min: 800, max: 3000 }
-) {
-  try {
-    let userPrompt = '';
+// ── Helper: gera slug seguro com fallback ─────────────────────────────────────
 
-    if (approach === 'original') {
-      const contentType = researchData?.content_type || 'tipo3'
+function generateSlug(title: string): string {
+  const slug = title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 80)
+  return slug || `artigo-${Date.now()}`
+}
 
-      if (!researchData?.articleFound || !researchData?.sourceContent) {
-        throw new Error(`Sem conteúdo para processar — a saltar "${topic}"`)
-      }
+// ── System prompts por tipo ───────────────────────────────────────────────────
 
-      if (contentType === 'tipo1') {
-        // Breaking news — adapta e cita a fonte
-        userPrompt = `Tens esta notícia breaking de uma fonte primária (${researchData.sourceUrl}):
-
----NOTÍCIA ORIGINAL---
-${researchData.sourceContent.slice(0, 2000)}
----FIM---
-
-Cria um artigo de notícia para o mercado lusófono:
-
-OBRIGATÓRIO:
-- Cita sempre a fonte: "Segundo [nome da fonte]..." ou "De acordo com [fonte]..."
-- Preserva todos os factos, números e datas da notícia original
-- Adiciona contexto: o que significa isto para Portugal, Brasil, Angola?
-- Título diferente mas que capture a essência da notícia
-- Tom jornalístico, factual, sem especulação
-
-ESTRUTURA:
-1. Título H1 em português
-2. Lead (50 palavras) — o facto principal
-3. Desenvolvimento (300 palavras) — contexto e implicações lusófonas
-4. Citação da fonte
-5. Meta description (máx 155 chars) + 5 keywords
-
-Máximo 500 palavras. Factual e verificável.`
-
-      } else if (contentType === 'tipo2') {
-        // YouTube — transforma completamente sem citar
-        userPrompt = `Tens esta transcrição de um vídeo YouTube sobre: "${topic}"
-
----TRANSCRIÇÃO---
-${researchData.sourceContent.slice(0, 6000)}
----FIM---
-
-Transforma em artigo completo para o mercado lusófono:
-
+function getSystemPrompt(contentType: string): string {
+  if (contentType === 'tipo1') {
+    return `És um tradutor especializado. Traduz fielmente para português europeu.
 REGRAS ABSOLUTAS:
-- NUNCA menciones o canal, o criador ou o vídeo original
-- Transforma completamente — novo título, nova estrutura, nova voz
-- Preserva os factos, dados e insights do vídeo
-- Adiciona contexto lusófono (PT/BR/AO) que o vídeo não tem
-- Explica todo o jargão técnico na primeira menção
+- Traduz TODO o conteúdo da fonte — não omites nada
+- Preservas todos os factos, dados e números do original
+- Citas a fonte quando apresentas factos: "Segundo [fonte]..."
+- NUNCA inventas informação que não está na fonte
+- NUNCA acrescenta informação que não existe na fonte`
+  }
 
-ESTRUTURA (5 partes obrigatórias):
-1. Título H1 em português — irreconhecível face ao vídeo
-2. Introdução (150 palavras)
-3. Desenvolvimento: 3 secções H2
-4. Conclusão completa (100 palavras)
-5. Meta description + 5 keywords
+  if (contentType === 'tipo2') {
+    return `És um tradutor e editor especializado. Traduz fielmente para português europeu.
+REGRAS ABSOLUTAS:
+- Traduz TODO o conteúdo — não omites nada
+- Preservas todos os factos, dados e números do original
+- Adaptas minimamente a estrutura de parágrafos para não ser plágio
+  (reordena parágrafos, parafraseia frases mantendo o mesmo significado)
+- NUNCA mencionas o canal, criador ou newsletter de origem
+- NUNCA inventas informação que não está na fonte
+- NUNCA acrescenta informação que não existe na fonte`
+  }
 
-Máximo 1200 palavras. Irreconhecível face ao original.`
+  return `És um tradutor e editor especializado. Traduz fielmente para português europeu.
+REGRAS ABSOLUTAS:
+- Traduz TODO o conteúdo — não omites nada
+- Preservas todos os factos, dados e números do original
+- Adaptas minimamente a estrutura de parágrafos para não ser plágio
+  (reordena parágrafos, parafraseia frases mantendo o mesmo significado)
+- NUNCA mencionas ou citas as fontes EN originais
+- NUNCA inventas informação que não está na fonte
+- NUNCA acrescenta informação que não existe na fonte`
+}
 
-      } else {
-        // Evergreen (tipo3) — traduz e adapta artigo EN
-        userPrompt = `Tens este artigo em inglês (${researchData.sourceUrl || 'fonte verificada'}):
+// ── Prompt por chunk ──────────────────────────────────────────────────────────
 
----ARTIGO ORIGINAL---
-${researchData.sourceContent.slice(0, 4000)}
+function getChunkPrompt(
+  chunk: string,
+  chunkIndex: number,
+  totalChunks: number,
+  topic: string,
+  contentType: string,
+  sourceRef: string,
+  previousContext: string
+): string {
+  const isFirst = chunkIndex === 0
+  const isLast = chunkIndex === totalChunks - 1
+  const position = totalChunks > 1
+    ? `PARTE ${chunkIndex + 1} DE ${totalChunks}`
+    : 'CONTEUDO COMPLETO'
+
+  const citationLine = contentType === 'tipo1' && sourceRef
+    ? `Quando apresentas factos usa: "Segundo ${sourceRef}..."`
+    : ''
+
+  const structureLine = isFirst
+    ? `Comeca com titulo em portugues (# Titulo) seguido do corpo do artigo.`
+    : `Continua directamente — nao repetes titulo nem introducao.`
+
+  const closingLine = isLast
+    ? `Termina com uma conclusao natural que encerra o artigo.`
+    : `Termina no fim de um paragrafo completo. NAO escreves conclusao.`
+
+  const contextLine = previousContext
+    ? `\nCONTEXTO DA PARTE ANTERIOR (manter coerencia):\n${previousContext.slice(-300)}\n`
+    : ''
+
+  return `[${position}]
+Tema: ${topic}
+${citationLine}
+${contextLine}
+---CONTEUDO PARA TRADUZIR---
+${chunk}
 ---FIM---
 
-TRADUZ E ADAPTA para o mercado lusófono. Não criar do zero.
+${structureLine}
+${closingLine}
 
-PRESERVA obrigatoriamente:
-- Todos os factos, dados, percentagens e datas do original
-- A lógica e estrutura argumentativa
+Escreve directamente o texto traduzido.`
+}
 
-MUDA obrigatoriamente:
-- Título: completamente diferente, específico para lusófonos
-- Estrutura: reordena secções de forma diferente
-- Contexto: adapta para Portugal, Brasil, Angola, Cabo Verde, Moçambique
-- Jargão: explica cada termo técnico na primeira menção
+// ── Prompt de merge ───────────────────────────────────────────────────────────
 
-PROIBIDO ABSOLUTAMENTE:
-- Inventar nomes, estatísticas, casos de estudo fictícios
-- Acrescentar dados sem fonte verificável
+function getMergePrompt(parts: string[], contentType: string, sourceRef: string): string {
+  const citationNote = contentType === 'tipo1' && sourceRef
+    ? `\nManten todas as citacoes a fonte "${sourceRef}" que existem nas partes.`
+    : '\nNao incluis referencias as fontes originais.'
 
-ESTRUTURA (5 partes obrigatórias):
-1. Título H1 em português
-2. Introdução (150 palavras)
-3. Desenvolvimento: 3 secções H2
-4. Conclusão completa (100 palavras)
-5. Meta description + 5 keywords
+  return `Une estas ${parts.length} partes num artigo unico e coeso em portugues.
 
-Máximo 1200 palavras. Irreconhecível face ao original.`
-      }
-    } else if (approach === 'transformed') {
-      userPrompt = `Transform and improve an article about: "${topic}"
+${parts.map((p, i) => `=== PARTE ${i + 1} ===\n${p}`).join('\n\n')}
+=== FIM ===
 
-Competitor source: ${competitorUrl || 'N/A'}
+REGRAS:
+- Manten TODO o conteudo de todas as partes — nao omites nada
+- Garante transicoes naturais entre partes
+- Remove repeticoes acidentais se existirem
+- Garante exactamente 1 titulo H1 (# Titulo) no inicio do artigo
+- Termina com conclusao clara${citationNote}
 
-Requirements:
-- Rewrite with at least 30% new content
-- Add updated data, statistics, or examples from 2024-2026
-- Include new insights or perspectives
-- Keep the core structure but improve clarity
-- Add sections the original may have missed
-- Cite the original source in a transparent way
-- Make it 15-20% longer with more depth
+Escreve o artigo final completo.`
+}
 
-Format as markdown with H1 title.`;
-    } else {
-      userPrompt = `Create a synthesized meta-analysis about: "${topic}"
+// ── Traduz um chunk ───────────────────────────────────────────────────────────
 
-Compile insights from multiple sources:
-${researchData?.sources?.slice(0, 5).join(', ') || 'N/A'}
+async function translateChunk(
+  chunk: string,
+  chunkIndex: number,
+  totalChunks: number,
+  topic: string,
+  contentType: string,
+  sourceRef: string,
+  appId: string,
+  previousContext: string
+): Promise<string> {
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4-5',
+    max_tokens: 4096,
+    system: getSystemPrompt(contentType),
+    messages: [{
+      role: 'user',
+      content: getChunkPrompt(chunk, chunkIndex, totalChunks, topic, contentType, sourceRef, previousContext),
+    }],
+  })
+  const text = response.content[0].type === 'text' ? response.content[0].text : ''
+  console.log(`[Stage 2] Chunk ${chunkIndex + 1}/${totalChunks}: in=${response.usage?.input_tokens} out=${response.usage?.output_tokens} stop=${response.stop_reason}`)
+  return text
+}
 
-Requirements:
-- Create a "State of ${topic}" or "Comprehensive Overview" style article
-- Identify common themes and disagreements
-- Present multiple perspectives
-- Cite each source clearly
-- Add your own synthesis and analysis
-- Include practical takeaways
-- Compare different approaches or tools
+// ── Faz merge dos chunks ──────────────────────────────────────────────────────
 
-Format as markdown with H1 title.`;
+async function mergeChunks(parts: string[], contentType: string, sourceRef: string): Promise<string> {
+  if (parts.length === 1) return parts[0]
+  const response = await anthropic.messages.create({
+    model: 'claude-sonnet-4-5',
+    max_tokens: 8192,
+    messages: [{ role: 'user', content: getMergePrompt(parts, contentType, sourceRef) }],
+  })
+  console.log(`[Stage 2] Merge: in=${response.usage?.input_tokens} out=${response.usage?.output_tokens} stop=${response.stop_reason}`)
+  return response.content[0].type === 'text' ? response.content[0].text : parts.join('\n\n')
+}
+
+// ── Processa conteúdo: chunks → tradução → merge → guarda ────────────────────
+
+async function processContent(
+  sourceContent: string,
+  topic: string,
+  contentType: string,
+  sourceRef: string,
+  appId: string,
+  sourceUrl: string
+): Promise<{ title: string; slug: string; id: string; chunks: number; contentLength: number }> {
+
+  const chunks = splitIntoChunks(sourceContent)
+  console.log(`Dividido em ${chunks.length} chunk(s):`)
+  chunks.forEach((c, i) => console.log(`  Chunk ${i + 1}: ${c.length} chars`))
+
+  const translatedParts: string[] = []
+  let previousContext = ''
+
+  for (let i = 0; i < chunks.length; i++) {
+    console.log(`Traduzindo chunk ${i + 1}/${chunks.length}...`)
+    const translated = await translateChunk(
+      chunks[i], i, chunks.length, topic, contentType, sourceRef, appId, previousContext
+    )
+    if (!translated || translated.length < 50) {
+      throw new Error(`Chunk ${i + 1} devolveu conteudo insuficiente`)
     }
+    translatedParts.push(translated)
+    previousContext = translated
+    console.log(`Chunk ${i + 1} traduzido: ${translated.length} chars`)
+  }
 
-    const response = await generateWithClaude(systemPrompt, userPrompt);
+  console.log(`Fazendo merge de ${translatedParts.length} parte(s)...`)
+  const finalContent = await mergeChunks(translatedParts, contentType, sourceRef)
+  console.log(`Artigo final: ${finalContent.length} chars`)
 
-    const lines = response.content.split('\n');
-    let titleLine = '';
-    let contentStartIdx = 0;
+  const titleMatch = finalContent.match(/^#\s+(.+)$/m)
+  const title = titleMatch ? titleMatch[1].trim() : topic
+  const slug = generateSlug(title)
 
-    for (let i = 0; i < lines.length; i++) {
-      if (lines[i].startsWith('# ')) {
-        titleLine = lines[i].replace('# ', '').trim();
-        contentStartIdx = i + 1;
-        break;
-      }
-    }
-
-    const title = titleLine || `${topic} â€“ Complete Guide 2026`;
-    const slug = topic.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    const content = lines.slice(contentStartIdx).join('\n').trim();
-
-    const firstParagraphMatch = content.match(/^[^\n]+/);
-    const excerpt = firstParagraphMatch
-      ? firstParagraphMatch[0].substring(0, 160).trim()
-      : `Learn about ${topic} in this comprehensive guide.`;
-
-    const metaDescription = `${title} - Updated guide for 2024-2026 with latest data and expert insights.`.substring(0, 160);
-
-    const keywords = topic
-      .split(' ')
-      .filter((w) => w.length > 3)
-      .concat([topic, `${topic} guide`, `how to ${topic}`])
-      .slice(0, 10);
-
-    return { title, slug, content, excerpt, metaDescription, keywords };
-  } catch (error) {
-    console.error('Error generating article:', error);
-    const title = `${topic} â€“ Complete Guide 2026`;
-    const slug = topic.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-    return {
+  const { data: post, error } = await getSupabase()
+    .from('blog_posts')
+    .insert({
+      app_id: appId,
       title,
       slug,
-      content: `# ${title}\n\n[Content generation failed, please retry]`,
-      excerpt: `Guide to ${topic}`,
-      metaDescription: `Guide to ${topic}`,
-      keywords: topic.split(' '),
-    };
-  }
+      content: finalContent,
+      status: 'draft',
+      source_url: sourceUrl || null,
+      created_at: new Date().toISOString(),
+    })
+    .select('id')
+    .single()
+
+  if (error) throw new Error(`Erro ao inserir artigo: ${error.message}`)
+
+  return { title, slug, id: post?.id, chunks: chunks.length, contentLength: finalContent.length }
 }
 
-async function runStage2(appFilter: string | null = null) {
-  console.log('\n=== STAGE 2: CONTENT GENERATION (CRON JOB) ===');
-  console.log(`Started at: ${new Date().toISOString()}`);
-  if (appFilter) console.log(`Filtering by app: ${appFilter}`);
+// ── Handler principal ─────────────────────────────────────────────────────────
+
+export async function GET(request: Request) {
+  const authHeader = request.headers.get('authorization')
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const { searchParams } = new URL(request.url)
+  const appId = searchParams.get('app') || 'crypto'
+
+  console.log(`\n=== STAGE 2: CONTENT GENERATION (${appId}) ===`)
+  console.log(`Started at: ${new Date().toISOString()}`)
 
   try {
-    const { data: apps } = await getSupabase().from('theme_config').select('*');
+    // ── PRIORIDADE 1: Breaking news (TIPO 1) ──────────────────────────────────
+    const { data: breaking } = await getSupabase()
+      .from('breaking_queue')
+      .select('*')
+      .eq('app_id', appId)
+      .eq('processed', false)
+      .order('priority', { ascending: false })
+      .limit(1)
+      .single()
 
-    const filteredApps = appFilter
-      ? (apps || []).filter(a => a.app_id === appFilter)
-      : (apps || []);
+    if (breaking) {
+      console.log(`[Stage 2] TIPO 1 breaking: "${breaking.title}"`)
 
-    for (const app of filteredApps) {
-      console.log(`\nGenerating articles for: ${app.app_id}`);
-
-      const articleLength = await getNexusArticleLength()
-      const mix = app.articles_per_day === 1
-        ? { original: 1, transformed: 0, aggregated: 0 }
-        : {
-            original: Math.ceil(app.articles_per_day * 0.4),
-            transformed: Math.ceil(app.articles_per_day * 0.5),
-            aggregated: Math.ceil(app.articles_per_day * 0.1),
-          }
-
-      console.log(`[NEXUS] article_length: ${articleLength.min}-${articleLength.max} palavras`)
-      console.log(`Content mix: ${mix.original} original, ${mix.transformed} transformed, ${mix.aggregated} aggregated`);
-
-      const { data: researchItems, error: researchError } = await getSupabase()
-        .from('content_research')
-        .select('id, topic, research_data, content_gaps, competitive_analysis')
-        .eq('app_id', app.app_id)
-        .eq('research_type', 'original')
-        .order('created_at', { ascending: false })
-        .limit(mix.original + mix.transformed + mix.aggregated);
-
-      console.log(`content_research query — app: ${app.app_id}, count: ${researchItems?.length}, error: ${researchError?.message}`);
-
-      if (researchError) {
-        console.error(`Query error for ${app.app_id}:`, researchError.message);
-        continue;
+      // Fetch do artigo completo usando source_url
+      let sourceContent = ''
+      if (breaking.source_url && breaking.source_url.startsWith('http')) {
+        console.log(`Fazendo fetch do artigo completo: ${breaking.source_url.slice(0, 60)}`)
+        sourceContent = await fetchArticleContent(breaking.source_url)
+        const wordCount = sourceContent.split(/\s+/).filter(w => w.length > 0).length
+        console.log(`Artigo completo: ${wordCount} palavras`)
       }
 
-      if (!researchItems || researchItems.length === 0) {
-        console.log(`âš  No research data available for ${app.app_id}`);
-        continue;
+      // Fallback: usa conteúdo da breaking_queue se fetch falhar ou for pequeno
+      if (!sourceContent || sourceContent.split(/\s+/).length < 200) {
+        console.log(`Fetch insuficiente — usando conteudo da breaking_queue`)
+        sourceContent = `${breaking.title}\n\n${breaking.content || ''}`
       }
 
-      let generatedCount = { original: 0, transformed: 0, aggregated: 0 };
-      let currentIdx = 0;
+      const sourceRef = breaking.source_url || breaking.source_type || 'fonte'
+      await getSupabase().from('breaking_queue').update({ processed: true }).eq('id', breaking.id)
 
-      // Generate ORIGINAL articles (40%)
-      for (let i = 0; i < mix.original && currentIdx < researchItems.length; i++) {
-        const research = researchItems[currentIdx++];
-        const startTime = Date.now();
-
-        try {
-          const articleData = await generateArticleContent(
-            research.topic,
-            'original',
-            app.generation_system_prompt,
-            research.research_data,
-            undefined,
-            articleLength
-          );
-
-          await getSupabase().from('blog_posts').insert({
-            app_id: app.app_id,
-            title: articleData.title,
-            slug: articleData.slug,
-            content: articleData.content,
-            excerpt: articleData.excerpt,
-            meta_description: articleData.metaDescription,
-            keywords: articleData.keywords,
-            status: 'draft',
-            generation_approach: 'original',
-            is_original_generated: true,
-            is_transformed_content: false,
-            is_aggregated_content: false,
-            language: 'en',
-          });
-
-          const duration = Math.round((Date.now() - startTime) / 1000);
-          console.log(`âœ“ Generated original article: "${articleData.title}" (${duration}s)`);
-          generatedCount.original++;
-
-          await getSupabase().from('generation_logs').insert({
-            app_id: app.app_id,
-            stage: 'generation',
-            status: 'success',
-            generation_approach: 'original',
-            duration_seconds: duration,
-            ai_model_used: 'claude-sonnet-4-5',
-            cost_usd: 0.01,
-          });
-        } catch (error) {
-          const duration = Math.round((Date.now() - startTime) / 1000);
-          console.error(`âœ— Error generating original article:`, error);
-
-          await getSupabase().from('generation_logs').insert({
-            app_id: app.app_id,
-            stage: 'generation',
-            status: 'failed',
-            generation_approach: 'original',
-            duration_seconds: duration,
-            error_message: (error as Error).message,
-            ai_model_used: 'claude-sonnet-4-5',
-          });
-        }
-      }
-
-      // Generate TRANSFORMED articles (50%)
-      for (let i = 0; i < mix.transformed && currentIdx < researchItems.length; i++) {
-        const research = researchItems[currentIdx++];
-        const competitorUrl = research.competitive_analysis?.top_performing_articles?.[0]?.url;
-        const startTime = Date.now();
-
-        try {
-          const articleData = await generateArticleContent(
-            research.topic,
-            'transformed',
-            app.transformation_system_prompt,
-            research.research_data,
-            competitorUrl,
-            articleLength
-          );
-
-          await getSupabase().from('blog_posts').insert({
-            app_id: app.app_id,
-            title: articleData.title,
-            slug: articleData.slug,
-            content: articleData.content,
-            excerpt: articleData.excerpt,
-            meta_description: articleData.metaDescription,
-            keywords: articleData.keywords,
-            status: 'draft',
-            generation_approach: 'transformed',
-            is_original_generated: false,
-            is_transformed_content: true,
-            is_aggregated_content: false,
-            transformation_of: competitorUrl,
-            language: 'en',
-          });
-
-          const duration = Math.round((Date.now() - startTime) / 1000);
-          console.log(`âœ“ Generated transformed article: "${articleData.title}" (${duration}s)`);
-          generatedCount.transformed++;
-
-          await getSupabase().from('generation_logs').insert({
-            app_id: app.app_id,
-            stage: 'generation',
-            status: 'success',
-            generation_approach: 'transformed',
-            duration_seconds: duration,
-            transformation_source_url: competitorUrl,
-            ai_model_used: 'claude-sonnet-4-5',
-            cost_usd: 0.01,
-          });
-        } catch (error) {
-          const duration = Math.round((Date.now() - startTime) / 1000);
-          console.error(`âœ— Error generating transformed article:`, error);
-
-          await getSupabase().from('generation_logs').insert({
-            app_id: app.app_id,
-            stage: 'generation',
-            status: 'failed',
-            generation_approach: 'transformed',
-            duration_seconds: duration,
-            error_message: (error as Error).message,
-            ai_model_used: 'claude-sonnet-4-5',
-          });
-        }
-      }
-
-      // Generate AGGREGATED articles (10%)
-      for (let i = 0; i < mix.aggregated && currentIdx < researchItems.length; i++) {
-        const research = researchItems[currentIdx++];
-        const startTime = Date.now();
-
-        try {
-          const articleData = await generateArticleContent(
-            research.topic,
-            'aggregated',
-            app.aggregation_system_prompt,
-            research.research_data,
-            undefined,
-            articleLength
-          );
-
-          await getSupabase().from('blog_posts').insert({
-            app_id: app.app_id,
-            title: articleData.title,
-            slug: articleData.slug,
-            content: articleData.content,
-            excerpt: articleData.excerpt,
-            meta_description: articleData.metaDescription,
-            keywords: articleData.keywords,
-            status: 'draft',
-            generation_approach: 'aggregated',
-            is_original_generated: false,
-            is_transformed_content: false,
-            is_aggregated_content: true,
-            language: 'en',
-          });
-
-          const duration = Math.round((Date.now() - startTime) / 1000);
-          console.log(`âœ“ Generated aggregated article: "${articleData.title}" (${duration}s)`);
-          generatedCount.aggregated++;
-
-          await getSupabase().from('generation_logs').insert({
-            app_id: app.app_id,
-            stage: 'generation',
-            status: 'success',
-            generation_approach: 'aggregated',
-            duration_seconds: duration,
-            ai_model_used: 'claude-sonnet-4-5',
-            cost_usd: 0.01,
-          });
-        } catch (error) {
-          const duration = Math.round((Date.now() - startTime) / 1000);
-          console.error(`âœ— Error generating aggregated article:`, error);
-
-          await getSupabase().from('generation_logs').insert({
-            app_id: app.app_id,
-            stage: 'generation',
-            status: 'failed',
-            generation_approach: 'aggregated',
-            duration_seconds: duration,
-            error_message: (error as Error).message,
-            ai_model_used: 'claude-sonnet-4-5',
-          });
-        }
-      }
-
-      console.log(`Generated: ${generatedCount.original} original, ${generatedCount.transformed} transformed, ${generatedCount.aggregated} aggregated`);
+      const result = await processContent(sourceContent, breaking.title, 'tipo1', sourceRef, appId, breaking.source_url)
+      console.log(`TIPO 1 publicado em draft: "${result.title}"`)
+      return NextResponse.json({ success: true, type: 'tipo1', app: appId, ...result })
     }
 
-    console.log('\n=== STAGE 2 COMPLETE ===');
-    return { statusCode: 200, body: 'Stage 2 complete' };
-  } catch (error) {
-    console.error('STAGE 2 FAILED:', error);
-    return { statusCode: 500, body: (error as Error).message };
+    // ── PRIORIDADE 2: YouTube/Newsletter (TIPO 2) ──────────────────────────────
+    const { data: video } = await getSupabase()
+      .from('content_queue')
+      .select('*')
+      .eq('app_id', appId)
+      .eq('processed', false)
+      .order('detected_at', { ascending: true })
+      .limit(1)
+      .single()
+
+    if (video && video.transcript && video.transcript.length > 500) {
+      console.log(`[Stage 2] TIPO 2 YouTube: "${video.video_title}"`)
+      await getSupabase().from('content_queue').update({ processed: true }).eq('id', video.id)
+
+      const result = await processContent(video.transcript, video.video_title, 'tipo2', '', appId, '')
+      console.log(`TIPO 2 publicado em draft: "${result.title}"`)
+      return NextResponse.json({ success: true, type: 'tipo2', app: appId, ...result })
+    }
+
+    if (video && (!video.transcript || video.transcript.length <= 500)) {
+      console.log(`TIPO 2 sem transcricao suficiente — a saltar para TIPO 3`)
+      await getSupabase().from('content_queue').update({ processed: true }).eq('id', video.id)
+    }
+
+    // ── PRIORIDADE 3: Evergreen (TIPO 3) ──────────────────────────────────────
+    const { data: research } = await getSupabase()
+      .from('content_research')
+      .select('*')
+      .eq('app_id', appId)
+      .or('processed.is.null,processed.eq.false')
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .single()
+
+    if (!research) {
+      console.log('Sem conteudo pendente para', appId)
+      return NextResponse.json({ success: true, reason: 'Sem conteudo pendente' })
+    }
+
+    const researchData = research.research_data as any
+    const sourceContent = researchData?.sourceContent
+    const sourceUrl = researchData?.sourceUrl || ''
+
+    if (!sourceContent || sourceContent.length < 500) {
+      console.log(`Sem sourceContent suficiente para "${research.topic}" — a marcar como processado`)
+      // Marca como processado=true para não ficar em loop
+      await getSupabase().from('content_research').update({ processed: true }).eq('id', research.id)
+      return NextResponse.json({ success: false, reason: 'Sem sourceContent suficiente' })
+    }
+
+    console.log(`[Stage 2] TIPO 3 evergreen: "${research.topic}" (${sourceContent.length} chars)`)
+
+    const result = await processContent(sourceContent, research.topic, 'tipo3', '', appId, sourceUrl)
+    await getSupabase().from('content_research').update({ processed: true }).eq('id', research.id)
+
+    console.log(`TIPO 3 publicado em draft: "${result.title}"`)
+    return NextResponse.json({ success: true, type: 'tipo3', app: appId, ...result })
+
+  } catch (error: any) {
+    console.error('Erro no Stage 2:', error.message)
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 })
   }
 }
-
-/**
- * Vercel Cron Handler
- */
-export async function GET(request: Request) {
-  // Verify the request is from Vercel Cron
-  const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return new Response('Unauthorized', { status: 401 });
-  }
-
-  const url = new URL(request.url);
-  const appFilter = url.searchParams.get('app') || null;
-  const result = await runStage2(appFilter);
-  return new Response(JSON.stringify(result), {
-    status: result.statusCode,
-    headers: { 'Content-Type': 'application/json' },
-  });
-}
-

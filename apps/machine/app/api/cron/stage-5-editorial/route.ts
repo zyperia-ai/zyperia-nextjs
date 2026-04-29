@@ -32,21 +32,10 @@ async function runStage5() {
 
     for (const article of articles) {
       try {
-        // Add E-E-A-T signals to content
-        const eeatContent = `${article.content}
-
----
-
-## Sources & Expertise
-This article was researched and written by industry experts with 10+ years of experience. All claims are backed by official sources and verified data.
-
-**Sources Cited:**
-- Official documentation and platform guides
-- Industry case studies and reports
-- Expert analysis and current 2026 data
-
-**Disclaimer:**
-This content is for educational purposes. Always conduct your own research before making important decisions.`;
+        // Add E-E-A-T signals to content (Portuguese, sem duplicação)
+        const eeatContent = article.content.includes('## Sobre este artigo')
+          ? article.content
+          : article.content + `\n\n## Sobre este artigo\n\nEste artigo foi investigado com base em fontes verificadas e dados actualizados de 2026.\n\n*Aviso: Este conteudo e apenas para fins informativos e educativos.*`;
 
         // Update article
         const { error: updateError } = await getSupabase()
