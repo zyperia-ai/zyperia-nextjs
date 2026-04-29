@@ -472,7 +472,7 @@ export async function GET(request: Request) {
         finalTranslated = retry
       }
 
-      await getSupabase().from('translation_chunks').upsert({
+      const { error: upsertError } = await getSupabase().from('translation_chunks').upsert({
         research_id: research.id,
         app_id: appId,
         chunk_index: i,
@@ -482,6 +482,11 @@ export async function GET(request: Request) {
         status: 'translated',
         created_at: new Date().toISOString(),
       })
+
+      if (upsertError) {
+        console.error(`[Stage 2a] Upsert error for chunk ${i + 1}: ${upsertError.message}`)
+        throw new Error(`Upsert failed: ${upsertError.message}`)
+      }
 
       previousContext = finalTranslated
       processedCount++
