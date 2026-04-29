@@ -175,8 +175,8 @@ async function runStage1(appFilter?: string | null) {
               'dextools.io',
             ]
 
-            // Tenta fetch das primeiras 3 sources até encontrar conteúdo
-            for (const url of extracted.sources.slice(0, 3)) {
+            // Tenta fetch das primeiras 8 sources até encontrar conteúdo
+            for (const url of extracted.sources.slice(0, 8)) {
               try {
                 if (!url || !url.startsWith('http')) continue
 
