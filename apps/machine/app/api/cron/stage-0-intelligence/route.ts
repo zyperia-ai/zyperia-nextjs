@@ -60,7 +60,7 @@ const SOURCES = {
       'fchollet','sleepinyourhat','TheRundownAI','AIatMeta','GoogleAI',
       'NvidiaAI','huggingface','LangChainAI','weights_biases','simonw',
       'swyx','emollick','benedictevans','xlr8harder','amandalaskell',
-      'mmitchell_ai','timnitGebru','pervognsen'
+      'mmitchell_ai','timnitGebru','pervognsen','theresanaiforit'
     ],
     rss: [
       'https://techcrunch.com/feed/',
@@ -85,7 +85,7 @@ const SOURCES = {
       'UCsBjURrPoezykLs9EqgamOA','UCbXgNpp0jedKWclzcgEVV_A',
       'UC_Oa7Ph3v94om5OyxY4pPpg','UCHXa4OpASJEwrHrLeP6U8Eg',
       'UCjFG3GXoGSiZ34WelzMI1nA','UCtYLUTtgS3k1Fg4y5tAhLbw',
-      'UCJMowYtxtfkk_T3aQ5TG8Sg',
+      'UCJMowYtxtfkk_T3aQ5TG8Sg','UCHCCGSnjLpHwL2bv-d4yz7g',
     ],
   },
   onlinebiz: {
