@@ -96,7 +96,7 @@ ${searchQueries.map((q, i) => `${i + 1}. ${q}`).join('\n')}
 
 Após pesquisar, extrai e devolve em JSON:
 {
-  "sources": ["URL ou título dos melhores artigos encontrados"],
+  "sources": ["https://... URL completa obrigatória — extrai do resultado da web search"],
   "keyFacts": [
     "Facto verificável 1 com contexto",
     "Facto verificável 2 com contexto",
@@ -107,6 +107,9 @@ Após pesquisar, extrai e devolve em JSON:
 }
 
 IMPORTANTE:
+- Em "sources" inclui APENAS URLs completas (https:// ou http://)
+- NUNCA incluis títulos ou nomes de sites — apenas URLs completas
+- Se não tens a URL completa, omite essa source
 - Maximum 5 key facts — os mais importantes e verificáveis
 - Se não encontrares factos verificáveis sobre algo, omite-o
 - Nunca inventas dados. Prefere menos factos sólidos a muitos factos duvidosos.`
@@ -147,19 +150,9 @@ IMPORTANTE:
 
         if (toolUseBlocks.length === 0) break
 
-        // Adiciona resposta do assistant ao histórico
+        // web_search_20250305 é nativo — Claude recebe resultados automaticamente
+        // Apenas adiciona a resposta do assistant ao histórico e continua
         messages.push({ role: 'assistant', content: response.content })
-
-        // Cria tool_result para cada tool_use
-        const toolResults = toolUseBlocks.map((toolUse: any) => ({
-          type: 'tool_result',
-          tool_use_id: toolUse.id,
-          content: toolUse.input?.query
-            ? `Web search executada para: ${toolUse.input.query}`
-            : 'Search executada',
-        }))
-
-        messages.push({ role: 'user', content: toolResults })
         continue
       }
 
