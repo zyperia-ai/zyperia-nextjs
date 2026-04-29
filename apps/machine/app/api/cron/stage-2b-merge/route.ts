@@ -11,7 +11,9 @@ function getSupabase() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
 }
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+function getAnthropic() {
+  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+}
 
 const USE_LOCAL_LLM = process.env.USE_LOCAL_LLM === 'true'
 
@@ -76,7 +78,7 @@ async function mergeChunks(parts: string[], contentType: string, sourceRef: stri
     }
   }
 
-  const response = await anthropic.messages.create({
+  const response = await getAnthropic().messages.create({
     model: 'claude-haiku-4-5-20251001',
     max_tokens: 8192,
     messages: [{ role: 'user', content: userPrompt }],

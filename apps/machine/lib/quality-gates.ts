@@ -5,14 +5,11 @@ function getSupabase() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
 }
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_KEY!
-)
-
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-})
+function getAnthropic() {
+  return new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY!,
+  })
+}
 
 // ─── TIPOS ───────────────────────────────────────────────────────────────────
 
@@ -120,12 +117,12 @@ Score >= 6 é aprovação. Scores < 6 só se houver problemas reais e visíveis.
 
   // Correr as 2 personas em paralelo
   const [resTradutor, resEditor] = await Promise.all([
-    anthropic.messages.create({
+    getAnthropic().messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 512,
       messages: [{ role: 'user', content: prompttradutor }],
     }),
-    anthropic.messages.create({
+    getAnthropic().messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 512,
       messages: [{ role: 'user', content: promptEditor }],

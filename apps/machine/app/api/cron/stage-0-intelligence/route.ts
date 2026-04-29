@@ -11,7 +11,9 @@ function getSupabase() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
 }
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+function getAnthropic() {
+  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+}
 
 const NITTER_INSTANCE = 'https://nitter.privacyredirect.com'
 
@@ -104,7 +106,7 @@ async function fetchRSS(url: string): Promise<Array<{ title: string; link: strin
 async function classifyItem(title: string, description: string, appId: string): Promise<boolean> {
   const scope = TOPIC_SCOPE[appId] || appId
   try {
-    const response = await anthropic.messages.create({
+    const response = await getAnthropic().messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 64,
       messages: [{
@@ -275,7 +277,7 @@ async function discoverTrends() {
   for (const appId of ['crypto', 'intelligence', 'onlinebiz']) {
     const scope = TOPIC_SCOPE[appId] || appId
     try {
-      const response = await anthropic.messages.create({
+      const response = await getAnthropic().messages.create({
         model: 'claude-sonnet-4-5',
         max_tokens: 1024,
         tools: [{ type: 'web_search_20250305' as any, name: 'web_search' } as any],

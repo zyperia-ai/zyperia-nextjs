@@ -9,11 +9,9 @@ function getSupabase() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
 }
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || '';
-const resendApiKey = process.env.RESEND_API_KEY || '';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
+function getResendApiKey() {
+  return process.env.RESEND_API_KEY || ''
+}
 
 interface NotificationPayload {
   type: 'success' | 'warning' | 'error' | 'opportunity';
@@ -224,6 +222,7 @@ async function sendEmail({
   subject: string;
   html: string;
 }) {
+  const resendApiKey = getResendApiKey();
   if (!resendApiKey) {
     console.warn('RESEND_API_KEY not set - email not sent');
     return;

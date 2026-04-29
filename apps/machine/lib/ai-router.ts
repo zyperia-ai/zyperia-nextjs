@@ -19,9 +19,11 @@ export interface AIResponse {
   outputTokens?: number;
 }
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+function getAnthropic() {
+  return new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  });
+}
 
 /**
  * Generate content using Claude API
@@ -33,7 +35,7 @@ export async function generateWithClaude(
   const startTime = Date.now();
 
   try {
-    const message = await anthropic.messages.create({
+    const message = await getAnthropic().messages.create({
       model: 'claude-sonnet-4-5',
       max_tokens: 16000,
       system: systemPrompt,
@@ -123,7 +125,7 @@ IMPORTANTE:
 
     while (iterations < maxIterations) {
       iterations++
-      const response = await anthropic.messages.create({
+      const response = await getAnthropic().messages.create({
         model: 'claude-sonnet-4-5',
         max_tokens: 4096,
         tools: [{ type: 'web_search_20250305' as any, name: 'web_search' } as any],
