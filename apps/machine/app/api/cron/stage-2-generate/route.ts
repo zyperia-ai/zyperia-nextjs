@@ -45,36 +45,97 @@ async function generateArticleContent(
     let userPrompt = '';
 
     if (approach === 'original') {
-      const factsSection = researchData?.keyFacts?.length > 0
-        ? `FACTOS VERIFICADOS PARA USAR NO ARTIGO:
-${researchData.keyFacts.map((f: string, i: number) => `${i + 1}. ${f}`).join('\n')}
+      const contentType = researchData?.content_type || 'tipo3'
 
-CONTEXTO LUSÓFONO IDENTIFICADO:
-${researchData.lusophoneContext || 'Adapta o conteúdo para Portugal, Brasil, Angola, Cabo Verde e Moçambique.'}`
-        : `Adapta o conteúdo para o mercado lusófono (Portugal, Brasil, Angola, Cabo Verde, Moçambique).`
+      if (!researchData?.articleFound || !researchData?.sourceContent) {
+        throw new Error(`Sem conteúdo para processar — a saltar "${topic}"`)
+      }
 
-      userPrompt = `Escreve um artigo completo sobre: "${topic}"
+      if (contentType === 'tipo1') {
+        // Breaking news — adapta e cita a fonte
+        userPrompt = `Tens esta notícia breaking de uma fonte primária (${researchData.sourceUrl}):
 
-${factsSection}
+---NOTÍCIA ORIGINAL---
+${researchData.sourceContent.slice(0, 2000)}
+---FIM---
 
-REGRAS FUNDAMENTAIS:
-- Idioma: português acessível ao mercado lusófono global
-- USA APENAS os factos verificados fornecidos acima — nunca inventes dados
-- Se não tens facto verificado sobre algo, usa linguagem qualitativa: tipicamente, geralmente, na maioria dos casos
-- Cada termo técnico DEVE ser explicado na primeira vez que aparece
-- NUNCA deixes uma secção incompleta
+Cria um artigo de notícia para o mercado lusófono:
 
-COMPRIMENTO: máximo 1200 palavras no total. Qualidade acima de quantidade.
+OBRIGATÓRIO:
+- Cita sempre a fonte: "Segundo [nome da fonte]..." ou "De acordo com [fonte]..."
+- Preserva todos os factos, números e datas da notícia original
+- Adiciona contexto: o que significa isto para Portugal, Brasil, Angola?
+- Título diferente mas que capture a essência da notícia
+- Tom jornalístico, factual, sem especulação
 
-ESTRUTURA OBRIGATÓRIA (5 partes, todas completas):
-1. Título H1 em português — claro, específico, sem sufixos em inglês
-2. Introdução — o problema real e o que o leitor vai aprender
-3. Desenvolvimento — 3 secções H2 com factos verificados, exemplos concretos, jargão explicado
-4. Conclusão completa — síntese + uma acção concreta que o leitor pode fazer hoje
-5. Meta description (máx 155 caracteres) + 5 keywords separadas por vírgula
+ESTRUTURA:
+1. Título H1 em português
+2. Lead (50 palavras) — o facto principal
+3. Desenvolvimento (300 palavras) — contexto e implicações lusófonas
+4. Citação da fonte
+5. Meta description (máx 155 chars) + 5 keywords
 
-ANTES DE TERMINAR: confirma que cada uma das 5 partes está completa e que usaste apenas factos verificados.
-Formata em markdown válido.`;
+Máximo 500 palavras. Factual e verificável.`
+
+      } else if (contentType === 'tipo2') {
+        // YouTube — transforma completamente sem citar
+        userPrompt = `Tens esta transcrição de um vídeo YouTube sobre: "${topic}"
+
+---TRANSCRIÇÃO---
+${researchData.sourceContent.slice(0, 6000)}
+---FIM---
+
+Transforma em artigo completo para o mercado lusófono:
+
+REGRAS ABSOLUTAS:
+- NUNCA menciones o canal, o criador ou o vídeo original
+- Transforma completamente — novo título, nova estrutura, nova voz
+- Preserva os factos, dados e insights do vídeo
+- Adiciona contexto lusófono (PT/BR/AO) que o vídeo não tem
+- Explica todo o jargão técnico na primeira menção
+
+ESTRUTURA (5 partes obrigatórias):
+1. Título H1 em português — irreconhecível face ao vídeo
+2. Introdução (150 palavras)
+3. Desenvolvimento: 3 secções H2
+4. Conclusão completa (100 palavras)
+5. Meta description + 5 keywords
+
+Máximo 1200 palavras. Irreconhecível face ao original.`
+
+      } else {
+        // Evergreen (tipo3) — traduz e adapta artigo EN
+        userPrompt = `Tens este artigo em inglês (${researchData.sourceUrl || 'fonte verificada'}):
+
+---ARTIGO ORIGINAL---
+${researchData.sourceContent.slice(0, 4000)}
+---FIM---
+
+TRADUZ E ADAPTA para o mercado lusófono. Não criar do zero.
+
+PRESERVA obrigatoriamente:
+- Todos os factos, dados, percentagens e datas do original
+- A lógica e estrutura argumentativa
+
+MUDA obrigatoriamente:
+- Título: completamente diferente, específico para lusófonos
+- Estrutura: reordena secções de forma diferente
+- Contexto: adapta para Portugal, Brasil, Angola, Cabo Verde, Moçambique
+- Jargão: explica cada termo técnico na primeira menção
+
+PROIBIDO ABSOLUTAMENTE:
+- Inventar nomes, estatísticas, casos de estudo fictícios
+- Acrescentar dados sem fonte verificável
+
+ESTRUTURA (5 partes obrigatórias):
+1. Título H1 em português
+2. Introdução (150 palavras)
+3. Desenvolvimento: 3 secções H2
+4. Conclusão completa (100 palavras)
+5. Meta description + 5 keywords
+
+Máximo 1200 palavras. Irreconhecível face ao original.`
+      }
     } else if (approach === 'transformed') {
       userPrompt = `Transform and improve an article about: "${topic}"
 

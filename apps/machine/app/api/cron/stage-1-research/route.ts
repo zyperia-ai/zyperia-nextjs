@@ -62,6 +62,74 @@ async function runStage1() {
         continue;
       }
 
+      // PRIORIDADE 1 — Breaking news (TIPO 1)
+      const { data: breaking } = await getSupabase()
+        .from('breaking_queue')
+        .select('*')
+        .eq('app_id', app.app_id)
+        .eq('processed', false)
+        .order('detected_at', { ascending: true })
+        .limit(1)
+        .single()
+
+      if (breaking) {
+        console.log(`[Stage 1] TIPO 1 breaking: "${breaking.title}"`)
+        await getSupabase().from('breaking_queue').update({ processed: true }).eq('id', breaking.id)
+        await getSupabase().from('content_research').insert({
+          app_id: app.app_id,
+          topic: breaking.title,
+          research_type: 'tipo1',
+          research_data: {
+            topic: breaking.title,
+            content_type: 'tipo1',
+            sourceUrl: breaking.source_url,
+            sourceTitle: breaking.title,
+            sourceContent: breaking.content,
+            sourceType: breaking.source_type,
+            articleFound: true,
+            updated_at: new Date().toISOString(),
+          },
+          confidence_score: 95,
+          created_at: new Date().toISOString(),
+        })
+        console.log(`✓ Breaking queued: "${breaking.title}"`)
+        continue
+      }
+
+      // PRIORIDADE 2 — YouTube (TIPO 2)
+      const { data: video } = await getSupabase()
+        .from('content_queue')
+        .select('*')
+        .eq('app_id', app.app_id)
+        .eq('processed', false)
+        .order('detected_at', { ascending: true })
+        .limit(1)
+        .single()
+
+      if (video && video.transcript && video.transcript.length > 500) {
+        console.log(`[Stage 1] TIPO 2 YouTube: "${video.video_title}"`)
+        await getSupabase().from('content_queue').update({ processed: true }).eq('id', video.id)
+        await getSupabase().from('content_research').insert({
+          app_id: app.app_id,
+          topic: video.video_title,
+          research_type: 'tipo2',
+          research_data: {
+            topic: video.video_title,
+            content_type: 'tipo2',
+            sourceUrl: `https://youtube.com/watch?v=${video.video_id}`,
+            sourceTitle: video.video_title,
+            sourceContent: video.transcript,
+            articleFound: true,
+            updated_at: new Date().toISOString(),
+          },
+          confidence_score: 85,
+          created_at: new Date().toISOString(),
+        })
+        console.log(`✓ YouTube queued: "${video.video_title}"`)
+        continue
+      }
+
+      // PRIORIDADE 3 — Evergreen (TIPO 3) — lógica existente abaixo
       for (const topic of topics) {
         const startTime = Date.now();
 

@@ -154,22 +154,25 @@ IMPORTANTE:
 
 function buildSearchQueries(topic: string, appId: string): string[] {
   const baseQueries = [
-    `${topic} explained 2025 2026`,
-    `${topic} guide tutorial`,
+    `"${topic}" statistics data 2024 2025`,
+    `${topic} real example case study results`,
   ]
 
   const appQueries: Record<string, string[]> = {
     crypto: [
-      `${topic} site:coindesk.com OR site:theblock.co OR site:decrypt.co`,
-      `${topic} Portugal Brazil regulation 2025 2026`,
+      `${topic} site:coindesk.com OR site:theblock.co OR site:defillama.com`,
+      `${topic} data statistics DeFi TVL 2024 2025`,
+      `${topic} Portugal Brazil regulation MiCA CVM 2024 2025`,
     ],
     intelligence: [
-      `${topic} site:techcrunch.com OR site:venturebeat.com OR site:huggingface.co`,
-      `${topic} GDPR LGPD Europe Brazil 2025 2026`,
+      `${topic} site:techcrunch.com OR site:huggingface.co OR site:venturebeat.com`,
+      `${topic} pricing benchmark comparison 2024 2025`,
+      `${topic} GDPR LGPD Europe Brazil implementation`,
     ],
     onlinebiz: [
-      `${topic} site:indiehackers.com OR site:failory.com OR site:starterstory.com`,
-      `${topic} Portugal Brazil online business 2025 2026`,
+      `${topic} site:indiehackers.com OR site:starterstory.com OR site:failory.com`,
+      `${topic} revenue numbers case study verified 2024 2025`,
+      `${topic} Portugal Brazil tax fiscal 2024 2025`,
     ],
   }
 
