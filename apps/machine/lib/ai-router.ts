@@ -112,34 +112,82 @@ IMPORTANTE:
 - Nunca inventas dados. Prefere menos factos sólidos a muitos factos duvidosos.`
 
   try {
-    const response = await anthropic.messages.create({
-      model: 'claude-sonnet-4-5',
-      max_tokens: 4096,
-      tools: [
-        {
-          type: 'web_search_20250305' as any,
-          name: 'web_search',
-        } as any,
-      ],
-      system: systemPrompt,
-      messages: [{ role: 'user', content: userPrompt }],
-    })
+    // Primeira chamada — Claude pode invocar web_search
+    let messages: any[] = [{ role: 'user', content: userPrompt }]
+    let finalText = ''
+    let iterations = 0
+    const maxIterations = 5
 
-    const textContent = response.content
-      .filter((block: any) => block.type === 'text')
-      .map((block: any) => block.text)
-      .join('')
+    while (iterations < maxIterations) {
+      iterations++
+      const response = await anthropic.messages.create({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 4096,
+        tools: [{ type: 'web_search_20250305' as any, name: 'web_search' } as any],
+        system: systemPrompt,
+        messages,
+      })
 
-    const jsonMatch = textContent.match(/\{[\s\S]*\}/)
+      // Extrai text blocks desta resposta
+      const textBlocks = response.content
+        .filter((block: any) => block.type === 'text')
+        .map((block: any) => block.text)
+        .join('')
+
+      if (textBlocks) finalText += textBlocks
+
+      // Se parou (end_turn ou max_tokens) — termina
+      if (response.stop_reason === 'end_turn' || response.stop_reason === 'max_tokens') {
+        break
+      }
+
+      // Se invocou tool — processa e continua
+      if (response.stop_reason === 'tool_use') {
+        const toolUseBlocks = response.content.filter((block: any) => block.type === 'tool_use')
+
+        if (toolUseBlocks.length === 0) break
+
+        // Adiciona resposta do assistant ao histórico
+        messages.push({ role: 'assistant', content: response.content })
+
+        // Cria tool_result para cada tool_use
+        const toolResults = toolUseBlocks.map((toolUse: any) => ({
+          type: 'tool_result',
+          tool_use_id: toolUse.id,
+          content: toolUse.input?.query
+            ? `Web search executada para: ${toolUse.input.query}`
+            : 'Search executada',
+        }))
+
+        messages.push({ role: 'user', content: toolResults })
+        continue
+      }
+
+      break
+    }
+
+    // Extrai JSON do texto final
+    const jsonMatch = finalText.match(/\{[\s\S]*\}/)
     if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0])
-      return {
-        sources: parsed.sources || [],
-        keyFacts: parsed.keyFacts || [],
-        lusophoneContext: parsed.lusophoneContext || '',
-        searchQueries: parsed.searchQueries || searchQueries,
+      try {
+        const parsed = JSON.parse(jsonMatch[0])
+        console.log('[AI Router] Parsed successfully:', {
+          sources: parsed.sources?.length || 0,
+          keyFacts: parsed.keyFacts?.length || 0,
+        })
+        return {
+          sources: parsed.sources || [],
+          keyFacts: parsed.keyFacts || [],
+          lusophoneContext: parsed.lusophoneContext || '',
+          searchQueries: parsed.searchQueries || searchQueries,
+        }
+      } catch (parseError) {
+        console.error('[AI Router] JSON parse error:', parseError)
       }
     }
+
+    console.warn('[AI Router] No valid JSON found in response. finalText length:', finalText.length)
+
   } catch (error) {
     console.error('[AI Router] Web search error:', error)
   }
