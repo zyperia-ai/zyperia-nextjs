@@ -106,8 +106,10 @@ Após pesquisar, extrai e devolve em JSON:
   "searchQueries": ["queries usadas"]
 }
 
-IMPORTANTE: Se não encontrares factos verificáveis sobre algo, omite-o.
-Nunca inventas dados. Prefere menos factos sólidos a muitos factos duvidosos.`
+IMPORTANTE:
+- Maximum 5 key facts — os mais importantes e verificáveis
+- Se não encontrares factos verificáveis sobre algo, omite-o
+- Nunca inventas dados. Prefere menos factos sólidos a muitos factos duvidosos.`
 
   try {
     const response = await anthropic.messages.create({

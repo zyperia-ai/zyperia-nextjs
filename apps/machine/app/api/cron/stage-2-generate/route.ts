@@ -64,6 +64,8 @@ REGRAS FUNDAMENTAIS:
 - Cada termo técnico DEVE ser explicado na primeira vez que aparece
 - NUNCA deixes uma secção incompleta
 
+COMPRIMENTO: máximo 1200 palavras no total. Qualidade acima de quantidade.
+
 ESTRUTURA OBRIGATÓRIA (5 partes, todas completas):
 1. Título H1 em português — claro, específico, sem sufixos em inglês
 2. Introdução — o problema real e o que o leitor vai aprender
