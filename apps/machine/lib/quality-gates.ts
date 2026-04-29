@@ -38,59 +38,85 @@ export async function camada1AutoReview(article: ArticlePayload): Promise<Qualit
   const contentSnippet = article.content.slice(0, 4000)
 
   const prompttradutor = `És o TRADUTOR — persona de revisão editorial do ZYPERIA.
-A tua função é verificar a qualidade da tradução para português.
+
+CONTEXTO IMPORTANTE: O ZYPERIA publica APENAS traduções fiéis de fontes originais, com scramble lexical e sintáctico mínimo. O sistema gera artigos a partir de fontes em inglês, traduzindo para português europeu sem adições, sem exemplos novos, sem contexto adicional, sem conclusões inventadas. Não há "adaptação cultural", não há "ângulo lusófono". É tradução, não criação.
+
+A tua função é detectar problemas DE TRADUÇÃO no artigo abaixo.
 
 ARTIGO (título: "${article.title}"):
 ${contentSnippet}
 
-Avalia APENAS:
-1. FIDELIDADE — A tradução preserva fidedignamente os factos, dados e números do original?
-   - Nenhum facto foi omitido ou distorcido?
-   - Os números e estatísticas estão correctos?
-   - O significado é fiel ao original?
+Avalia:
 
-2. FLUÊNCIA — O português é fluente, natural e legível?
-   - Não parece tradução automática óbvia?
-   - A prosa flui naturalmente?
-   - O vocabulário é apropriado e consistente?
+1. FLUÊNCIA (1-10) — O português é PT-PT correcto e natural?
+   - Soa a português europeu (não brasileiro)
+   - Não tem traduções literais óbvias ("realizar uma compra" em vez de "comprar")
+   - Vocabulário técnico apropriado e consistente
+   - Sintaxe natural, não decalcada do inglês
 
-NÃO avalies: contexto lusófono, exemplos locais, originalidade da adaptação, ângulo único.
+2. INTEGRIDADE (1-10) — O artigo está estruturalmente íntegro?
+   - Frases completas (nada cortado a meio)
+   - Parágrafos coesos
+   - Sem caracteres estranhos, sem placeholders ("[INSERIR]"), sem mistura de línguas
+   - Sem auto-referências do tipo "subscreve o meu canal", "como vimos no meu artigo anterior", "neste vídeo"
 
-Responde APENAS com JSON válido. Usa aspas duplas. Sem caracteres especiais nas strings.
+SINAIS DE ALARME (cada um reduz scores):
+- Frases que soam a "considerações finais" inventadas pelo modelo
+- "Em suma", "concluindo", "para terminar" se parecem postiços
+- Contextualizações tipo "em Portugal isto significa..." (proibido por design)
+- Disclaimers ou aviso adicionados pelo modelo
+- Promessas ou linguagem de marketing ("vais aprender X", "neste artigo")
+
+NÃO avalies: originalidade, criatividade, ângulo único, contexto lusófono, exemplos locais. NADA disso é desejado.
+
+Responde APENAS com JSON válido. Aspas duplas. Sem caracteres especiais nas strings.
 Formato exacto:
-{"scores":{"fidelidade":0,"fluencia":0},"issues":["issue 1","issue 2"]}
-Substitui 0 pelos scores reais (1-10). Maximum 3 issues curtos (menos de 80 caracteres cada).
-Sem aspas simples, sem hífens duplos, sem caracteres especiais dentro das strings dos issues.
+{"scores":{"fluencia":0,"integridade":0},"issues":["issue 1","issue 2"]}
+Substitui 0 pelos scores reais (1-10). Máximo 3 issues curtos (menos de 80 caracteres cada).
 
-Score >= 6 é aprovação para tradução. Scores < 6 só se houver problemas reais.`
+Score >= 6 é aprovação. Scores < 6 só se houver problemas reais.`
 
   const promptEditor = `És o EDITOR — persona de revisão editorial do ZYPERIA.
-A tua função é verificar a estrutura e coerência do artigo.
+
+CONTEXTO IMPORTANTE: O ZYPERIA publica traduções fiéis de fontes originais. Um artigo pode terminar abruptamente se a fonte termina abruptamente. Pode começar in medias res se a fonte começa assim. NÃO se exige estrutura editorial canónica. Exige-se que a tradução não esteja partida.
+
+A tua função é verificar que o artigo está USÁVEL — não cortado, não corrompido, sem contradições internas.
 
 ARTIGO (título: "${article.title}"):
 ${contentSnippet}
 
-Avalia APENAS:
-1. COMPLETUDE — O artigo tem estrutura clara de início, meio e fim?
-   - Tem introdução que contextualiza o tema?
-   - Tem desenvolvimento com ideias conectadas?
-   - Tem conclusão que encerra o artigo?
-   - Os parágrafos estão completos (não cortados no meio)?
+Avalia:
 
-2. COERÊNCIA — Os factos são consistentes e lógicos entre si?
-   - Não há contradições internas?
-   - O argumento flui logicamente?
-   - Os factos citados são plausíveis?
+1. COMPLETUDE TÉCNICA (1-10) — O artigo está utilizável?
+   - Não está cortado a meio de uma frase
+   - Não está cortado a meio de uma lista ou secção
+   - Tem pelo menos um parágrafo desenvolvido (>3 frases)
+   - O título existe e faz sentido em relação ao corpo
 
-NÃO avalies: contexto lusófono, adaptação local, tom criativo, originalidade da escrita.
+2. COERÊNCIA INTERNA (1-10) — Os factos são consistentes entre si?
+   - Não há contradições óbvias dentro do artigo
+   - Os números mencionados são plausíveis (ex.: percentagens entre 0-100, datas razoáveis)
+   - Os nomes próprios mantêm-se consistentes ao longo do artigo
+   - As referências internas funcionam (se diz "como veremos abaixo", há algo abaixo)
 
-Responde APENAS com JSON válido. Usa aspas duplas. Sem caracteres especiais nas strings.
+NÃO avalies:
+- "Tem boa introdução / boa conclusão" (não exigimos estrutura editorial canónica)
+- Contexto lusófono, adaptação local, tom criativo, originalidade
+- Comprimento absoluto (artigo de 600 palavras pode estar perfeito, artigo de 2500 idem)
+- Headings — a presença ou ausência de H2 não é defeito
+
+PENALIZAÇÕES (reduzem scores):
+- Artigo termina a meio de uma frase ou enumeração
+- Caracteres estranhos não traduzidos (ex.: "&amp;", "[citation needed]")
+- Mistura de inglês e português no mesmo parágrafo
+- Texto duplicado (mesmo parágrafo aparece duas vezes)
+
+Responde APENAS com JSON válido. Aspas duplas. Sem caracteres especiais nas strings.
 Formato exacto:
 {"scores":{"completude":0,"coerencia":0},"issues":["issue 1","issue 2"]}
-Substitui 0 pelos scores reais (1-10). Maximum 3 issues curtos (menos de 80 caracteres cada).
-Sem aspas simples, sem hífens duplos, sem caracteres especiais dentro das strings dos issues.
+Substitui 0 pelos scores reais (1-10). Máximo 3 issues curtos (menos de 80 caracteres cada).
 
-Score >= 6 é aprovação para estrutura. Scores < 6 só se houver problemas reais.`
+Score >= 6 é aprovação. Scores < 6 só se houver problemas reais e visíveis.`
 
   // Correr as 2 personas em paralelo
   const [resTradutor, resEditor] = await Promise.all([
@@ -171,20 +197,37 @@ export function camada2Estrutural(article: ArticlePayload): QualityResult {
   const issues: string[] = []
   const content = article.content
 
-  // Word count
+  // Word count — limites alargados para acomodar tradução fiel
+  // Stage 1 aceita fontes 500-4000 palavras EN; EN→PT expande ~10-15%
   const wordCount = content.split(/\s+/).length
-  if (wordCount < 800) issues.push(`Demasiado curto: ${wordCount} palavras (mínimo 800)`)
-  if (wordCount > 3000) issues.push(`Demasiado longo: ${wordCount} palavras (máximo 3000)`)
+  if (wordCount < 400) issues.push(`Artigo demasiado curto: ${wordCount} palavras (mínimo 400)`)
+  if (wordCount > 5000) issues.push(`Artigo demasiado longo: ${wordCount} palavras (máximo 5000)`)
 
-  // Headings H2
-  const h2Count = (content.match(/^## .+/gm) || []).length
-  if (h2Count < 3) issues.push(`Poucos headings H2: ${h2Count} (mínimo 3)`)
+  // Título H1 obrigatório (uma única vez)
+  const h1Count = (content.match(/^#\s+.+/gm) || []).length
+  if (h1Count === 0) issues.push('Falta título H1 (# Título)')
+  if (h1Count > 1) issues.push(`Múltiplos H1 detectados: ${h1Count} (deve haver apenas 1)`)
 
-  // Outbound links
-  const linkCount = (content.match(/\[.+?\]\(https?:\/\/.+?\)/g) || []).length
-  if (linkCount < 2) issues.push(`Poucos links externos: ${linkCount} (mínimo 2)`)
+  // Sinais de truncação — último char deve ser pontuação final
+  const trimmed = content.trimEnd()
+  const lastChar = trimmed.slice(-1)
+  if (!['.', '!', '?', '"', '»', ')', ':'].includes(lastChar)) {
+    issues.push(`Artigo termina sem pontuação final (último char: "${lastChar}")`)
+  }
 
-  // Palavras proibidas
+  // Mistura inglês/português óbvia (heurística simples)
+  const englishMarkers = [
+    /\bthe\s+(?:article|content|following|above|below)\b/gi,
+    /\bin\s+conclusion\b/gi,
+    /\bto\s+sum\s+up\b/gi,
+    /\b(?:subscribe|follow\s+me|click\s+here)\b/gi,
+  ]
+  const englishHits = englishMarkers.filter(p => p.test(content)).length
+  if (englishHits >= 2) {
+    issues.push(`Possíveis fragmentos não traduzidos detectados (${englishHits} marcadores)`)
+  }
+
+  // Palavras proibidas (segurança legal/ética — manter)
   const lowerContent = content.toLowerCase()
   for (const palavra of PALAVRAS_PROIBIDAS) {
     if (lowerContent.includes(palavra.toLowerCase())) {
@@ -192,22 +235,25 @@ export function camada2Estrutural(article: ArticlePayload): QualityResult {
     }
   }
 
-  // Disclaimer financeiro
+  // Disclaimer financeiro (só crypto)
   const hasDisclaimer =
     lowerContent.includes('não é aconselhamento financeiro') ||
     lowerContent.includes('não constitui aconselhamento') ||
+    lowerContent.includes('não é conselho financeiro') ||
     lowerContent.includes('not financial advice')
 
   if (article.app_name === 'crypto' && !hasDisclaimer) {
     issues.push('Disclaimer financeiro obrigatório em conteúdo crypto ausente')
   }
 
-  // Disclosure IA
+  // Disclosure IA — aceita o bloco "Sobre este artigo" injectado pelo Stage 5
   const hasAIDisclosure =
     lowerContent.includes('assistência de ia') ||
     lowerContent.includes('gerado com ia') ||
-    lowerContent.includes('ai-assisted') ||
-    lowerContent.includes('inteligência artificial')
+    lowerContent.includes('inteligência artificial') ||
+    lowerContent.includes('com recurso a inteligência') ||
+    lowerContent.includes('sobre este artigo') ||
+    lowerContent.includes('ai-assisted')
 
   if (!hasAIDisclosure) {
     issues.push('Disclosure de conteúdo gerado com IA ausente')
