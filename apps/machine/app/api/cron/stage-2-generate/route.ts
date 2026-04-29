@@ -1,3 +1,10 @@
+/**
+ * @deprecated Use stage-2a-translate + stage-2b-merge instead.
+ * Este endpoint ainda existe para compatibilidade mas atinge timeout 300s
+ * para artigos grandes. Mantido temporariamente para o caso de roll-back.
+ * Remover após 8.6E.
+ */
+
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
 export const maxDuration = 300
