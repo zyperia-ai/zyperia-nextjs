@@ -5,12 +5,15 @@ export const maxDuration = 300
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import Anthropic from '@anthropic-ai/sdk'
+import { ollamaComplete, ollamaHealthy } from '@/lib/ollama-client'
 
 function getSupabase() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
 }
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+
+const USE_LOCAL_LLM = process.env.USE_LOCAL_LLM === 'true'
 
 function generateSlug(title: string): string {
   const slug = title
@@ -53,12 +56,32 @@ Devolve APENAS o artigo final, começando pela linha "# Título".`
 
 async function mergeChunks(parts: string[], contentType: string, sourceRef: string): Promise<string> {
   if (parts.length === 1) return parts[0]
+
+  const userPrompt = getMergePrompt(parts, contentType, sourceRef)
+
+  if (USE_LOCAL_LLM) {
+    try {
+      const healthy = await ollamaHealthy()
+      if (healthy) {
+        const result = await ollamaComplete({
+          userPrompt,
+          maxTokens: 8192,
+          temperature: 0.3,
+        })
+        console.log(`[Stage 2b] Merge (Ollama): in=${result.inputTokens} out=${result.outputTokens} duration=${result.durationMs}ms`)
+        return result.text.trim()
+      }
+    } catch (error: any) {
+      console.warn(`[Stage 2b] Ollama falhou (${error.message}) — fallback Haiku`)
+    }
+  }
+
   const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-5',
+    model: 'claude-haiku-4-5-20251001',
     max_tokens: 8192,
-    messages: [{ role: 'user', content: getMergePrompt(parts, contentType, sourceRef) }],
+    messages: [{ role: 'user', content: userPrompt }],
   })
-  console.log(`[Stage 2b] Merge: in=${response.usage?.input_tokens} out=${response.usage?.output_tokens} stop=${response.stop_reason}`)
+  console.log(`[Stage 2b] Merge (Haiku fallback): in=${response.usage?.input_tokens} out=${response.usage?.output_tokens}`)
   return response.content[0].type === 'text' ? response.content[0].text : parts.join('\n\n')
 }
 
@@ -111,16 +134,16 @@ export async function GET(request: Request) {
 
     const { data: chunks } = await getSupabase()
       .from('translation_chunks')
-      .select('chunk_index, scrambled_chunk')
+      .select('chunk_index, translated_chunk')
       .eq('research_id', target.id)
-      .eq('status', 'scrambled')
+      .eq('status', 'translated')
       .order('chunk_index', { ascending: true })
 
     if (!chunks || chunks.length === 0) {
       return NextResponse.json({ success: false, reason: 'Sem chunks prontos' })
     }
 
-    const parts = chunks.map(c => c.scrambled_chunk!).filter(Boolean)
+    const parts = chunks.map(c => c.translated_chunk!).filter(Boolean)
     console.log(`A juntar ${parts.length} parte(s) para "${topic}"`)
 
     const finalContent = await mergeChunks(parts, contentType, '')

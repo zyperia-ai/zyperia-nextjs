@@ -6,12 +6,15 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import Anthropic from '@anthropic-ai/sdk'
 import { splitIntoChunks } from '@/lib/chunker'
+import { ollamaComplete, ollamaHealthy } from '@/lib/ollama-client'
 
 function getSupabase() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
 }
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+
+const USE_LOCAL_LLM = process.env.USE_LOCAL_LLM === 'true'
 
 const TRANSLATION_RULES = `REGRAS ABSOLUTAS DE TRADUÇÃO:
 - Traduzes frase a frase para português europeu (PT-PT, não PT-BR)
@@ -269,18 +272,39 @@ async function translateChunk(
   appId: string,
   previousContext: string
 ): Promise<string> {
+  const systemPrompt = getSystemPrompt(contentType)
+  const userPrompt = getChunkPrompt(chunk, chunkIndex, totalChunks, topic, contentType, sourceRef, previousContext)
+
+  // Tentar Ollama local se configurado
+  if (USE_LOCAL_LLM) {
+    try {
+      const healthy = await ollamaHealthy()
+      if (healthy) {
+        const result = await ollamaComplete({
+          systemPrompt,
+          userPrompt,
+          maxTokens: 4096,
+          temperature: 0.3,
+        })
+        console.log(`[Stage 2a] Chunk ${chunkIndex + 1}/${totalChunks} (Ollama): in=${result.inputTokens} out=${result.outputTokens} duration=${result.durationMs}ms`)
+        return result.text.trim()
+      }
+      console.warn(`[Stage 2a] Ollama unhealthy — fallback Anthropic Haiku`)
+    } catch (error: any) {
+      console.warn(`[Stage 2a] Ollama falhou (${error.message}) — fallback Anthropic Haiku`)
+    }
+  }
+
+  // Fallback: Anthropic Haiku 4.5 (NÃO Sonnet — 3x mais barato)
   const response = await anthropic.messages.create({
-    model: 'claude-sonnet-4-5',
+    model: 'claude-haiku-4-5-20251001',
     max_tokens: 4096,
-    system: getSystemPrompt(contentType),
-    messages: [{
-      role: 'user',
-      content: getChunkPrompt(chunk, chunkIndex, totalChunks, topic, contentType, sourceRef, previousContext),
-    }],
+    system: systemPrompt,
+    messages: [{ role: 'user', content: userPrompt }],
   })
   const text = response.content[0].type === 'text' ? response.content[0].text : ''
-  console.log(`[Stage 2a] Chunk ${chunkIndex + 1}/${totalChunks}: in=${response.usage?.input_tokens} out=${response.usage?.output_tokens} stop=${response.stop_reason}`)
-  return text
+  console.log(`[Stage 2a] Chunk ${chunkIndex + 1}/${totalChunks} (Haiku fallback): in=${response.usage?.input_tokens} out=${response.usage?.output_tokens} stop=${response.stop_reason}`)
+  return text.trim()
 }
 
 async function scrambleArticle(translatedArticle: string): Promise<{ output: string; scrambleApplied: boolean; reason?: string }> {
@@ -413,11 +437,11 @@ export async function GET(request: Request) {
       if (lastIdx >= 0) {
         const { data: lastChunk } = await getSupabase()
           .from('translation_chunks')
-          .select('scrambled_chunk')
+          .select('translated_chunk')
           .eq('research_id', research.id)
           .eq('chunk_index', lastIdx)
           .single()
-        if (lastChunk?.scrambled_chunk) previousContext = lastChunk.scrambled_chunk
+        if (lastChunk?.translated_chunk) previousContext = lastChunk.translated_chunk
       }
     }
 
@@ -448,23 +472,18 @@ export async function GET(request: Request) {
         finalTranslated = retry
       }
 
-      console.log(`Scramble chunk ${i + 1}/${chunks.length}...`)
-      const scrambleResult = await scrambleArticle(finalTranslated)
-      console.log(`Chunk ${i + 1} scramble: ${scrambleResult.scrambleApplied ? '✓' : `skipped (${scrambleResult.reason})`}`)
-
       await getSupabase().from('translation_chunks').upsert({
         research_id: research.id,
         app_id: appId,
         chunk_index: i,
         source_chunk: chunks[i],
         translated_chunk: finalTranslated,
-        scrambled_chunk: scrambleResult.output,
-        scramble_applied: scrambleResult.scrambleApplied,
-        status: 'scrambled',
+        scramble_applied: false,
+        status: 'translated',
         created_at: new Date().toISOString(),
       }, { onConflict: 'research_id,chunk_index' })
 
-      previousContext = scrambleResult.output
+      previousContext = finalTranslated
       processedCount++
     }
 
@@ -473,11 +492,11 @@ export async function GET(request: Request) {
       .select('chunk_index, status')
       .eq('research_id', research.id)
 
-    const allDone = (finalChunks || []).filter(c => c.status === 'scrambled').length === chunks.length
+    const allDone = (finalChunks || []).filter(c => c.status === 'translated').length === chunks.length
 
     if (allDone) {
       await getSupabase().from('content_research').update({ processed: true }).eq('id', research.id)
-      console.log(`✓ Todos os ${chunks.length} chunks scrambled — pronto para Stage 2b`)
+      console.log(`✓ Todos os ${chunks.length} chunks translated — pronto para Stage 2b`)
     } else {
       console.log(`Processados ${processedCount} chunks neste run; faltam ${chunks.length - (finalChunks?.length || 0)}`)
     }
