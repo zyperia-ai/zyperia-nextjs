@@ -82,6 +82,11 @@ export async function GET(request: Request) {
         if (!quality.approved) {
           results.rejected++
 
+          // Debug logging
+          console.log('[Stage 6] REJEITADO:', article.title?.slice(0, 50))
+          console.log('[Stage 6] Razão:', quality.reason)
+          console.log('[Stage 6] Quality object:', JSON.stringify(quality, null, 2))
+
           // Log em generation_logs
           await getSupabase().from('generation_logs').insert({
             blog_post_id: article.id,
