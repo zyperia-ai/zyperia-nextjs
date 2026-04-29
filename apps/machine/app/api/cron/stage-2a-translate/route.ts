@@ -425,7 +425,7 @@ export async function GET(request: Request) {
 
     const completedIndices = new Set(
       (existingChunks || [])
-        .filter(c => c.status === 'scrambled')
+        .filter(c => c.status === 'translated')
         .map(c => c.chunk_index)
     )
 
