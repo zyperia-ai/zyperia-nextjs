@@ -151,6 +151,52 @@ async function runStage1() {
 
           console.log(`Found ${extracted.sources.length} sources, ${extracted.keyFacts.length} key facts`)
 
+          // Fetch do conteúdo do melhor artigo encontrado
+          let sourceContent = ''
+          let sourceUrl = ''
+          let articleFound = false
+
+          if (extracted.sources && extracted.sources.length > 0) {
+            // Tenta fetch das primeiras 3 sources até encontrar conteúdo
+            for (const url of extracted.sources.slice(0, 3)) {
+              try {
+                if (!url || !url.startsWith('http')) continue
+                const response = await fetch(url, {
+                  headers: { 'User-Agent': 'ZyperiaBot/1.0' },
+                  signal: AbortSignal.timeout(10000),
+                })
+                if (!response.ok) continue
+                const html = await response.text()
+                // Extrai texto limpo do HTML
+                const text = html
+                  .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+                  .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+                  .replace(/<[^>]+>/g, ' ')
+                  .replace(/\s+/g, ' ')
+                  .trim()
+                  .slice(0, 8000)
+                if (text.length > 500) {
+                  sourceContent = text
+                  sourceUrl = url
+                  articleFound = true
+                  console.log(`✓ Fetched content from: ${url.slice(0, 60)} (${text.length} chars)`)
+                  break
+                }
+              } catch (e) {
+                console.log(`✗ Failed to fetch: ${url.slice(0, 60)}`)
+              }
+            }
+          }
+
+          // Adiciona ao researchData
+          const researchDataComplete = {
+            ...researchData,
+            sourceContent,
+            sourceUrl,
+            articleFound,
+            content_type: 'tipo3',
+          }
+
           // Get competitive analysis from Stage 0
           const { data: competitiveData } = await getSupabase()
             .from('content_research')
@@ -166,7 +212,7 @@ async function runStage1() {
             app_id: app.app_id,
             topic: topic.title,
             research_type: 'original',
-            research_data: researchData,
+            research_data: researchDataComplete,
             content_gaps: competitiveData?.[0]?.content_gaps,
             confidence_score: 75,
             created_at: new Date().toISOString(),
