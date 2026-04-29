@@ -37,9 +37,17 @@ export interface OllamaCompletionResult {
   stopReason: 'end_turn' | 'max_tokens' | 'error'
 }
 
-const OLLAMA_URL = process.env.OLLAMA_URL!
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'phi4'
-const OLLAMA_TIMEOUT_MS = parseInt(process.env.OLLAMA_TIMEOUT_MS || '300000')
+function getOllamaUrl() {
+  return process.env.OLLAMA_URL || ''
+}
+
+function getOllamaModel() {
+  return process.env.OLLAMA_MODEL || 'phi4'
+}
+
+function getOllamaTimeout() {
+  return parseInt(process.env.OLLAMA_TIMEOUT_MS || '300000')
+}
 
 export async function ollamaComplete(opts: {
   systemPrompt?: string
@@ -53,7 +61,7 @@ export async function ollamaComplete(opts: {
   messages.push({ role: 'user', content: opts.userPrompt })
 
   const body: OllamaChatRequest = {
-    model: opts.model || OLLAMA_MODEL,
+    model: opts.model || getOllamaModel(),
     messages,
     stream: false,
     options: {
@@ -64,13 +72,15 @@ export async function ollamaComplete(opts: {
   }
 
   const start = Date.now()
+  const ollamaUrl = getOllamaUrl()
+  const timeout = getOllamaTimeout()
 
   try {
-    const response = await fetch(`${OLLAMA_URL}/api/chat`, {
+    const response = await fetch(`${ollamaUrl}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(OLLAMA_TIMEOUT_MS),
+      signal: AbortSignal.timeout(timeout),
     })
 
     if (!response.ok) {
@@ -102,8 +112,9 @@ export async function ollamaComplete(opts: {
 
 export async function ollamaHealthy(): Promise<boolean> {
   try {
-    if (!OLLAMA_URL) return false
-    const response = await fetch(`${OLLAMA_URL}/api/tags`, {
+    const ollamaUrl = getOllamaUrl()
+    if (!ollamaUrl) return false
+    const response = await fetch(`${ollamaUrl}/api/tags`, {
       signal: AbortSignal.timeout(5000),
     })
     return response.ok
