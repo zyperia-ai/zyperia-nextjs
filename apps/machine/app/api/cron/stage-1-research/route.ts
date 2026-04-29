@@ -27,7 +27,7 @@ async function getNexusAudienceFocus(): Promise<Record<string, number>> {
   }
 }
 
-async function runStage1() {
+async function runStage1(appFilter?: string | null) {
   console.log('\n=== STAGE 1: RESEARCH & TOPIC SELECTION (CRON JOB) ===');
   console.log(`Started at: ${new Date().toISOString()}`);
 
@@ -35,6 +35,7 @@ async function runStage1() {
     const { data: apps, error: appsError } = await getSupabase().from('theme_config').select('app_id, articles_per_day');
 
     for (const app of apps || []) {
+      if (appFilter && app.app_id !== appFilter) continue
       console.log(`\nSelecting topics for: ${app.app_id} (${app.articles_per_day} articles)`);
 
       // NEXUS audience_focus — preferência mas sem bloquear se não há tópicos suficientes
@@ -275,7 +276,10 @@ export async function GET(request: Request) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const result = await runStage1();
+  const { searchParams } = new URL(request.url)
+  const appFilter = searchParams.get('app') || null
+
+  const result = await runStage1(appFilter);
   return new Response(JSON.stringify(result), {
     status: result.statusCode,
     headers: { 'Content-Type': 'application/json' },

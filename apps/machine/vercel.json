@@ -16,8 +16,16 @@
       "schedule": "0 * * * *"
     },
     {
-      "path": "/api/cron/stage-1-research",
+      "path": "/api/cron/stage-1-research?app=crypto",
       "schedule": "30 0 * * *"
+    },
+    {
+      "path": "/api/cron/stage-1-research?app=intelligence",
+      "schedule": "40 0 * * *"
+    },
+    {
+      "path": "/api/cron/stage-1-research?app=onlinebiz",
+      "schedule": "50 0 * * *"
     },
     {
       "path": "/api/cron/stage-2-generate?app=crypto",
