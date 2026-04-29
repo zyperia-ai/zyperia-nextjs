@@ -1,5 +1,6 @@
 {
   "functions": {
+    "app/api/cron/stage-0-intelligence/route.ts": {"maxDuration": 300},
     "app/api/cron/stage-2-generate/route.ts": {"maxDuration": 300},
     "app/api/cron/stage-5-editorial/route.ts": {"maxDuration": 300},
     "app/api/cron/stage-6-publish/route.ts": {"maxDuration": 300},
@@ -9,6 +10,10 @@
     {
       "path": "/api/cron/stage-0-analysis",
       "schedule": "0 23 * * *"
+    },
+    {
+      "path": "/api/cron/stage-0-intelligence",
+      "schedule": "0 * * * *"
     },
     {
       "path": "/api/cron/stage-1-research",
