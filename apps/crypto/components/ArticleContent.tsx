@@ -10,6 +10,9 @@ interface ArticleContentProps {
 export default function ArticleContent({ content }: ArticleContentProps) {
   if (!content) return null
 
+  // Remove the leading H1 if present (the page already shows the title separately)
+  const stripped = content.replace(/^\s*#\s+.+?(\r?\n|$)/, '').trimStart()
+
   return (
     <div className="prose-zyperia">
       <ReactMarkdown
@@ -81,7 +84,7 @@ export default function ArticleContent({ content }: ArticleContentProps) {
           hr: () => <hr className="my-10 border-white/10" />,
         }}
       >
-        {content}
+        {stripped}
       </ReactMarkdown>
     </div>
   )

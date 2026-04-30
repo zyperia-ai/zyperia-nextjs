@@ -1,6 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
-import { Clock } from "lucide-react";
+import { Clock, Eye } from "lucide-react";
 
 export type ArticleCardData = {
   slug: string;
@@ -13,6 +12,8 @@ export type ArticleCardData = {
   reading_time_minutes?: number;
 };
 
+const CATEGORY_LABEL = "CASO DE ESTUDO";
+
 export default function ArticleCard({ article }: { article: ArticleCardData }) {
   const dateStr = new Date(article.published_at).toLocaleDateString("pt-PT", {
     day: "numeric",
@@ -23,49 +24,51 @@ export default function ArticleCard({ article }: { article: ArticleCardData }) {
   return (
     <Link
       href={`/articles/${article.slug}`}
-      className="card overflow-hidden group flex flex-col no-underline"
+      className="group relative block no-underline border-l-2 border-[var(--brand-primary)]/40 hover:border-[var(--brand-primary)] hover:border-l-4 transition-all duration-200 pl-6 md:pl-8 py-6 md:py-7"
     >
-      <div className="relative aspect-[16/9] bg-[var(--surface-2)] overflow-hidden">
-        {article.featured_image_url ? (
-          <Image
-            src={article.featured_image_url}
-            alt={article.title}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-[var(--text-muted)]">
-            <div className="h-display text-3xl opacity-20">Z</div>
-          </div>
+      {/* Top row: category badge + date + meta */}
+      <div className="flex flex-wrap items-center gap-3 text-[10px] h-mono uppercase tracking-wider mb-4">
+        <span className="text-[var(--brand-primary)]">{CATEGORY_LABEL}</span>
+        <span className="text-[var(--text-muted)]">·</span>
+        <time dateTime={article.published_at} className="text-[var(--text-muted)]">
+          {dateStr}
+        </time>
+        {article.reading_time_minutes && (
+          <>
+            <span className="text-[var(--text-muted)]">·</span>
+            <span className="flex items-center gap-1 text-[var(--text-muted)]">
+              <Clock size={10} /> {article.reading_time_minutes} min
+            </span>
+          </>
+        )}
+        {typeof article.views === "number" && article.views > 0 && (
+          <>
+            <span className="text-[var(--text-muted)]">·</span>
+            <span className="flex items-center gap-1 text-[var(--text-muted)]">
+              <Eye size={10} /> {article.views.toLocaleString("pt-PT")}
+            </span>
+          </>
         )}
       </div>
-      <div className="p-5 flex flex-col flex-1">
-        <div className="flex items-center gap-3 text-[10px] h-mono uppercase tracking-wider text-[var(--text-muted)] mb-3">
-          <time dateTime={article.published_at}>{dateStr}</time>
-          {article.reading_time_minutes && (
-            <>
-              <span>·</span>
-              <span className="flex items-center gap-1">
-                <Clock size={10} /> {article.reading_time_minutes} min de leitura
-              </span>
-            </>
-          )}
+
+      {/* Title */}
+      <h3 className="h-display text-2xl md:text-3xl mb-3 text-white group-hover:text-[var(--brand-highlight)] transition-colors leading-tight">
+        {article.title}
+      </h3>
+
+      {/* Excerpt (only if present) */}
+      {article.excerpt && (
+        <p className="text-sm md:text-base text-[var(--text-secondary)] leading-relaxed line-clamp-2 mb-3">
+          {article.excerpt}
+        </p>
+      )}
+
+      {/* Author byline (only if present) */}
+      {article.author_byline && (
+        <div className="text-[10px] h-mono uppercase tracking-wider text-[var(--text-muted)] mt-3">
+          Por <span className="text-[var(--text-secondary)]">{article.author_byline}</span>
         </div>
-        <h3 className="h-display text-lg md:text-xl mb-2 text-white group-hover:text-[var(--brand-highlight)] transition-colors">
-          {article.title}
-        </h3>
-        {article.excerpt && (
-          <p className="text-sm text-[var(--text-secondary)] leading-relaxed line-clamp-3 flex-1">
-            {article.excerpt}
-          </p>
-        )}
-        {article.author_byline && (
-          <div className="text-[10px] h-mono uppercase tracking-wider text-[var(--text-muted)] mt-4">
-            Por {article.author_byline}
-          </div>
-        )}
-      </div>
+      )}
     </Link>
   );
 }
