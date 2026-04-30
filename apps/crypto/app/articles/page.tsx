@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 
 async function getArticles(
   page: number = 1,
+  categoria?: string,
   tag?: string,
   q?: string,
   sort: "newest" | "popular" = "newest"
@@ -32,7 +33,8 @@ async function getArticles(
       .eq('app_id', 'crypto')
       .eq('status', 'published');
 
-    if (tag) query = query.contains('keywords', [tag]);
+    if (categoria) query = query.contains('keywords', [categoria.toUpperCase()]);
+    if (tag) query = query.contains('tags', [tag.toLowerCase()]);
     if (q) query = query.ilike('title', `%${q}%`);
     if (sort === 'popular') query = query.order('views', { ascending: false });
     else query = query.order('published_at', { ascending: false });
@@ -54,21 +56,23 @@ async function getArticles(
 }
 
 export default async function ArticlesPage(props: {
-  searchParams?: Promise<{ page?: string; tag?: string; q?: string; sort?: string }>;
+  searchParams?: Promise<{ page?: string; categoria?: string; tag?: string; q?: string; sort?: string }>;
 }) {
   const searchParams = await props.searchParams;
   const page = parseInt(searchParams?.page ?? "1");
+  const categoria = searchParams?.categoria;
   const tag = searchParams?.tag;
   const q = searchParams?.q;
   const sort = (searchParams?.sort as "newest" | "popular") || "newest";
 
-  const { articles, total } = await getArticles(page, tag, q, sort);
+  const { articles, total } = await getArticles(page, categoria, tag, q, sort);
   const limit = 12;
   const totalPages = Math.ceil(total / limit);
 
   const buildUrl = (newPage: number, updates?: Record<string, string | undefined>) => {
     const params = new URLSearchParams();
     if (newPage > 1) params.set("page", newPage.toString());
+    if (categoria || updates?.categoria) params.set("categoria", updates?.categoria || categoria || "");
     if (tag || updates?.tag) params.set("tag", updates?.tag || tag || "");
     if (q || updates?.q) params.set("q", updates?.q || q || "");
     if (sort !== "newest" || updates?.sort) params.set("sort", updates?.sort || sort);
@@ -82,7 +86,11 @@ export default async function ArticlesPage(props: {
         {/* Kicker + Title */}
         <span className="kicker mb-4">Análises</span>
         <h1 className="h-display text-4xl md:text-5xl mb-3">
-          {tag ? (
+          {categoria ? (
+            <>
+              Categoria: <span className="text-brand-gradient">{categoria}</span>
+            </>
+          ) : tag ? (
             <>
               Tema: <span className="text-brand-gradient">{tag}</span>
             </>
@@ -103,7 +111,7 @@ export default async function ArticlesPage(props: {
         </p>
 
         {/* Filters */}
-        <ArticleFilters activeTag={tag} activeSort={sort} activeQuery={q} />
+        <ArticleFilters activeCategoria={categoria} activeTag={tag} activeSort={sort} activeQuery={q} />
 
         {/* Articles Grid */}
         {articles.length > 0 ? (

@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import { Metadata } from 'next'
 import ArticleCard from '@/components/ArticleCard'
 import ArticleContent from '@/components/ArticleContent'
 import { createClient } from '@supabase/supabase-js'
@@ -22,6 +23,8 @@ interface Article {
   reading_time_minutes?: number
   tags?: string[]
   featured_image_url?: string
+  meta_description?: string
+  keywords?: string[]
 }
 
 async function fetchArticle(slug: string): Promise<Article | null> {
@@ -55,6 +58,33 @@ async function fetchRelatedArticles(slug: string): Promise<Article[]> {
     return []
   }
   return data || []
+}
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
+  const { slug } = await params
+  const article = await fetchArticle(slug)
+  if (!article) {
+    return { title: 'Artigo não encontrado — ZYPERIA Crypto' }
+  }
+  const description = (article as any).meta_description || article.excerpt || article.title
+  return {
+    title: `${article.title} — ZYPERIA Crypto`,
+    description: description.slice(0, 160),
+    openGraph: {
+      title: article.title,
+      description: description.slice(0, 160),
+      type: 'article',
+      publishedTime: article.published_at,
+      authors: article.author_byline ? [article.author_byline] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: description.slice(0, 160),
+    },
+  }
 }
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
