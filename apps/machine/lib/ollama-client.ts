@@ -11,7 +11,7 @@ interface OllamaMessage {
 interface OllamaChatRequest {
   model: string
   messages: OllamaMessage[]
-  stream?: false
+  stream?: boolean
   options?: {
     temperature?: number
     num_predict?: number
@@ -67,7 +67,7 @@ export async function ollamaComplete(opts: {
   const body: OllamaChatRequest = {
     model: opts.model || getOllamaModel(),
     messages,
-    stream: false,
+    stream: true,
     options: {
       temperature: opts.temperature ?? 0.3,
       num_predict: opts.maxTokens ?? 4096,
@@ -96,19 +96,80 @@ export async function ollamaComplete(opts: {
       throw new Error(`Ollama HTTP ${response.status}: ${await response.text()}`)
     }
 
-    const data: OllamaChatResponse = await response.json()
+    // Parse NDJSON stream: each line is a JSON event from Ollama
+    // Streaming keeps the Cloudflare Tunnel connection alive (avoids 524 timeouts)
+    // by sending bytes continuously instead of going silent for >100s
+    if (!response.body) {
+      throw new Error('Ollama response has no body (cannot stream)')
+    }
+
+    const reader = response.body.getReader()
+    const decoder = new TextDecoder()
+    let buffer = ''
+    let fullText = ''
+    let inputTokens = 0
+    let outputTokens = 0
+    let modelName = body.model
+    let finalDone = false
+
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buffer += decoder.decode(value, { stream: true })
+
+      // Split on newlines; last fragment may be incomplete, keep in buffer
+      const lines = buffer.split('\n')
+      buffer = lines.pop() || ''
+
+      for (const line of lines) {
+        const trimmed = line.trim()
+        if (!trimmed) continue
+        try {
+          const event = JSON.parse(trimmed)
+          if (event.message?.content) {
+            fullText += event.message.content
+          }
+          if (event.done) {
+            finalDone = true
+            if (typeof event.prompt_eval_count === 'number') inputTokens = event.prompt_eval_count
+            if (typeof event.eval_count === 'number') outputTokens = event.eval_count
+            if (event.model) modelName = event.model
+          }
+        } catch (parseErr: any) {
+          console.warn(`[Ollama] skipped malformed NDJSON line: ${trimmed.slice(0, 120)}`)
+        }
+      }
+    }
+
+    // Process any leftover buffer content
+    const leftover = buffer.trim()
+    if (leftover) {
+      try {
+        const event = JSON.parse(leftover)
+        if (event.message?.content) fullText += event.message.content
+        if (event.done) {
+          finalDone = true
+          if (typeof event.prompt_eval_count === 'number') inputTokens = event.prompt_eval_count
+          if (typeof event.eval_count === 'number') outputTokens = event.eval_count
+          if (event.model) modelName = event.model
+        }
+      } catch {
+        // ignore trailing garbage
+      }
+    }
+
     const durationMs = Date.now() - start
-    const stopReason: OllamaCompletionResult['stopReason'] = data.done ? 'end_turn' : 'max_tokens'
+    const stopReason: OllamaCompletionResult['stopReason'] = finalDone ? 'end_turn' : 'max_tokens'
 
     console.log(
-      `[Ollama] model=${data.model} in=${data.prompt_eval_count} out=${data.eval_count} ` +
-      `duration=${durationMs}ms stop=${stopReason}`
+      `[Ollama] model=${modelName} in=${inputTokens} out=${outputTokens} ` +
+      `duration=${durationMs}ms stop=${stopReason} chars=${fullText.length}`
     )
 
     return {
-      text: data.message.content,
-      inputTokens: data.prompt_eval_count,
-      outputTokens: data.eval_count,
+      text: fullText,
+      inputTokens,
+      outputTokens,
       durationMs,
       stopReason,
     }
