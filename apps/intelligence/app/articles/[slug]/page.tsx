@@ -56,8 +56,8 @@ async function fetchRelatedArticles(slug: string): Promise<Article[]> {
   return data || []
 }
 
-export default async function ArticlePage({ params }: { params: { slug: string } }) {
-  const { slug } = params
+export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
   const article = await fetchArticle(slug)
 
   if (!article) {
