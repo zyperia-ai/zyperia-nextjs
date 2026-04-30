@@ -27,12 +27,20 @@ async function getArticles(
   });
 
   try {
-    const res = await fetch(`/api/articles?${params}`, {
-      cache: "no-store",
-    });
-    if (!res.ok) return { articles: [], total: 0 };
-    return res.json();
-  } catch {
+    const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
+    const url = `${baseUrl}/api/articles?${params}`;
+    console.log('[articles/page] FETCHING:', url);
+    const res = await fetch(url, { cache: "no-store" });
+    console.log('[articles/page] RES STATUS:', res.status);
+    if (!res.ok) {
+      console.log('[articles/page] RES NOT OK');
+      return { articles: [], total: 0 };
+    }
+    const data = await res.json();
+    console.log('[articles/page] DATA:', JSON.stringify(data).slice(0, 200));
+    return data;
+  } catch (e: any) {
+    console.error('[articles/page] FETCH ERROR:', e.message);
     return { articles: [], total: 0 };
   }
 }
