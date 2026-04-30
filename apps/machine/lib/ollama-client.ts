@@ -46,7 +46,11 @@ function getOllamaModel() {
 }
 
 function getOllamaTimeout() {
-  return parseInt(process.env.OLLAMA_TIMEOUT_MS || '300000')
+  const raw = process.env.OLLAMA_TIMEOUT_MS || '300000'
+  const parsed = parseInt(raw)
+  const isValid = !isNaN(parsed) && parsed > 0
+  console.log(`[Ollama] timeout config: raw="${raw}" len=${raw.length} parsed=${parsed} valid=${isValid}`)
+  return isValid ? parsed : 300000
 }
 
 export async function ollamaComplete(opts: {
@@ -75,13 +79,18 @@ export async function ollamaComplete(opts: {
   const ollamaUrl = getOllamaUrl()
   const timeout = getOllamaTimeout()
 
+  console.log(`[Ollama] request start: url=${ollamaUrl} timeout=${timeout}ms model=${body.model} tokens=${body.options?.num_predict}`)
+
   try {
+    const reqStart = Date.now()
     const response = await fetch(`${ollamaUrl}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(timeout),
     })
+    const reqDuration = Date.now() - reqStart
+    console.log(`[Ollama] fetch completed in ${reqDuration}ms, status=${response.status}`)
 
     if (!response.ok) {
       throw new Error(`Ollama HTTP ${response.status}: ${await response.text()}`)
@@ -105,20 +114,35 @@ export async function ollamaComplete(opts: {
     }
   } catch (error: any) {
     const durationMs = Date.now() - start
-    console.error(`[Ollama] Erro após ${durationMs}ms:`, error.message)
+    const errorInfo = {
+      message: error.message,
+      code: error.code,
+      cause: error.cause?.message || error.cause,
+      name: error.name,
+    }
+    console.error(`[Ollama] Erro após ${durationMs}ms:`, JSON.stringify(errorInfo, null, 2))
     throw error
   }
 }
 
 export async function ollamaHealthy(): Promise<boolean> {
+  const start = Date.now()
   try {
     const ollamaUrl = getOllamaUrl()
-    if (!ollamaUrl) return false
+    if (!ollamaUrl) {
+      console.log(`[Ollama] health check: url missing`)
+      return false
+    }
     const response = await fetch(`${ollamaUrl}/api/tags`, {
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(2000),
     })
-    return response.ok
-  } catch {
+    const duration = Date.now() - start
+    const healthy = response.ok
+    console.log(`[Ollama] health check: url=${ollamaUrl} status=${response.status} duration=${duration}ms healthy=${healthy}`)
+    return healthy
+  } catch (error: any) {
+    const duration = Date.now() - start
+    console.error(`[Ollama] health check failed after ${duration}ms: ${error.message}`)
     return false
   }
 }
