@@ -278,7 +278,7 @@ async function discoverTrends() {
     const scope = TOPIC_SCOPE[appId] || appId
     try {
       const response = await getAnthropic().messages.create({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 1024,
         tools: [{ type: 'web_search_20250305' as any, name: 'web_search' } as any],
         system: `És um analista que identifica tópicos em alta para conteúdo editorial. Devolves APENAS JSON válido, sem prosa. Formato: {"trends":["tópico 1","tópico 2",...]}`,

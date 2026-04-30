@@ -8,7 +8,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 
-export type AIModel = 'claude-sonnet-4-5' | 'gemini-flash';
+export type AIModel = 'claude-haiku-4-5-20251001' | 'gemini-flash';
 
 export interface AIResponse {
   content: string;
@@ -33,41 +33,60 @@ export async function generateWithClaude(
   userPrompt: string,
 ): Promise<AIResponse> {
   const startTime = Date.now();
+  let content = '';
+  let inputTokens = 0;
+  let outputTokens = 0;
 
-  try {
-    const message = await getAnthropic().messages.create({
-      model: 'claude-sonnet-4-5',
-      max_tokens: 16000,
-      system: systemPrompt,
-      messages: [
-        {
-          role: 'user',
-          content: userPrompt,
-        },
-      ],
-    });
-
-    const duration = Math.round((Date.now() - startTime) / 1000);
-    const content = message.content[0].type === 'text' ? message.content[0].text : '';
-
-    // Rough cost estimation: Claude Sonnet 4.5 is ~$3/MTok input, $15/MTok output
-    const inputTokens = message.usage.input_tokens;
-    const outputTokens = message.usage.output_tokens;
-    const costUsd = (inputTokens * 3 + outputTokens * 15) / 1_000_000;
-
-    console.log(`[AI Router] input_tokens: ${inputTokens}, output_tokens: ${outputTokens}, max: 16000, stop_reason: ${message.stop_reason}`)
-    return {
-      content,
-      model: 'claude-sonnet-4-5',
-      costUsd,
-      duration,
-      inputTokens,
-      outputTokens,
-    };
-  } catch (error) {
-    console.error('Claude API error:', error);
-    throw error;
+  if (process.env.USE_LOCAL_LLM === 'true') {
+    try {
+      const { ollamaComplete, ollamaHealthy } = await import('./ollama-client')
+      if (await ollamaHealthy()) {
+        const r = await ollamaComplete({ systemPrompt, userPrompt, maxTokens: 16000, temperature: 0.3 })
+        content = r.text.trim()
+        inputTokens = r.inputTokens
+        outputTokens = r.outputTokens
+        console.log(`[AI Router] (Ollama): ${outputTokens} out, ${r.durationMs}ms`)
+      }
+    } catch (e: any) {
+      console.warn(`[AI Router] Ollama falhou: ${e.message}`)
+    }
   }
+
+  if (!content) {
+    try {
+      const message = await getAnthropic().messages.create({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 16000,
+        system: systemPrompt,
+        messages: [
+          {
+            role: 'user',
+            content: userPrompt,
+          },
+        ],
+      });
+
+      content = message.content[0].type === 'text' ? message.content[0].text : '';
+      inputTokens = message.usage.input_tokens;
+      outputTokens = message.usage.output_tokens;
+      console.log(`[AI Router] (Haiku fallback): ${outputTokens} out`)
+    } catch (error) {
+      console.error('Claude API error:', error);
+      throw error;
+    }
+  }
+
+  const duration = Math.round((Date.now() - startTime) / 1000);
+  const costUsd = (inputTokens * 0.8 + outputTokens * 4) / 1_000_000;
+
+  return {
+    content,
+    model: 'claude-haiku-4-5-20251001',
+    costUsd,
+    duration,
+    inputTokens,
+    outputTokens,
+  };
 }
 
 export async function searchAndExtractWithClaude(
@@ -126,7 +145,7 @@ IMPORTANTE:
     while (iterations < maxIterations) {
       iterations++
       const response = await getAnthropic().messages.create({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-haiku-4-5-20251001',
         max_tokens: 4096,
         tools: [{ type: 'web_search_20250305' as any, name: 'web_search' } as any],
         system: systemPrompt,
