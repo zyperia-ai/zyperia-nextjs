@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 async function getArchivedArticles() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/articles?limit=999&status=published`, {
+    const res = await fetch(`/api/articles?limit=999&status=published`, {
       cache: "no-store",
     });
     if (!res.ok) return [];

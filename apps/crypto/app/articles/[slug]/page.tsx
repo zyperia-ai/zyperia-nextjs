@@ -19,7 +19,7 @@ interface Article {
 
 async function fetchArticle(slug: string): Promise<Article> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/articles/${slug}`, {
+    const response = await fetch(`/api/articles/${slug}`, {
       cache: 'no-store'
     })
 
@@ -41,7 +41,7 @@ async function fetchArticle(slug: string): Promise<Article> {
 
 async function fetchRelatedArticles(slug: string): Promise<Article[]> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/articles/related/${slug}`, {
+    const response = await fetch(`/api/articles/related/${slug}`, {
       cache: 'no-store'
     })
 

@@ -27,7 +27,7 @@ async function getArticles(
   });
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/articles?${params}`, {
+    const res = await fetch(`/api/articles?${params}`, {
       cache: "no-store",
     });
     if (!res.ok) return { articles: [], total: 0 };
