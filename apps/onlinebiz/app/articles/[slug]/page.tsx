@@ -2,6 +2,12 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import ArticleCard from '@/components/ArticleCard'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
 interface Article {
   id: string
@@ -17,48 +23,47 @@ interface Article {
   featured_image_url?: string
 }
 
-async function fetchArticle(slug: string): Promise<Article> {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003'}/api/articles/${slug}`, {
-      cache: 'no-store'
-    })
+async function fetchArticle(slug: string): Promise<Article | null> {
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select('*')
+    .eq('app_id', 'onlinebiz')
+    .eq('status', 'published')
+    .eq('slug', slug)
+    .maybeSingle()
 
-    if (!response.ok || response.status === 404) {
-      notFound()
-    }
-
-    const data = await response.json()
-
-    if (!data.article || data.article === null || data.article === undefined) {
-      notFound()
-    }
-
-    return data.article
-  } catch (err) {
-    notFound()
+  if (error) {
+    console.error('[articles/[slug]] fetchArticle error:', error.message)
+    return null
   }
+  return data
 }
 
 async function fetchRelatedArticles(slug: string): Promise<Article[]> {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003'}/api/articles/related/${slug}`, {
-      cache: 'no-store'
-    })
+  const { data, error } = await supabase
+    .from('blog_posts')
+    .select('*')
+    .eq('app_id', 'onlinebiz')
+    .eq('status', 'published')
+    .neq('slug', slug)
+    .order('published_at', { ascending: false })
+    .limit(3)
 
-    if (!response.ok) {
-      return []
-    }
-
-    const data = await response.json()
-    return data.articles || []
-  } catch {
+  if (error) {
+    console.error('[articles/[slug]] fetchRelatedArticles error:', error.message)
     return []
   }
+  return data || []
 }
 
 export default async function ArticlePage({ params }: { params: { slug: string } }) {
   const { slug } = params
   const article = await fetchArticle(slug)
+
+  if (!article) {
+    notFound()
+  }
+
   const relatedArticles = await fetchRelatedArticles(slug)
 
   const dateStr = new Date(article.published_at).toLocaleDateString('pt-PT', {
