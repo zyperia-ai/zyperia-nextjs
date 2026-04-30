@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import ArticleCard from '@/components/ArticleCard'
+import ArticleContent from '@/components/ArticleContent'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -125,10 +126,16 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </Link>.
           </div>
 
+          {/* Excerpt (lead) */}
+          {article.excerpt && (
+            <p className="text-lg md:text-xl leading-relaxed mb-8 text-[var(--text-secondary)] italic">
+              {article.excerpt}
+            </p>
+          )}
+
           {/* Content */}
-          <div className="prose-zyperia mb-12 leading-relaxed">
-            {/* TODO: render article.content as markdown */}
-            <p>{article.excerpt}</p>
+          <div className="mb-12">
+            <ArticleContent content={article.content} />
           </div>
 
           {/* Tags */}
