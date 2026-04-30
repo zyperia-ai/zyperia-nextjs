@@ -17,8 +17,27 @@ function getAnthropic() {
 
 const USE_LOCAL_LLM = process.env.USE_LOCAL_LLM === 'true'
 
+const BYLINE_BY_APP: Record<string, string> = {
+  crypto: 'Redacção ZYPERIA Crypto',
+  intelligence: 'Redacção ZYPERIA Intelligence',
+  onlinebiz: 'Redacção ZYPERIA OnlineBiz',
+}
+
+function calculateReadingTime(content: string): number {
+  const words = content.trim().split(/\s+/).length
+  return Math.max(1, Math.ceil(words / 200))
+}
+
+function resolveGenerationApproach(searchParams: URLSearchParams): string {
+  const type = searchParams.get('type') || searchParams.get('approach')
+  if (type === 'breaking' || type === 'breaking_news' || type === '1') return 'breaking_news'
+  if (type === 'youtube' || type === 'newsletter' || type === 'youtube_newsletter' || type === '2') return 'youtube_newsletter'
+  if (type === 'evergreen' || type === '3') return 'evergreen'
+  return 'evergreen'
+}
+
 function generateSlug(title: string): string {
-  const slug = title
+  const raw = title
     .toLowerCase()
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
@@ -26,8 +45,14 @@ function generateSlug(title: string): string {
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
-    .slice(0, 80)
-  return slug || `artigo-${Date.now()}`
+
+  if (raw.length <= 100) return raw || `artigo-${Date.now()}`
+
+  // Truncate at word boundary within 100 chars
+  const truncated = raw.slice(0, 100)
+  const lastDash = truncated.lastIndexOf('-')
+  const safe = lastDash > 60 ? truncated.slice(0, lastDash) : truncated
+  return safe || `artigo-${Date.now()}`
 }
 
 function getMergePrompt(parts: string[], contentType: string, sourceRef: string): string {
@@ -165,6 +190,9 @@ export async function GET(request: Request) {
         status: 'draft',
         source_url: sourceUrl || null,
         created_at: new Date().toISOString(),
+        author_byline: BYLINE_BY_APP[appId] || 'Redacção ZYPERIA',
+        reading_time_minutes: calculateReadingTime(finalContent),
+        generation_approach: resolveGenerationApproach(searchParams),
       })
       .select('id')
       .single()
