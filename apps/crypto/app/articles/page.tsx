@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { createClient } from "@supabase/supabase-js";
 import ArticleFilters from "@/components/ArticleFilters";
 import ArticleCard from "@/components/ArticleCard";
 
@@ -18,29 +19,36 @@ async function getArticles(
 ) {
   const limit = 12;
   const offset = (page - 1) * limit;
-  const params = new URLSearchParams({
-    limit: limit.toString(),
-    offset: offset.toString(),
-    ...(tag && { tag }),
-    ...(q && { q }),
-    ...(sort && { sort }),
-  });
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
   try {
-    const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
-    const url = `${baseUrl}/api/articles?${params}`;
-    console.log('[articles/page] FETCHING:', url);
-    const res = await fetch(url, { cache: "no-store" });
-    console.log('[articles/page] RES STATUS:', res.status);
-    if (!res.ok) {
-      console.log('[articles/page] RES NOT OK');
+    let query = supabase
+      .from('blog_posts')
+      .select('*', { count: 'exact' })
+      .eq('app_id', 'crypto')
+      .eq('status', 'published');
+
+    if (tag) query = query.contains('keywords', [tag]);
+    if (q) query = query.ilike('title', `%${q}%`);
+    if (sort === 'popular') query = query.order('views', { ascending: false });
+    else query = query.order('published_at', { ascending: false });
+
+    query = query.range(offset, offset + limit - 1);
+
+    const { data: articles, count, error } = await query;
+
+    if (error) {
+      console.error('[articles/page] supabase error:', error.message);
       return { articles: [], total: 0 };
     }
-    const data = await res.json();
-    console.log('[articles/page] DATA:', JSON.stringify(data).slice(0, 200));
-    return data;
+
+    return { articles: articles || [], total: count || 0 };
   } catch (e: any) {
-    console.error('[articles/page] FETCH ERROR:', e.message);
+    console.error('[articles/page] catch error:', e.message);
     return { articles: [], total: 0 };
   }
 }
