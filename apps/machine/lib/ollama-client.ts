@@ -79,7 +79,8 @@ export async function ollamaComplete(opts: {
   const ollamaUrl = getOllamaUrl()
   const timeout = getOllamaTimeout()
 
-  console.log(`[Ollama] request start: url=${ollamaUrl} timeout=${timeout}ms model=${body.model} tokens=${body.options?.num_predict}`)
+  console.log(`[Ollama] request start: url=${ollamaUrl} timeout=${timeout}ms model=${body.model} tokens=${body.options?.num_predict} stream=${body.stream}`)
+  console.log(`[Ollama] body preview: ${JSON.stringify(body).substring(0, 200)}`)
 
   try {
     const reqStart = Date.now()
