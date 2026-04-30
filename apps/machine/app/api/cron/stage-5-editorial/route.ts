@@ -6,7 +6,8 @@ export const fetchCache = 'force-no-store'
  * Runs daily at 05:00 UTC
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js'
+import { extractMetadata } from '@/lib/metadata-extractor';
 
 function getSupabase() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
@@ -37,12 +38,23 @@ async function runStage5() {
           ? article.content
           : article.content + `\n\n## Sobre este artigo\n\nEste artigo foi investigado com base em fontes verificadas e dados actualizados de 2026.\n\n*Aviso: Este conteudo e apenas para fins informativos e educativos.*`;
 
+        // Extract metadata
+        let metadata = { keywords: [], meta_description: '', tags: [] };
+        try {
+          metadata = await extractMetadata(article.app_id, article.title, article.content);
+        } catch (metadataError) {
+          console.warn(`[Stage 5] Metadata extraction failed for "${article.title}":`, (metadataError as Error).message);
+        }
+
         // Update article
         const { error: updateError } = await getSupabase()
           .from('blog_posts')
           .update({
             content: eeatContent,
             last_verified_at: new Date().toISOString(),
+            keywords: metadata.keywords,
+            meta_description: metadata.meta_description,
+            tags: metadata.tags,
           })
           .eq('id', article.id);
 
