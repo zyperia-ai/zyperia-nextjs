@@ -5,13 +5,20 @@ import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import Link from "next/link";
 
-const TOP_TAGS = ["llm", "automation", "agents", "workflow", "opensource", "integration"];
+const TOP_CATEGORIAS = [
+  'OPENAI', 'ANTHROPIC', 'GOOGLE-AI', 'XAI', 'META-AI', 'DEEPSEEK',
+  'LLM', 'AGENTS', 'RAG', 'MCP', 'MULTIMODAL',
+  'PRODUTIVIDADE', 'AUTOMACAO',
+  'ETICA-IA', 'REGULACAO-IA',
+] as const;
 
 export default function ArticleFilters({
+  activeCategoria,
   activeTag,
   activeSort,
   activeQuery,
 }: {
+  activeCategoria?: string;
   activeTag?: string;
   activeSort: string;
   activeQuery?: string;
@@ -68,29 +75,29 @@ export default function ArticleFilters({
         </div>
       </div>
 
-      {/* Tag pills */}
+      {/* Categoria pills */}
       <div className="flex flex-wrap gap-2">
         <Link
           href="/articles"
           className={`px-3 py-1 rounded-full text-xs h-mono uppercase tracking-wider border transition-colors ${
-            !activeTag
+            !activeCategoria
               ? "bg-[var(--brand-soft)] border-[var(--brand-primary)] text-[var(--brand-highlight)]"
               : "border-white/10 text-[var(--text-secondary)] hover:border-white/20"
           }`}
         >
           Todos
         </Link>
-        {TOP_TAGS.map((tag) => (
+        {TOP_CATEGORIAS.map((categoria) => (
           <Link
-            key={tag}
-            href={`/articles?tag=${tag}`}
+            key={categoria}
+            href={`/articles?categoria=${categoria}`}
             className={`px-3 py-1 rounded-full text-xs h-mono uppercase tracking-wider border transition-colors ${
-              activeTag === tag
+              activeCategoria === categoria
                 ? "bg-[var(--brand-soft)] border-[var(--brand-primary)] text-[var(--brand-highlight)]"
                 : "border-white/10 text-[var(--text-secondary)] hover:border-white/20"
             }`}
           >
-            {tag}
+            {categoria}
           </Link>
         ))}
       </div>
