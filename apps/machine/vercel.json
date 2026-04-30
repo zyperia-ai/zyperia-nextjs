@@ -1,7 +1,7 @@
 {
   "functions": {
     "app/api/cron/stage-0-intelligence/route.ts": {"maxDuration": 300},
-    "app/api/cron/stage-2a-translate/route.ts": {"maxDuration": 300},
+    "app/api/cron/stage-2a-translate/route.ts": {"maxDuration": 800},
     "app/api/cron/stage-2b-merge/route.ts": {"maxDuration": 300},
     "app/api/cron/stage-5-editorial/route.ts": {"maxDuration": 300},
     "app/api/cron/stage-6-publish/route.ts": {"maxDuration": 300},
@@ -51,6 +51,30 @@
     {
       "path": "/api/cron/stage-2b-merge?app=onlinebiz",
       "schedule": "20 3 * * *"
+    },
+    {
+      "path": "/api/cron/stage-2a-translate?app=crypto",
+      "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/cron/stage-2a-translate?app=intelligence",
+      "schedule": "10 12 * * *"
+    },
+    {
+      "path": "/api/cron/stage-2a-translate?app=onlinebiz",
+      "schedule": "20 12 * * *"
+    },
+    {
+      "path": "/api/cron/stage-2b-merge?app=crypto",
+      "schedule": "0 13 * * *"
+    },
+    {
+      "path": "/api/cron/stage-2b-merge?app=intelligence",
+      "schedule": "10 13 * * *"
+    },
+    {
+      "path": "/api/cron/stage-2b-merge?app=onlinebiz",
+      "schedule": "20 13 * * *"
     },
     {
       "path": "/api/cron/stage-4-plagiarism",
