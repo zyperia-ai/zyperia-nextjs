@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic'
 export const fetchCache = 'force-no-store'
-export const maxDuration = 300
+export const maxDuration = 800
 
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
