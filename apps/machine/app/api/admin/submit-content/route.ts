@@ -29,6 +29,10 @@ const BYLINE: Record<string, string> = {
   'blog-onlinebiz': 'Redacção ZYPERIA OnlineBiz',
 }
 
+function toAppId(blog: string): string {
+  return blog.replace('blog-', '')
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { mode, blog, tipo, input, title } = await req.json()
@@ -53,7 +57,7 @@ export async function POST(req: NextRequest) {
       const { error } = await supabaseAdmin
         .from('blog_posts')
         .insert({
-          app_id: blog,
+          app_id: toAppId(blog),
           title: title.trim(),
           slug,
           content: input.trim(),
