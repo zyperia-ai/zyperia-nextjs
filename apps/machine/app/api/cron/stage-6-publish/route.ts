@@ -52,12 +52,14 @@ export async function GET(request: Request) {
     const slots = rl.limit - rl.published_today
 
     // ── Buscar candidatos a publicar ─────────────────────────────────────────
+    const now_ts = new Date().toISOString()
+
     const { data: candidates, error: fetchError } = await getSupabase()
       .from('blog_posts')
       .select('id, title, content, app_id')
-      .eq('status', 'draft')
-      .not('last_verified_at', 'is', null)
-      .order('created_at', { ascending: true })
+      .eq('status', 'approved')
+      .lte('scheduled_for', now_ts)
+      .order('scheduled_for', { ascending: true })
       .limit(slots)
 
     if (fetchError) {
