@@ -17,6 +17,9 @@ const APP_COLORS: Record<string, string> = {
   'blog-crypto': '#FFB800',
   'blog-intelligence': '#00B4FF',
   'blog-onlinebiz': '#AEEA00',
+  'crypto': '#FFB800',
+  'intelligence': '#00B4FF',
+  'onlinebiz': '#AEEA00',
 }
 
 const TIPO_LABELS: Record<string, string> = {
