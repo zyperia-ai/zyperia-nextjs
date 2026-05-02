@@ -41,6 +41,7 @@ export default function AdminLayout({
             { href: '/admin/queue', label: 'Fila' },
             { href: '/admin/breaking', label: 'Breaking' },
             { href: '/admin/glossary', label: 'Glossário' },
+            { href: '/admin/articles', label: 'Artigos' },
             { href: '/admin/submit', label: 'Submit' },
           ].map(item => (
             <a
