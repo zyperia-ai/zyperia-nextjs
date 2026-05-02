@@ -5,6 +5,26 @@ export default function AdminLayout({
 }) {
   return (
     <html lang="pt">
+      <head>
+        <style>{`
+          a.nav-link {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            transition: color 0.15s, border-color 0.15s;
+          }
+          a.nav-link:hover {
+            color: #fff;
+            border-bottom-color: #555;
+          }
+        `}</style>
+      </head>
       <body style={{
         margin: 0,
         fontFamily: 'system-ui, -apple-system, sans-serif',
@@ -51,25 +71,7 @@ export default function AdminLayout({
             <a
               key={item.href}
               href={item.href}
-              style={{
-                color: '#ccc',
-                textDecoration: 'none',
-                fontSize: '15px',
-                fontWeight: 500,
-                display: 'flex',
-                alignItems: 'center',
-                padding: '0 14px',
-                borderBottom: '2px solid transparent',
-                whiteSpace: 'nowrap',
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLAnchorElement).style.color = '#fff'
-                ;(e.currentTarget as HTMLAnchorElement).style.borderBottomColor = '#555'
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLAnchorElement).style.color = '#ccc'
-                ;(e.currentTarget as HTMLAnchorElement).style.borderBottomColor = 'transparent'
-              }}
+              className="nav-link"
             >
               {item.label}
             </a>
