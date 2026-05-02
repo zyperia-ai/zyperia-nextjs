@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 const APP_COLORS: Record<string, string> = {
   'blog-crypto': '#FFB800',
   'blog-intelligence': '#00B4FF',
@@ -89,11 +91,47 @@ type Props = {
   recentPublished: any[]
   pendingArticles: any[]
   nextScheduled: any[]
+  pipelineCount: number
+  pipelineItems: any[]
+}
+
+function PipelineDeleteButton({ itemId }: { itemId: string }) {
+  const [deleting, setDeleting] = useState(false)
+  const [deleted, setDeleted] = useState(false)
+
+  async function handleDelete() {
+    if (!confirm('Apagar este item da fila?')) return
+    setDeleting(true)
+    try {
+      const res = await fetch('/api/admin/pipeline-action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: itemId, action: 'delete' }),
+      })
+      if (!res.ok) throw new Error('Erro')
+      setDeleted(true)
+    } catch {
+      setDeleting(false)
+    }
+  }
+
+  if (deleted) return <span style={{ fontSize: '11px', color: '#444' }}>apagado</span>
+
+  return (
+    <button
+      onClick={handleDelete}
+      disabled={deleting}
+      style={{ background: 'none', border: '1px solid #7f1d1d', borderRadius: '4px', color: '#f87171', padding: '3px 8px', cursor: 'pointer', fontSize: '11px', flexShrink: 0 }}
+    >
+      {deleting ? '...' : 'Apagar'}
+    </button>
+  )
 }
 
 export default function DashboardClient({
   pendingCount, approved, publishedToday,
-  recentBreakings, recentPublished, pendingArticles, nextScheduled
+  recentBreakings, recentPublished, pendingArticles, nextScheduled,
+  pipelineCount, pipelineItems
 }: Props) {
 
   const cryptoStock = stockWeeks(approved, 'blog-crypto')
@@ -141,7 +179,7 @@ export default function DashboardClient({
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '12px' }}>
         <a href="/admin/pending-review" style={{ textDecoration: 'none' }}>
           <div style={{ background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '16px', cursor: 'pointer' }}>
-            <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '6px' }}>Pending review</div>
+            <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '6px' }}>Por rever</div>
             <div style={{ fontSize: '28px', fontWeight: 600, color: pendingCount > 0 ? '#fff' : '#444' }}>{pendingCount}</div>
             <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>artigos a rever</div>
           </div>
@@ -178,7 +216,7 @@ export default function DashboardClient({
         {/* Left — Pending review */}
         <div style={{ background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '16px 20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-            <span style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>Pending review</span>
+            <span style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>Por rever</span>
             <a href="/admin/pending-review" style={{ fontSize: '12px', color: '#60a5fa', textDecoration: 'none' }}>Ver todos →</a>
           </div>
           {pendingArticles.length === 0 ? (
@@ -307,6 +345,47 @@ export default function DashboardClient({
                 </div>
               )
             })}
+          </div>
+        )}
+      </div>
+
+      {/* Pipeline queue */}
+      <div style={{ background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '16px 20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+          <span style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>
+            Pipeline queue ({pipelineCount})
+          </span>
+          <span style={{ fontSize: '12px', color: '#888' }}>
+            aguarda Stage 1+2 (crons OFF)
+          </span>
+        </div>
+        {pipelineItems.length === 0 ? (
+          <div style={{ fontSize: '13px', color: '#888', textAlign: 'center', padding: '12px 0' }}>
+            Fila vazia
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {pipelineItems.map(item => (
+              <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 10px', borderRadius: '6px', background: '#1a1a1a' }}>
+                <div style={{ width: '3px', height: '28px', background: APP_COLORS[item.app_id] ?? '#888', flexShrink: 0 }}></div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '13px', color: '#e5e5e5', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {item.topic ?? '(sem tópico)'}
+                  </div>
+                  <div style={{ fontSize: '11px', color: '#888', marginTop: '2px', display: 'flex', gap: '8px' }}>
+                    <span style={{ color: APP_COLORS[item.app_id] ?? '#888' }}>{item.app_id}</span>
+                    <span>{item.generation_approach ?? 'evergreen'}</span>
+                    <span>{timeAgo(item.created_at)}</span>
+                  </div>
+                </div>
+                <PipelineDeleteButton itemId={item.id} />
+              </div>
+            ))}
+            {pipelineCount > 5 && (
+              <div style={{ fontSize: '12px', color: '#888', textAlign: 'center', padding: '4px 0' }}>
+                + {pipelineCount - 5} mais
+              </div>
+            )}
           </div>
         )}
       </div>

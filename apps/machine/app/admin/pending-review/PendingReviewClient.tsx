@@ -106,7 +106,7 @@ export default function PendingReviewClient({ articles }: { articles: Article[] 
     return (
       <div style={{ textAlign: 'center', padding: '80px 24px', color: '#aaa' }}>
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>✓</div>
-        <div style={{ fontSize: '18px' }}>Nenhum artigo em pending review</div>
+        <div style={{ fontSize: '18px' }}>Nenhum artigo por rever</div>
       </div>
     )
   }
@@ -114,7 +114,7 @@ export default function PendingReviewClient({ articles }: { articles: Article[] 
   return (
     <div>
       <h1 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '24px', color: '#fff' }}>
-        Pending Review ({articles.length})
+        Por Rever ({articles.length})
       </h1>
 
       {/* Lista de artigos */}

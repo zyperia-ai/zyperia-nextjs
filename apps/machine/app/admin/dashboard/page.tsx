@@ -66,6 +66,19 @@ export default async function DashboardPage() {
     .order('scheduled_for', { ascending: true })
     .limit(6)
 
+  // Pipeline queue (content_research pendente)
+  const { count: pipelineCount } = await supabaseAdmin
+    .from('content_research')
+    .select('*', { count: 'exact', head: true })
+    .eq('processed', false)
+
+  const { data: pipelineItems } = await supabaseAdmin
+    .from('content_research')
+    .select('id, app_id, topic, created_at, generation_approach')
+    .eq('processed', false)
+    .order('created_at', { ascending: false })
+    .limit(5)
+
   const DashboardClient = (await import('./DashboardClient')).default
   return (
     <DashboardClient
@@ -76,6 +89,8 @@ export default async function DashboardPage() {
       recentPublished={recentPublished ?? []}
       pendingArticles={pendingArticles ?? []}
       nextScheduled={nextScheduled ?? []}
+      pipelineCount={pipelineCount ?? 0}
+      pipelineItems={pipelineItems ?? []}
     />
   )
 }
