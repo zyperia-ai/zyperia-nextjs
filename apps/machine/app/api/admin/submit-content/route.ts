@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
     const { error } = await supabaseAdmin
       .from('content_research')
       .insert({
-        app_id: blog,
+        app_id: toAppId(blog),
         source_url: sourceUrl,
         source_content: sourceContent,
         topic: `[MANUAL SUBMIT — ${mode.toUpperCase()}]`,
