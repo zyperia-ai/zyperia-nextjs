@@ -27,6 +27,7 @@ export default function AdminLayout({
           <a href="/admin/pending-review" style={{ color: '#666', textDecoration: 'none', fontSize: '13px' }}>Pending Review</a>
           <a href="/admin/queue" style={{ color: '#666', textDecoration: 'none', fontSize: '13px' }}>Fila</a>
           <a href="/admin/breaking" style={{ color: '#666', textDecoration: 'none', fontSize: '13px' }}>Breaking</a>
+          <a href="/admin/glossary" style={{ color: '#666', textDecoration: 'none', fontSize: '13px' }}>Glossário</a>
           <a href="/admin/submit" style={{ color: '#666', textDecoration: 'none', fontSize: '13px' }}>Submit</a>
           <div style={{ marginLeft: 'auto' }}>
             <a href="/admin/submit" style={{
