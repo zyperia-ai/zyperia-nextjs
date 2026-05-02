@@ -37,12 +37,12 @@ export default function AdminLayout({
           </a>
           {[
             { href: '/admin/dashboard', label: 'Dashboard' },
-            { href: '/admin/pending-review', label: 'Pending Review' },
+            { href: '/admin/pending-review', label: 'Por Rever' },
             { href: '/admin/queue', label: 'Fila' },
             { href: '/admin/breaking', label: 'Breaking' },
             { href: '/admin/glossary', label: 'Glossário' },
             { href: '/admin/articles', label: 'Artigos' },
-            { href: '/admin/submit', label: 'Submit' },
+            { href: '/admin/submit', label: 'Submeter' },
           ].map(item => (
             <a
               key={item.href}
