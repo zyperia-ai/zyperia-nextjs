@@ -95,13 +95,23 @@ export default function QueueClient({ articles: initial }: { articles: Article[]
     if (direction === 'down' && idx === articles.length - 1) return
 
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1
-    const swapArticle = articles[swapIdx]
-    const currentArticle = articles[idx]
+    const current = articles[idx]
+    const swap = articles[swapIdx]
 
-    // Swap scheduled_for dates
-    const tempDate = currentArticle.scheduled_for
-    scheduleAction(currentArticle.id, 'custom', swapArticle.scheduled_for ?? undefined)
-    scheduleAction(swapArticle.id, 'custom', tempDate ?? undefined)
+    // Se ambos têm datas — troca as datas
+    if (current.scheduled_for && swap.scheduled_for) {
+      const tempDate = current.scheduled_for
+      scheduleAction(current.id, 'custom', swap.scheduled_for)
+      scheduleAction(swap.id, 'custom', tempDate)
+      return
+    }
+
+    // Se nenhum tem data — reordena localmente sem datas
+    const newArticles = [...articles]
+    newArticles[idx] = swap
+    newArticles[swapIdx] = current
+    setArticles(newArticles)
+    return
   }
 
   // Count articles per day per blog
