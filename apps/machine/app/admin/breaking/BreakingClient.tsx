@@ -143,7 +143,7 @@ export default function BreakingClient({ articles }: { articles: Article[] }) {
 
   if (articles.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '80px 24px', color: '#666' }}>
+      <div style={{ textAlign: 'center', padding: '80px 24px', color: '#aaa' }}>
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>📡</div>
         <div style={{ fontSize: '18px' }}>Nenhum breaking publicado</div>
       </div>
@@ -180,14 +180,14 @@ export default function BreakingClient({ articles }: { articles: Article[] }) {
                   <div style={{ fontWeight: 600, fontSize: '14px', color: '#fff', marginBottom: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {article.title}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#666', display: 'flex', gap: '12px' }}>
+                  <div style={{ fontSize: '12px', color: '#aaa', display: 'flex', gap: '12px' }}>
                     <span style={{ color }}>{article.app_id.replace('blog-', '')}</span>
                     <span>{timeAgo(article.published_at)}</span>
                     <a
                       href={`${domain}/articles/${article.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ color: '#555', textDecoration: 'none' }}
+                      style={{ color: '#aaa', textDecoration: 'none' }}
                       onClick={e => e.stopPropagation()}
                     >
                       ver no site ↗
@@ -226,21 +226,21 @@ export default function BreakingClient({ articles }: { articles: Article[] }) {
               href={`${BLOG_DOMAINS[selected.app_id]}/articles/${selected.slug}`}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ fontSize: '13px', color: '#555', textDecoration: 'none', flexShrink: 0 }}
+              style={{ fontSize: '13px', color: '#aaa', textDecoration: 'none', flexShrink: 0 }}
             >
               ver no site ↗
             </a>
           </div>
 
           {/* Guard rails info */}
-          <div style={{ background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '10px 16px', marginBottom: '16px', fontSize: '12px', color: '#555' }}>
+          <div style={{ background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '10px 16px', marginBottom: '16px', fontSize: '12px', color: '#aaa' }}>
             <span style={{ color: '#f87171' }}>Imutáveis:</span> slug, URL, app_id, generation_approach, published_at &nbsp;·&nbsp;
             <span style={{ color: '#4ade80' }}>Editáveis:</span> title, content, meta_description, tags
           </div>
 
           {/* Editor */}
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', color: '#666', marginBottom: '6px' }}>Conteúdo (markdown)</label>
+            <label style={{ display: 'block', fontSize: '12px', color: '#aaa', marginBottom: '6px' }}>Conteúdo (markdown)</label>
             <textarea
               value={content}
               onChange={e => setContent(e.target.value)}
@@ -264,7 +264,7 @@ export default function BreakingClient({ articles }: { articles: Article[] }) {
           {/* Nota de correcção */}
           {showCorrection && (
             <div style={{ background: '#111', border: '1px solid #333', borderRadius: '8px', padding: '16px', marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontSize: '12px', color: '#666', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontSize: '12px', color: '#aaa', marginBottom: '6px' }}>
                 Nota de correcção (aparece no artigo como "Última actualização")
               </label>
               <textarea

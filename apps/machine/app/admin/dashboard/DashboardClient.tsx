@@ -122,14 +122,14 @@ export default function DashboardClient({
               <div key={article.id} style={{ background: '#111', borderRadius: '6px', padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: '13px', color: '#e5e5e5', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{article.title}</div>
-                  <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}>
+                  <div style={{ fontSize: '11px', color: '#aaa', marginTop: '2px' }}>
                     <span style={{ color: APP_COLORS[article.app_id] ?? '#888' }}>{article.app_id.replace('blog-', '')}</span>
                     {' · '}{timeAgo(article.published_at)}
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '10px', flexShrink: 0 }}>
                   <a href="/admin/breaking" style={{ fontSize: '12px', color: '#60a5fa', textDecoration: 'none' }}>Rever</a>
-                  <a href={`${BLOG_DOMAINS[article.app_id]}/articles/${article.slug}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#555', textDecoration: 'none' }}>↗</a>
+                  <a href={`${BLOG_DOMAINS[article.app_id]}/articles/${article.slug}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#aaa', textDecoration: 'none' }}>↗</a>
                 </div>
               </div>
             ))}
@@ -141,24 +141,24 @@ export default function DashboardClient({
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '12px' }}>
         <a href="/admin/pending-review" style={{ textDecoration: 'none' }}>
           <div style={{ background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '16px', cursor: 'pointer' }}>
-            <div style={{ fontSize: '12px', color: '#666', marginBottom: '6px' }}>Pending review</div>
+            <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '6px' }}>Pending review</div>
             <div style={{ fontSize: '28px', fontWeight: 600, color: pendingCount > 0 ? '#fff' : '#444' }}>{pendingCount}</div>
-            <div style={{ fontSize: '11px', color: '#444', marginTop: '4px' }}>artigos a rever</div>
+            <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>artigos a rever</div>
           </div>
         </a>
         <a href="/admin/queue" style={{ textDecoration: 'none' }}>
           <div style={{ background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '16px', cursor: 'pointer' }}>
-            <div style={{ fontSize: '12px', color: '#666', marginBottom: '6px' }}>Fila aprovados</div>
+            <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '6px' }}>Fila aprovados</div>
             <div style={{ fontSize: '28px', fontWeight: 600, color: approved.length > 0 ? '#fff' : '#444' }}>{approved.length}</div>
-            <div style={{ fontSize: '11px', color: '#444', marginTop: '4px' }}>
+            <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
               {approved.length > 0 ? `~${(approved.length / 3 / 7).toFixed(1)} semanas stock` : 'fila vazia'}
             </div>
           </div>
         </a>
         <div style={{ background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '16px' }}>
-          <div style={{ fontSize: '12px', color: '#666', marginBottom: '6px' }}>Publicados hoje</div>
+          <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '6px' }}>Publicados hoje</div>
           <div style={{ fontSize: '28px', fontWeight: 600, color: publishedToday.length > 0 ? '#fff' : '#444' }}>{publishedToday.length}</div>
-          <div style={{ fontSize: '11px', color: '#444', marginTop: '4px' }}>
+          <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
             {cryptoToday > 0 && <span style={{ color: '#FFB800' }}>{cryptoToday} crypto </span>}
             {intelToday > 0 && <span style={{ color: '#00B4FF' }}>{intelToday} intel </span>}
             {bizToday > 0 && <span style={{ color: '#AEEA00' }}>{bizToday} biz</span>}
@@ -166,9 +166,9 @@ export default function DashboardClient({
           </div>
         </div>
         <div style={{ background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '16px' }}>
-          <div style={{ fontSize: '12px', color: '#666', marginBottom: '6px' }}>Próximo batch</div>
+          <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '6px' }}>Próximo batch</div>
           <div style={{ fontSize: '18px', fontWeight: 600, color: '#fff' }}>Dom 02:00</div>
-          <div style={{ fontSize: '11px', color: '#444', marginTop: '4px' }}>{nextBatchInfo()}</div>
+          <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>{nextBatchInfo()}</div>
         </div>
       </div>
 
@@ -182,7 +182,7 @@ export default function DashboardClient({
             <a href="/admin/pending-review" style={{ fontSize: '12px', color: '#60a5fa', textDecoration: 'none' }}>Ver todos →</a>
           </div>
           {pendingArticles.length === 0 ? (
-            <div style={{ fontSize: '13px', color: '#444', textAlign: 'center', padding: '20px 0' }}>Nenhum artigo pendente</div>
+            <div style={{ fontSize: '13px', color: '#888', textAlign: 'center', padding: '20px 0' }}>Nenhum artigo pendente</div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {pendingArticles.map(article => {
@@ -202,16 +202,16 @@ export default function DashboardClient({
                         <div style={{ fontSize: '11px', marginTop: '2px', display: 'flex', gap: '8px' }}>
                           <span style={{ color }}>{article.app_id.replace('blog-', '')}</span>
                           <span style={{ color: old ? '#ef4444' : '#555' }}>{timeAgo(article.created_at)}{old ? ' ⚠️' : ''}</span>
-                          <span style={{ color: '#555' }}>{TIPO_LABELS[article.generation_approach] ?? '—'}</span>
+                          <span style={{ color: '#aaa' }}>{TIPO_LABELS[article.generation_approach] ?? '—'}</span>
                         </div>
                       </div>
-                      <span style={{ color: '#444', fontSize: '16px' }}>›</span>
+                      <span style={{ color: '#888', fontSize: '16px' }}>›</span>
                     </div>
                   </a>
                 )
               })}
               {pendingCount > 5 && (
-                <div style={{ fontSize: '12px', color: '#444', textAlign: 'center', padding: '4px 0' }}>+ {pendingCount - 5} mais</div>
+                <div style={{ fontSize: '12px', color: '#888', textAlign: 'center', padding: '4px 0' }}>+ {pendingCount - 5} mais</div>
               )}
             </div>
           )}
@@ -234,7 +234,7 @@ export default function DashboardClient({
               return (
                 <div key={id} style={{ marginBottom: '12px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '12px', color: '#666' }}>{label}</span>
+                    <span style={{ fontSize: '12px', color: '#aaa' }}>{label}</span>
                     <span style={{ fontSize: '12px', color: '#e5e5e5' }}>{stock.count} art · {stock.weeks} sem</span>
                   </div>
                   <div style={{ height: '4px', background: '#222', borderRadius: '2px' }}>
@@ -257,7 +257,7 @@ export default function DashboardClient({
               <a href="/admin/queue" style={{ fontSize: '12px', color: '#60a5fa', textDecoration: 'none' }}>Fila →</a>
             </div>
             {nextScheduled.length === 0 ? (
-              <div style={{ fontSize: '13px', color: '#444', textAlign: 'center', padding: '12px 0' }}>Nenhuma publicação agendada</div>
+              <div style={{ fontSize: '13px', color: '#888', textAlign: 'center', padding: '12px 0' }}>Nenhuma publicação agendada</div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {nextScheduled.map(article => (
@@ -265,7 +265,7 @@ export default function DashboardClient({
                     <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: APP_COLORS[article.app_id] ?? '#888', flexShrink: 0 }}></div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: '12px', color: '#e5e5e5', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{article.title}</div>
-                      <div style={{ fontSize: '11px', color: '#555' }}>{formatDate(article.scheduled_for)}</div>
+                      <div style={{ fontSize: '11px', color: '#aaa' }}>{formatDate(article.scheduled_for)}</div>
                     </div>
                   </div>
                 ))}
@@ -279,7 +279,7 @@ export default function DashboardClient({
       <div style={{ background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '16px 20px' }}>
         <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff', marginBottom: '14px' }}>Publicados recentemente</div>
         {recentPublished.length === 0 ? (
-          <div style={{ fontSize: '13px', color: '#444', textAlign: 'center', padding: '12px 0' }}>Nenhum artigo publicado ainda</div>
+          <div style={{ fontSize: '13px', color: '#888', textAlign: 'center', padding: '12px 0' }}>Nenhum artigo publicado ainda</div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {recentPublished.map(article => {
@@ -290,7 +290,7 @@ export default function DashboardClient({
                   <div style={{ width: '3px', height: '28px', background: color, flexShrink: 0 }}></div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: '13px', color: '#e5e5e5', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{article.title}</div>
-                    <div style={{ fontSize: '11px', color: '#555', marginTop: '2px', display: 'flex', gap: '8px' }}>
+                    <div style={{ fontSize: '11px', color: '#aaa', marginTop: '2px', display: 'flex', gap: '8px' }}>
                       <span style={{ color }}>{article.app_id.replace('blog-', '')}</span>
                       <span>{TIPO_LABELS[article.generation_approach] ?? '—'}</span>
                       <span>{timeAgo(article.published_at)}</span>
@@ -300,7 +300,7 @@ export default function DashboardClient({
                     href={`${domain}/articles/${article.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ fontSize: '12px', color: '#444', textDecoration: 'none', flexShrink: 0 }}
+                    style={{ fontSize: '12px', color: '#888', textDecoration: 'none', flexShrink: 0 }}
                   >
                     ↗
                   </a>
@@ -316,26 +316,26 @@ export default function DashboardClient({
         <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff', marginBottom: '14px' }}>Estado do pipeline</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: '12px' }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '11px', color: '#555', marginBottom: '6px' }}>Crons</div>
+            <div style={{ fontSize: '11px', color: '#aaa', marginBottom: '6px' }}>Crons</div>
             <div style={{ display: 'inline-block', background: '#1a0a0a', color: '#ef4444', fontSize: '11px', padding: '3px 10px', borderRadius: '4px' }}>OFF</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '11px', color: '#555', marginBottom: '6px' }}>Último batch</div>
-            <div style={{ fontSize: '12px', color: '#444' }}>—</div>
+            <div style={{ fontSize: '11px', color: '#aaa', marginBottom: '6px' }}>Último batch</div>
+            <div style={{ fontSize: '12px', color: '#888' }}>—</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '11px', color: '#555', marginBottom: '6px' }}>Modelo activo</div>
+            <div style={{ fontSize: '11px', color: '#aaa', marginBottom: '6px' }}>Modelo activo</div>
             <div style={{ fontSize: '12px', color: '#e5e5e5' }}>Haiku 4.5</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '11px', color: '#555', marginBottom: '6px' }}>Custo mês</div>
+            <div style={{ fontSize: '11px', color: '#aaa', marginBottom: '6px' }}>Custo mês</div>
             <div style={{ fontSize: '12px', color: '#e5e5e5' }}>$0.00</div>
             <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: '10px', color: '#60a5fa', textDecoration: 'none' }}>ver Anthropic →</a>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '11px', color: '#555', marginBottom: '6px' }}>Próximo batch</div>
+            <div style={{ fontSize: '11px', color: '#aaa', marginBottom: '6px' }}>Próximo batch</div>
             <div style={{ fontSize: '12px', color: '#e5e5e5' }}>Dom 02:00 UTC</div>
-            <div style={{ fontSize: '10px', color: '#444', marginTop: '2px' }}>{nextBatchInfo()}</div>
+            <div style={{ fontSize: '10px', color: '#888', marginTop: '2px' }}>{nextBatchInfo()}</div>
           </div>
         </div>
       </div>

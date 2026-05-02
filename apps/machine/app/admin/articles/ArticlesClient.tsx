@@ -236,7 +236,7 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
       {editingId && (
         <div style={{ background: '#111', border: '1px solid #333', borderRadius: '8px', padding: '20px', marginBottom: '16px' }}>
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '6px' }}>Título</label>
+            <label style={{ fontSize: '12px', color: '#aaa', display: 'block', marginBottom: '6px' }}>Título</label>
             <input
               type="text"
               value={editTitle}
@@ -245,7 +245,7 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
             />
           </div>
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ fontSize: '12px', color: '#666', display: 'block', marginBottom: '6px' }}>Conteúdo (markdown)</label>
+            <label style={{ fontSize: '12px', color: '#aaa', display: 'block', marginBottom: '6px' }}>Conteúdo (markdown)</label>
             <textarea
               value={editContent}
               onChange={e => setEditContent(e.target.value)}
@@ -261,7 +261,7 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
 
       {/* Lista */}
       {filtered.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '60px', color: '#444' }}>Nenhum artigo encontrado</div>
+        <div style={{ textAlign: 'center', padding: '60px', color: '#888' }}>Nenhum artigo encontrado</div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           {filtered.map(article => {
@@ -295,7 +295,7 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
                   <div style={{ fontSize: '13px', color: '#e5e5e5', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '3px' }}>
                     {article.title}
                   </div>
-                  <div style={{ fontSize: '11px', color: '#555', display: 'flex', gap: '8px' }}>
+                  <div style={{ fontSize: '11px', color: '#aaa', display: 'flex', gap: '8px' }}>
                     <span style={{ color }}>{article.app_id.replace('blog-', '')}</span>
                     <span>{TIPO_LABELS[article.generation_approach] ?? '—'}</span>
                     <span style={{ color: statusColor }}>{STATUS_LABELS[article.status]}</span>
@@ -321,7 +321,7 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
                       href={`${domain}/articles/${article.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ background: 'none', border: '1px solid #333', borderRadius: '4px', color: '#555', padding: '4px 10px', cursor: 'pointer', fontSize: '12px', textDecoration: 'none', display: 'flex', alignItems: 'center' }}
+                      style={{ background: 'none', border: '1px solid #333', borderRadius: '4px', color: '#aaa', padding: '4px 10px', cursor: 'pointer', fontSize: '12px', textDecoration: 'none', display: 'flex', alignItems: 'center' }}
                     >
                       ↗
                     </a>
@@ -331,16 +331,16 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
                   {article.status === 'pending_review' && (
                     <>
                       <button onClick={() => doAction(article.id, 'approved')} disabled={isSaving} style={{ background: '#166534', border: 'none', borderRadius: '4px', color: '#4ade80', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>Aprovar</button>
-                      <button onClick={() => doAction(article.id, 'rejected')} disabled={isSaving} style={{ background: 'none', border: '1px solid #333', borderRadius: '4px', color: '#666', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>Rejeitar</button>
+                      <button onClick={() => doAction(article.id, 'rejected')} disabled={isSaving} style={{ background: 'none', border: '1px solid #333', borderRadius: '4px', color: '#aaa', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>Rejeitar</button>
                     </>
                   )}
 
                   {article.status === 'approved' && (
-                    <button onClick={() => { if (confirm('Mover de volta para pending review?')) doAction(article.id, 'approved', { revert: true }) }} disabled={isSaving} style={{ background: 'none', border: '1px solid #333', borderRadius: '4px', color: '#666', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>← Pending</button>
+                    <button onClick={() => { if (confirm('Mover de volta para pending review?')) doAction(article.id, 'approved', { revert: true }) }} disabled={isSaving} style={{ background: 'none', border: '1px solid #333', borderRadius: '4px', color: '#aaa', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>← Pending</button>
                   )}
 
                   {article.status === 'published' && (
-                    <button onClick={() => { if (confirm('Despublicar este artigo?')) doAction(article.id, 'unpublished') }} disabled={isSaving} style={{ background: 'none', border: '1px solid #333', borderRadius: '4px', color: '#666', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>Despublicar</button>
+                    <button onClick={() => { if (confirm('Despublicar este artigo?')) doAction(article.id, 'unpublished') }} disabled={isSaving} style={{ background: 'none', border: '1px solid #333', borderRadius: '4px', color: '#aaa', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>Despublicar</button>
                   )}
 
                   {article.status === 'rejected' && (

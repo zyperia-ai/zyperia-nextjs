@@ -76,7 +76,7 @@ export default function SubmitClient() {
 
       {/* Modo de entrada */}
       <div style={{ marginBottom: '24px' }}>
-        <label style={{ display: 'block', fontSize: '12px', color: '#666', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <label style={{ display: 'block', fontSize: '12px', color: '#aaa', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           Modo de entrada
         </label>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -108,7 +108,7 @@ export default function SubmitClient() {
 
       {/* Blog destino */}
       <div style={{ marginBottom: '24px' }}>
-        <label style={{ display: 'block', fontSize: '12px', color: '#666', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <label style={{ display: 'block', fontSize: '12px', color: '#aaa', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           Blog destino
         </label>
         <div style={{ display: 'flex', gap: '8px' }}>
@@ -135,7 +135,7 @@ export default function SubmitClient() {
 
       {/* Tipo */}
       <div style={{ marginBottom: '24px' }}>
-        <label style={{ display: 'block', fontSize: '12px', color: '#666', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <label style={{ display: 'block', fontSize: '12px', color: '#aaa', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           Tipo de artigo
         </label>
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -163,7 +163,7 @@ export default function SubmitClient() {
       {/* Título — só no modo direct */}
       {mode === 'direct' && (
         <div style={{ marginBottom: '16px' }}>
-          <label style={{ display: 'block', fontSize: '12px', color: '#666', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <label style={{ display: 'block', fontSize: '12px', color: '#aaa', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             Título do artigo
           </label>
           <input
@@ -187,7 +187,7 @@ export default function SubmitClient() {
 
       {/* Input */}
       <div style={{ marginBottom: '16px' }}>
-        <label style={{ display: 'block', fontSize: '12px', color: '#666', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <label style={{ display: 'block', fontSize: '12px', color: '#aaa', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
           {mode === 'url' ? 'URL do artigo' : mode === 'youtube' ? 'URL do vídeo YouTube' : 'Conteúdo (markdown ou texto)'}
         </label>
         {mode === 'url' || mode === 'youtube' ? (
@@ -232,10 +232,10 @@ export default function SubmitClient() {
       </div>
 
       {/* Nota informativa */}
-      <div style={{ marginBottom: '24px', background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '12px 16px', fontSize: '13px', color: '#666' }}>
+      <div style={{ marginBottom: '24px', background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '12px 16px', fontSize: '13px', color: '#aaa' }}>
         {MODE_NOTES[mode]}
         {mode === 'direct' && (
-          <div style={{ marginTop: '8px', fontSize: '12px', color: '#444' }}>
+          <div style={{ marginTop: '8px', fontSize: '12px', color: '#888' }}>
             Keywords, imagem e afiliados serão gerados automaticamente quando abrires o artigo em Pending Review.
           </div>
         )}

@@ -146,7 +146,7 @@ export default function GlossaryClient({ rules: initial, preserve: initialPreser
       <div style={{ marginBottom: '40px' }}>
         <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff', marginBottom: '16px' }}>
           Regras de substituição ({rules.length})
-          <span style={{ fontSize: '12px', fontWeight: 400, color: '#555', marginLeft: '8px' }}>
+          <span style={{ fontSize: '12px', fontWeight: 400, color: '#aaa', marginLeft: '8px' }}>
             find/replace aplicado pós-geração em todos os artigos
           </span>
         </div>
@@ -176,7 +176,7 @@ export default function GlossaryClient({ rules: initial, preserve: initialPreser
               <option value="exact">exact</option>
               <option value="contains">contains</option>
             </select>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#666', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#aaa', cursor: 'pointer', whiteSpace: 'nowrap' }}>
               <input type="checkbox" checked={newCaseSensitive} onChange={e => setNewCaseSensitive(e.target.checked)} />
               Case
             </label>
@@ -196,18 +196,18 @@ export default function GlossaryClient({ rules: initial, preserve: initialPreser
             <div key={rule.id} style={{ background: '#111', border: '1px solid #1a1a1a', borderRadius: '6px', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
                 <span style={{ fontSize: '13px', color: '#f87171', fontFamily: 'monospace' }}>{rule.term_original}</span>
-                <span style={{ fontSize: '12px', color: '#444' }}>→</span>
+                <span style={{ fontSize: '12px', color: '#888' }}>→</span>
                 <span style={{ fontSize: '13px', color: '#4ade80', fontFamily: 'monospace' }}>{rule.term_correct}</span>
-                <span style={{ fontSize: '11px', color: '#444', background: '#1a1a1a', padding: '2px 6px', borderRadius: '4px' }}>{rule.match_type}</span>
-                {rule.case_sensitive && <span style={{ fontSize: '11px', color: '#444', background: '#1a1a1a', padding: '2px 6px', borderRadius: '4px' }}>case</span>}
+                <span style={{ fontSize: '11px', color: '#888', background: '#1a1a1a', padding: '2px 6px', borderRadius: '4px' }}>{rule.match_type}</span>
+                {rule.case_sensitive && <span style={{ fontSize: '11px', color: '#888', background: '#1a1a1a', padding: '2px 6px', borderRadius: '4px' }}>case</span>}
               </div>
-              <span style={{ fontSize: '11px', color: '#444', minWidth: '60px', textAlign: 'right' }}>
+              <span style={{ fontSize: '11px', color: '#888', minWidth: '60px', textAlign: 'right' }}>
                 {rule.times_applied}× aplicado
               </span>
               <button
                 onClick={() => deleteRule(rule.id)}
                 disabled={saving}
-                style={{ background: 'none', border: '1px solid #333', borderRadius: '4px', color: '#666', padding: '4px 8px', cursor: 'pointer', fontSize: '11px' }}
+                style={{ background: 'none', border: '1px solid #333', borderRadius: '4px', color: '#aaa', padding: '4px 8px', cursor: 'pointer', fontSize: '11px' }}
               >
                 Apagar
               </button>
@@ -220,7 +220,7 @@ export default function GlossaryClient({ rules: initial, preserve: initialPreser
       <div>
         <div style={{ fontSize: '14px', fontWeight: 600, color: '#fff', marginBottom: '16px' }}>
           Termos a preservar ({preserve.length})
-          <span style={{ fontSize: '12px', fontWeight: 400, color: '#555', marginLeft: '8px' }}>
+          <span style={{ fontSize: '12px', fontWeight: 400, color: '#aaa', marginLeft: '8px' }}>
             nunca alterar (DeFi, staking, etc.)
           </span>
         </div>
@@ -254,7 +254,7 @@ export default function GlossaryClient({ rules: initial, preserve: initialPreser
               <button
                 onClick={() => deletePreserveTerm(term.id)}
                 disabled={saving}
-                style={{ background: 'none', border: 'none', color: '#444', cursor: 'pointer', fontSize: '14px', padding: '0', lineHeight: 1 }}
+                style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '14px', padding: '0', lineHeight: 1 }}
               >
                 ×
               </button>

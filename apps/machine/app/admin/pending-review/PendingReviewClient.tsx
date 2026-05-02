@@ -104,7 +104,7 @@ export default function PendingReviewClient({ articles }: { articles: Article[] 
 
   if (articles.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '80px 24px', color: '#666' }}>
+      <div style={{ textAlign: 'center', padding: '80px 24px', color: '#aaa' }}>
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>✓</div>
         <div style={{ fontSize: '18px' }}>Nenhum artigo em pending review</div>
       </div>
@@ -148,14 +148,14 @@ export default function PendingReviewClient({ articles }: { articles: Article[] 
                   <div style={{ fontWeight: 600, fontSize: '15px', color: '#fff', marginBottom: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {article.title}
                   </div>
-                  <div style={{ fontSize: '12px', color: '#666', display: 'flex', gap: '12px' }}>
+                  <div style={{ fontSize: '12px', color: '#aaa', display: 'flex', gap: '12px' }}>
                     <span style={{ color }}>{article.app_id.replace('blog-', '')}</span>
                     <span>{tipo}</span>
                     <span>{date}</span>
                     {article.reading_time_minutes && <span>{article.reading_time_minutes} min</span>}
                   </div>
                 </div>
-                <div style={{ color: '#444', fontSize: '18px' }}>›</div>
+                <div style={{ color: '#888', fontSize: '18px' }}>›</div>
               </div>
             )
           })}
@@ -179,7 +179,7 @@ export default function PendingReviewClient({ articles }: { articles: Article[] 
           </div>
 
           {/* Meta info */}
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', fontSize: '12px', color: '#666' }}>
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', fontSize: '12px', color: '#aaa' }}>
             <span style={{ color: APP_COLORS[selected.app_id] ?? '#888' }}>
               {selected.app_id.replace('blog-', '')}
             </span>
@@ -190,7 +190,7 @@ export default function PendingReviewClient({ articles }: { articles: Article[] 
 
           {/* Editor markdown */}
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '12px', color: '#666', marginBottom: '6px' }}>
+            <label style={{ display: 'block', fontSize: '12px', color: '#aaa', marginBottom: '6px' }}>
               Conteúdo (markdown)
             </label>
             <textarea

@@ -117,7 +117,7 @@ function SortableItem({ article, articles, idx, saving, onSchedule }: SortableIt
         {...listeners}
         style={{
           cursor: 'grab',
-          color: '#444',
+          color: '#888',
           fontSize: '18px',
           padding: '4px',
           display: 'flex',
@@ -142,7 +142,7 @@ function SortableItem({ article, articles, idx, saving, onSchedule }: SortableIt
         <div style={{ fontWeight: 600, fontSize: '14px', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '4px' }}>
           {article.title}
         </div>
-        <div style={{ fontSize: '12px', color: '#666', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+        <div style={{ fontSize: '12px', color: '#aaa', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           <span style={{ color }}>{article.app_id.replace('blog-', '')}</span>
           <span>{tipo}</span>
           {article.reading_time_minutes && <span>{article.reading_time_minutes} min</span>}
@@ -263,10 +263,10 @@ export default function QueueClient({ articles: initial }: { articles: Article[]
 
   if (articles.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '80px 24px', color: '#666' }}>
+      <div style={{ textAlign: 'center', padding: '80px 24px', color: '#aaa' }}>
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>📭</div>
         <div style={{ fontSize: '18px' }}>Fila vazia — nenhum artigo aprovado</div>
-        <div style={{ fontSize: '14px', color: '#444', marginTop: '8px' }}>
+        <div style={{ fontSize: '14px', color: '#888', marginTop: '8px' }}>
           Aprova artigos em Pending Review para os ver aqui
         </div>
       </div>
