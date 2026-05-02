@@ -77,13 +77,18 @@ export async function POST(req: NextRequest) {
     const sourceContent = mode === 'text' ? input : null
     const sourceUrl = mode !== 'text' ? input : null
 
+    let topic = input
+    if (mode === 'text' && input.length > 120) {
+      topic = input.slice(0, 120) + '...'
+    }
+
     const { error } = await supabaseAdmin
       .from('content_research')
       .insert({
         app_id: toAppId(blog),
         source_url: sourceUrl,
         source_content: sourceContent,
-        topic: `[MANUAL SUBMIT — ${mode.toUpperCase()}]`,
+        topic,
         status: 'pending',
         generation_approach,
         processed: false,

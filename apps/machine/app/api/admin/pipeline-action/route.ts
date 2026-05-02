@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
   try {
-    const { id, action } = await req.json()
+    const body = await req.json()
+    const { id, action, topic } = body
     if (!id || !action) return NextResponse.json({ error: 'id e action obrigatórios' }, { status: 400 })
 
     const { supabaseAdmin } = await import('../../../../lib/supabase-admin')
@@ -11,6 +12,16 @@ export async function POST(req: NextRequest) {
       const { error } = await supabaseAdmin
         .from('content_research')
         .delete()
+        .eq('id', id)
+      if (error) throw error
+      return NextResponse.json({ ok: true })
+    }
+
+    if (action === 'edit') {
+      if (!topic) return NextResponse.json({ error: 'topic obrigatório' }, { status: 400 })
+      const { error } = await supabaseAdmin
+        .from('content_research')
+        .update({ topic })
         .eq('id', id)
       if (error) throw error
       return NextResponse.json({ ok: true })

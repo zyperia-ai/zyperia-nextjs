@@ -95,13 +95,31 @@ type Props = {
   pipelineItems: any[]
 }
 
-function PipelineDeleteButton({ itemId }: { itemId: string }) {
-  const [deleting, setDeleting] = useState(false)
+function PipelineItemActions({ itemId, currentTopic }: { itemId: string; currentTopic: string }) {
+  const [editing, setEditing] = useState(false)
+  const [topic, setTopic] = useState(currentTopic)
+  const [saving, setSaving] = useState(false)
   const [deleted, setDeleted] = useState(false)
+
+  async function handleEdit() {
+    if (!topic.trim()) return
+    setSaving(true)
+    try {
+      const res = await fetch('/api/admin/pipeline-action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: itemId, action: 'edit', topic: topic.trim() }),
+      })
+      if (!res.ok) throw new Error('Erro')
+      setEditing(false)
+    } catch {
+      setSaving(false)
+    }
+  }
 
   async function handleDelete() {
     if (!confirm('Apagar este item da fila?')) return
-    setDeleting(true)
+    setSaving(true)
     try {
       const res = await fetch('/api/admin/pipeline-action', {
         method: 'POST',
@@ -111,20 +129,101 @@ function PipelineDeleteButton({ itemId }: { itemId: string }) {
       if (!res.ok) throw new Error('Erro')
       setDeleted(true)
     } catch {
-      setDeleting(false)
+      setSaving(false)
     }
   }
 
   if (deleted) return <span style={{ fontSize: '11px', color: '#444' }}>apagado</span>
 
+  if (editing) {
+    return (
+      <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+        <input
+          type="text"
+          value={topic}
+          onChange={e => setTopic(e.target.value)}
+          style={{
+            width: '120px',
+            background: '#222',
+            border: '1px solid #444',
+            borderRadius: '4px',
+            color: '#e5e5e5',
+            padding: '3px 6px',
+            fontSize: '11px',
+            fontFamily: 'monospace',
+          }}
+        />
+        <button
+          onClick={handleEdit}
+          disabled={saving}
+          style={{
+            background: '#16a34a',
+            border: 'none',
+            borderRadius: '4px',
+            color: '#fff',
+            padding: '3px 8px',
+            cursor: saving ? 'not-allowed' : 'pointer',
+            fontSize: '10px',
+            opacity: saving ? 0.6 : 1,
+          }}
+        >
+          {saving ? '...' : 'Gravar'}
+        </button>
+        <button
+          onClick={() => {
+            setTopic(currentTopic)
+            setEditing(false)
+          }}
+          disabled={saving}
+          style={{
+            background: 'none',
+            border: '1px solid #444',
+            borderRadius: '4px',
+            color: '#aaa',
+            padding: '3px 8px',
+            cursor: 'pointer',
+            fontSize: '10px',
+          }}
+        >
+          Cancelar
+        </button>
+      </div>
+    )
+  }
+
   return (
-    <button
-      onClick={handleDelete}
-      disabled={deleting}
-      style={{ background: 'none', border: '1px solid #7f1d1d', borderRadius: '4px', color: '#f87171', padding: '3px 8px', cursor: 'pointer', fontSize: '11px', flexShrink: 0 }}
-    >
-      {deleting ? '...' : 'Apagar'}
-    </button>
+    <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+      <button
+        onClick={() => setEditing(true)}
+        style={{
+          background: 'none',
+          border: '1px solid #444',
+          borderRadius: '4px',
+          color: '#60a5fa',
+          padding: '3px 8px',
+          cursor: 'pointer',
+          fontSize: '11px',
+        }}
+      >
+        Editar
+      </button>
+      <button
+        onClick={handleDelete}
+        disabled={saving}
+        style={{
+          background: 'none',
+          border: '1px solid #7f1d1d',
+          borderRadius: '4px',
+          color: '#f87171',
+          padding: '3px 8px',
+          cursor: saving ? 'not-allowed' : 'pointer',
+          fontSize: '11px',
+          opacity: saving ? 0.6 : 1,
+        }}
+      >
+        {saving ? '...' : 'Apagar'}
+      </button>
+    </div>
   )
 }
 
@@ -353,7 +452,7 @@ export default function DashboardClient({
       <div style={{ background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '16px 20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
           <span style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>
-            Pipeline queue ({pipelineCount})
+            Fila do pipeline ({pipelineCount})
           </span>
           <span style={{ fontSize: '12px', color: '#888' }}>
             aguarda Stage 1+2 (crons OFF)
@@ -378,7 +477,7 @@ export default function DashboardClient({
                     <span>{timeAgo(item.created_at)}</span>
                   </div>
                 </div>
-                <PipelineDeleteButton itemId={item.id} />
+                <PipelineItemActions itemId={item.id} currentTopic={item.topic ?? ''} />
               </div>
             ))}
             {pipelineCount > 5 && (
