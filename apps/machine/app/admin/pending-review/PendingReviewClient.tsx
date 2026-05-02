@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import ImageManager from '../../../components/ImageManager'
 
 type Article = {
   id: string
@@ -13,6 +14,8 @@ type Article = {
   meta_description: string | null
   tags: string[] | null
   slug: string
+  featured_image_url?: string
+  hero_image_url?: string
 }
 
 const APP_COLORS: Record<string, string> = {
@@ -209,6 +212,14 @@ export default function PendingReviewClient({ articles }: { articles: Article[] 
               }}
             />
           </div>
+
+          {/* Image Manager */}
+          <ImageManager
+            articleId={selected.id}
+            currentImageUrl={selected.featured_image_url}
+            articleTitle={selected.title}
+            articleIntro={selected.content?.slice(0, 300)}
+          />
 
           {/* Tags */}
           {selected.tags && selected.tags.length > 0 && (
