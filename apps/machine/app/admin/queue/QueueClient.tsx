@@ -286,7 +286,6 @@ export default function QueueClient({ articles: initial }: { articles: Article[]
         )}
       </div>
 
-      {/* @ts-expect-error - dnd-kit type compatibility with React 18 */}
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
