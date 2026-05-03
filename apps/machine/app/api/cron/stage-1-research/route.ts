@@ -38,6 +38,76 @@ async function runStage1(appFilter?: string | null) {
       if (appFilter && app.app_id !== appFilter) continue
       console.log(`\nSelecting topics for: ${app.app_id} (${app.articles_per_day} articles)`);
 
+      // BLOCO A — Processa submits manuais com source_content (PRIORIDADE 0)
+      console.log(`[Stage 1] Checking for manual submissions in ${app.app_id}...`)
+
+      const { data: manualSubmissions } = await getSupabase()
+        .from('content_research')
+        .select('*')
+        .eq('app_id', app.app_id)
+        .not('source_content', 'is', null)
+        .eq('processed', false)
+
+      if (manualSubmissions && manualSubmissions.length > 0) {
+        console.log(`  Found ${manualSubmissions.length} manual submissions`)
+
+        for (const submission of manualSubmissions.slice(0, app.articles_per_day)) {
+          const startTime = Date.now()
+
+          try {
+            console.log(`  [Stage 1] Processing manual: "${submission.topic}"`)
+
+            // Construir researchDataComplete usando source_content já fornecido (SEM web_search)
+            const researchDataComplete = {
+              topic: submission.topic,
+              content_type: submission.generation_approach || 'manual_submit',
+              sourceContent: submission.source_content,
+              sourceUrl: submission.source_url || '',
+              articleFound: true,
+              updated_at: new Date().toISOString(),
+            }
+
+            // UPDATE com processed=false para Stage 2a buscar
+            const { error: updateError } = await getSupabase()
+              .from('content_research')
+              .update({
+                processed: false,
+                research_data: researchDataComplete,
+                status: 'researched',
+              })
+              .eq('id', submission.id)
+
+            const duration = Math.round((Date.now() - startTime) / 1000)
+
+            if (updateError) {
+              console.error(`  ✗ Error: ${updateError.message}`)
+              await getSupabase().from('generation_logs').insert({
+                stage: 'research',
+                status: 'failed',
+                duration_seconds: duration,
+                error_message: updateError.message,
+              })
+            } else {
+              console.log(`  ✓ Manual processed: "${submission.topic}" (${duration}s)`)
+              await getSupabase().from('generation_logs').insert({
+                stage: 'research',
+                status: 'success',
+                duration_seconds: duration,
+              })
+            }
+          } catch (error) {
+            const duration = Math.round((Date.now() - startTime) / 1000)
+            console.error(`  ✗ Error in manual submission:`, error)
+            await getSupabase().from('generation_logs').insert({
+              stage: 'research',
+              status: 'failed',
+              duration_seconds: duration,
+              error_message: (error as Error).message,
+            })
+          }
+        }
+      }
+
       // NEXUS audience_focus — preferência mas sem bloquear se não há tópicos suficientes
       const audienceFocus = await getNexusAudienceFocus()
       const preferredAudience = Object.entries(audienceFocus).sort((a, b) => b[1] - a[1])[0][0]
