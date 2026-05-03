@@ -187,7 +187,7 @@ export async function GET(request: Request) {
         title,
         slug,
         content: finalContent,
-        status: 'draft',
+        status: 'pending_review',
         source_url: sourceUrl || null,
         created_at: new Date().toISOString(),
         author_byline: BYLINE_BY_APP[appId] || 'Redacção ZYPERIA',
