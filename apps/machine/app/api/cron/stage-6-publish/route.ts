@@ -56,7 +56,7 @@ export async function GET(request: Request) {
 
     const { data: candidates, error: fetchError } = await getSupabase()
       .from('blog_posts')
-      .select('id, title, content, app_id')
+      .select('id, title, content, app_id, generation_approach')
       .eq('status', 'approved')
       .lte('scheduled_for', now_ts)
       .order('scheduled_for', { ascending: true })
@@ -73,33 +73,37 @@ export async function GET(request: Request) {
     // ── Processar cada candidato ─────────────────────────────────────────────
     for (const article of candidates) {
       try {
-        // Camadas 1-4: Quality Pipeline
-        const quality = await runQualityPipeline({
-          id: article.id,
-          content: article.content ?? '',
-          title: article.title ?? 'Sem título',
-          app_name: article.app_id ?? 'crypto',
-        })
+        // Artigos approved foram revistos pelo owner — publicar directamente
+        // Quality gate apenas para breaking_news (auto-publicados sem revisão humana)
+        let qualityLayers = 0
+        let publishReason = 'Owner-approved (sem quality pipeline)'
 
-        if (!quality.approved) {
-          results.rejected++
-
-          // Debug logging
-          console.log('[Stage 6] REJEITADO:', article.title?.slice(0, 50))
-          console.log('[Stage 6] Razão:', quality.reason)
-          console.log('[Stage 6] Quality object:', JSON.stringify(quality, null, 2))
-
-          // Log em generation_logs
-          await getSupabase().from('generation_logs').insert({
-            blog_post_id: article.id,
-            stage: 'stage-6-publish',
-            status: 'rejected',
-            error_message: quality.reason,
-            ai_model_used: 'quality-pipeline',
-            cost_usd: 0.01, // custo do auto-review Haiku
+        if (article.generation_approach === 'breaking_news') {
+          const quality = await runQualityPipeline({
+            id: article.id,
+            content: article.content ?? '',
+            title: article.title ?? 'Sem título',
+            app_name: article.app_id ?? 'crypto',
           })
 
-          continue
+          qualityLayers = quality.results?.length ?? 0
+
+          if (!quality.approved) {
+            results.rejected++
+            console.log('[Stage 6] BREAKING REJEITADO:', article.title?.slice(0, 50))
+            console.log('[Stage 6] Razão:', quality.reason)
+            await getSupabase().from('generation_logs').insert({
+              blog_post_id: article.id,
+              stage: 'stage-6-publish',
+              status: 'rejected',
+              error_message: quality.reason,
+              ai_model_used: 'quality-pipeline',
+              cost_usd: 0.01,
+            })
+            continue
+          }
+
+          publishReason = 'Breaking news — todas as camadas de qualidade aprovadas'
         }
 
         // ── Publicar ────────────────────────────────────────────────────────
@@ -144,9 +148,10 @@ export async function GET(request: Request) {
           decision_data: {
             article_id: article.id,
             app_id: article.app_id,
-            quality_layers_passed: quality.results.length,
+            quality_layers_passed: qualityLayers,
+            generation_approach: article.generation_approach,
           },
-          reason: 'Todas as camadas de qualidade aprovadas',
+          reason: publishReason,
           articles_affected: 1,
         })
 
