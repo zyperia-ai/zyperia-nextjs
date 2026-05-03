@@ -1,22 +1,52 @@
 {
-  "functions": {
-    "app/api/cron/stage-0-intelligence/route.ts": {
-      "maxDuration": 300
+  "crons": [
+    {
+      "path": "/api/cron/stage-0-analysis?app=crypto",
+      "schedule": "0 2 * * 0"
     },
-    "app/api/cron/stage-2a-translate/route.ts": {
-      "maxDuration": 800
+    {
+      "path": "/api/cron/stage-0-analysis?app=intelligence",
+      "schedule": "0 2 * * 0"
     },
-    "app/api/cron/stage-2b-merge/route.ts": {
-      "maxDuration": 300
+    {
+      "path": "/api/cron/stage-0-analysis?app=onlinebiz",
+      "schedule": "0 2 * * 0"
     },
-    "app/api/cron/stage-5-editorial/route.ts": {
-      "maxDuration": 300
+    {
+      "path": "/api/cron/stage-1-research",
+      "schedule": "30 3 * * 0"
     },
-    "app/api/cron/stage-6-publish/route.ts": {
-      "maxDuration": 300
+    {
+      "path": "/api/cron/stage-2a-translate?app=crypto",
+      "schedule": "0 5 * * 0"
     },
-    "app/api/cron/stage-4-plagiarism/route.ts": {
-      "maxDuration": 300
+    {
+      "path": "/api/cron/stage-2a-translate?app=intelligence",
+      "schedule": "0 5 * * 0"
+    },
+    {
+      "path": "/api/cron/stage-2a-translate?app=onlinebiz",
+      "schedule": "0 5 * * 0"
+    },
+    {
+      "path": "/api/cron/stage-0-intelligence",
+      "schedule": "0 */4 * * *"
+    },
+    {
+      "path": "/api/cron/stage-6-publish",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/stage-6-publish",
+      "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/cron/stage-6-publish",
+      "schedule": "0 18 * * *"
+    },
+    {
+      "path": "/api/cron/brain-tick",
+      "schedule": "0 3 * * *"
     }
-  }
+  ]
 }
