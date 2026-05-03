@@ -9,15 +9,22 @@ type ImageManagerProps = {
   articleIntro?: string
 }
 
+function generateDefaultPrompt(title: string, intro?: string): string {
+  const cleanTitle = title.replace(/^#+\s*/, '').replace(/[#*_`]/g, '').trim()
+  const cleanIntro = intro
+    ? intro.replace(/^#+\s*.+$/m, '').replace(/[#*_`]/g, '').trim().slice(0, 150)
+    : ''
+
+  return `Editorial illustration for a Portuguese-language article titled: "${cleanTitle}". ${cleanIntro ? `Context: ${cleanIntro}` : ''} Professional, clean, modern editorial style. No text overlays. 16:9 format.`
+}
+
 export default function ImageManager({ articleId, currentImageUrl, articleTitle, articleIntro }: ImageManagerProps) {
   const [mode, setMode] = useState<'ai' | 'url' | 'upload'>('ai')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
 
   // AI mode
-  const [prompt, setPrompt] = useState(
-    `Uma imagem profissional e atrativa para artigo: "${articleTitle}"${articleIntro ? ` - ${articleIntro.slice(0, 100)}...` : ''}`
-  )
+  const [prompt, setPrompt] = useState(generateDefaultPrompt(articleTitle, articleIntro))
 
   // URL mode
   const [imageUrl, setImageUrl] = useState('')
