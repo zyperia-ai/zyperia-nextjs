@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import ImageManager from '../../../components/ImageManager'
 
 type Article = {
   id: string
@@ -146,6 +147,7 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
       const data = await res.json()
       setEditTitle(data.title ?? article.title)
       setEditContent(data.content ?? '')
+      // imagem activa será carregada pelo ImageManager automaticamente
       setEditingId(article.id)
     } catch {
       setEditTitle(article.title)
@@ -252,6 +254,11 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
               style={{ width: '100%', minHeight: '300px', background: '#0a0a0a', border: '1px solid #333', borderRadius: '6px', color: '#e5e5e5', padding: '12px', fontSize: '13px', fontFamily: 'monospace', resize: 'vertical', boxSizing: 'border-box' as const }}
             />
           </div>
+          <ImageManager
+            articleId={editingId}
+            currentImageUrl={null}
+            articleTitle={editTitle}
+          />
           <div style={{ display: 'flex', gap: '8px' }}>
             <button onClick={() => saveEdit(editingId)} disabled={saving === editingId} style={{ background: '#16a34a', border: 'none', borderRadius: '6px', color: '#fff', padding: '8px 16px', cursor: 'pointer', fontSize: '13px' }}>Guardar</button>
             <button onClick={() => setEditingId(null)} style={{ background: 'none', border: '1px solid #333', borderRadius: '6px', color: '#aaa', padding: '8px 16px', cursor: 'pointer', fontSize: '13px' }}>Cancelar</button>
