@@ -14,7 +14,7 @@ type Article = {
   scheduled_for: string | null
   reading_time_minutes: number | null
   slug: string
-  meta_description: string | null
+  meta_description?: string | null
 }
 
 const APP_COLORS: Record<string, string> = {
