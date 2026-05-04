@@ -393,6 +393,10 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
                     <button onClick={() => { if (confirm('Restaurar para pending review?')) doAction(article.id, 'pending_review') }} disabled={isSaving} style={{ background: 'none', border: '1px solid #333', borderRadius: '4px', color: '#60a5fa', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>Restaurar</button>
                   )}
 
+                  {article.status === 'draft' && (
+                    <button onClick={() => { if (confirm('Mover para revisão?')) doAction(article.id, 'pending_review') }} disabled={isSaving} style={{ background: 'none', border: '1px solid #333', borderRadius: '4px', color: '#60a5fa', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>→ Rever</button>
+                  )}
+
                   {article.status === 'unpublished' && (
                     <button onClick={() => { if (confirm('Republicar este artigo?')) doAction(article.id, 'republish') }} disabled={isSaving} style={{ background: '#166534', border: 'none', borderRadius: '4px', color: '#4ade80', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>Republicar</button>
                   )}
