@@ -8,7 +8,7 @@ export default async function ArticlesPage() {
 
   const { data: articles, error } = await supabaseAdmin
     .from('blog_posts')
-    .select('id, title, app_id, generation_approach, status, created_at, published_at, scheduled_for, reading_time_minutes, slug')
+    .select('id, title, app_id, generation_approach, status, created_at, published_at, scheduled_for, reading_time_minutes, slug, meta_description')
     .order('created_at', { ascending: false })
     .limit(200)
 

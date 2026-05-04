@@ -16,7 +16,7 @@ export default function ShareArticle({
   slug,
   excerpt,
   variant = 'compact',
-  baseUrl = 'https://crypto.zyperia.ai',
+  baseUrl = 'https://intelligence.zyperia.ai',
 }: ShareArticleProps) {
   const [copied, setCopied] = useState(false)
   const [showMenu, setShowMenu] = useState(false)

@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react'
 import { Metadata } from 'next'
 import ArticleCard from '@/components/ArticleCard'
 import ArticleContent from '@/components/ArticleContent'
+import ShareArticle from '@/components/ShareArticle'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -199,6 +200,20 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               </div>
             </div>
           )}
+
+          {/* Share buttons */}
+          <div className="mb-12 py-8 border-t border-white/10">
+            <div className="text-[10px] h-mono uppercase tracking-wider text-[var(--text-muted)] mb-4">
+              Partilhar artigo
+            </div>
+            <ShareArticle
+              title={article.title}
+              slug={article.slug}
+              excerpt={article.excerpt}
+              variant="full"
+              baseUrl="https://crypto.zyperia.ai"
+            />
+          </div>
         </article>
 
         {/* Related articles */}

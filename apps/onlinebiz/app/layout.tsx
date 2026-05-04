@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Syne, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
+import SiteNav from "@/components/SiteNav";
 
 const syne = Syne({
   subsets: ["latin"],
@@ -49,6 +50,7 @@ export default function RootLayout({
   return (
     <html lang="pt-PT" className={`${syne.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="font-sans antialiased bg-[#070707] text-white">
+        <SiteNav />
         {children}
         <CookieBanner />
       </body>
