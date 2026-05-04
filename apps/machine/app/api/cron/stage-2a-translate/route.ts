@@ -21,6 +21,12 @@ const BYLINE_BY_APP: Record<string, string> = {
   onlinebiz: 'Redacção ZYPERIA OnlineBiz',
 }
 
+const DISCLAIMER_BY_APP: Record<string, string> = {
+  crypto: `\n\n---\n\n## Sobre este artigo\n\nEste artigo foi investigado com base em fontes verificadas e dados actualizados de ${new Date().getFullYear()}.\n\n*Aviso: Este conteúdo é apenas para fins informativos e educativos. Não constitui aconselhamento financeiro ou de investimento.*`,
+  intelligence: `\n\n---\n\n## Sobre este artigo\n\nEste artigo foi investigado com base em fontes verificadas e dados actualizados de ${new Date().getFullYear()}.\n\n*Aviso: Este conteúdo é apenas para fins informativos e educativos.*`,
+  onlinebiz: `\n\n---\n\n## Sobre este artigo\n\nEste artigo foi investigado com base em fontes verificadas e dados actualizados de ${new Date().getFullYear()}.\n\n*Aviso: Este conteúdo é apenas para fins informativos e educativos. Os resultados mencionados podem variar.*`,
+}
+
 function calculateReadingTime(content: string): number {
   const words = content.trim().split(/\s+/).length
   return Math.max(1, Math.ceil(words / 200))
@@ -216,7 +222,11 @@ export async function GET(request: Request) {
       throw new Error(`Tradução insuficiente: ${translated.length} chars`)
     }
 
-    const titleMatch = translated.match(/^#\s+(.+)$/m)
+    // Passo 2b: Adicionar disclaimer fixo
+    const disclaimer = DISCLAIMER_BY_APP[appId] ?? DISCLAIMER_BY_APP['crypto']
+    const contentWithDisclaimer = translated + disclaimer
+
+    const titleMatch = contentWithDisclaimer.match(/^#\s+(.+)$/m)
     const title = titleMatch ? titleMatch[1].trim() : topic
     const slug = generateSlug(title)
 
@@ -226,7 +236,7 @@ export async function GET(request: Request) {
     let meta_description = ''
     let tags: string[] = []
     try {
-      const metadata = await extractMetadata(appId, title, translated)
+      const metadata = await extractMetadata(appId, title, contentWithDisclaimer)
       keywords = metadata.keywords ?? []
       meta_description = metadata.meta_description ?? ''
       tags = metadata.tags ?? []
@@ -241,12 +251,12 @@ export async function GET(request: Request) {
         app_id: appId,
         title,
         slug,
-        content: translated,
+        content: contentWithDisclaimer,
         status: 'pending_review',
         source_url: sourceUrl || null,
         created_at: new Date().toISOString(),
         author_byline: BYLINE_BY_APP[appId] || 'Redacção ZYPERIA',
-        reading_time_minutes: calculateReadingTime(translated),
+        reading_time_minutes: calculateReadingTime(contentWithDisclaimer),
         generation_approach: resolveGenerationApproach(contentType),
         keywords: keywords.length > 0 ? keywords : null,
         meta_description: meta_description || null,
@@ -259,7 +269,7 @@ export async function GET(request: Request) {
 
     await getSupabase().from('content_research').update({ processed: true }).eq('id', research.id)
 
-    console.log(`✓ Artigo criado: "${title}" (${translated.length} chars)`)
+    console.log(`✓ Artigo criado: "${title}" (${contentWithDisclaimer.length} chars)`)
 
     return NextResponse.json({
       success: true,
