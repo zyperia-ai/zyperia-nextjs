@@ -82,6 +82,14 @@ export default function ArticleContent({ content }: ArticleContentProps) {
             <td className="py-2 px-3 border-b border-white/5 text-sm text-[var(--text-secondary)]">{children}</td>
           ),
           hr: () => <hr className="my-10 border-white/10" />,
+          img: ({ src, alt }) => (
+            <img
+              src={src}
+              alt={alt}
+              loading="lazy"
+              className="max-w-full h-auto rounded-lg my-6 border border-white/10"
+            />
+          ),
         }}
       >
         {stripped}

@@ -163,6 +163,18 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </p>
           )}
 
+          {/* Featured image (hero) */}
+          {article.featured_image_url && (
+            <div className="mb-12 rounded-lg overflow-hidden border border-white/10">
+              <img
+                src={article.featured_image_url}
+                alt={article.title}
+                loading="lazy"
+                className="w-full h-auto max-h-[500px] object-cover"
+              />
+            </div>
+          )}
+
           {/* Content */}
           <div className="mb-12">
             <ArticleContent content={article.content} />
