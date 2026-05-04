@@ -14,6 +14,7 @@ type Article = {
   scheduled_for: string | null
   reading_time_minutes: number | null
   slug: string
+  meta_description: string | null
 }
 
 const APP_COLORS: Record<string, string> = {
@@ -100,6 +101,10 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
 
       if (action === 'delete') {
         setArticles(prev => prev.filter(a => a.id !== id))
+      } else if (action === 'enrich_metadata') {
+        if (data.metadata?.meta_description) {
+          setArticles(prev => prev.map(a => a.id === id ? { ...a, meta_description: data.metadata.meta_description } : a))
+        }
       } else {
         const newStatus = action === 'approved' ? 'approved'
           : action === 'rejected' ? 'rejected'
@@ -322,6 +327,18 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
                   >
                     Editar
                   </button>
+
+                  {/* Enriquecer SEO — apenas sem meta_description */}
+                  {!article.meta_description && (
+                    <button
+                      onClick={() => doAction(article.id, 'enrich_metadata')}
+                      disabled={isSaving}
+                      title="Gerar keywords, meta_description e tags via AI"
+                      style={{ background: 'none', border: '1px solid #1d4ed8', borderRadius: '4px', color: '#60a5fa', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}
+                    >
+                      SEO
+                    </button>
+                  )}
 
                   {/* Ver no site — só published */}
                   {isPublished && domain && (

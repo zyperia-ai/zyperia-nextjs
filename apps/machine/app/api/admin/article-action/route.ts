@@ -100,6 +100,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true })
     }
 
+    if (action === 'enrich_metadata') {
+      // Buscar artigo
+      const { data: article, error: fetchError } = await supabaseAdmin
+        .from('blog_posts')
+        .select('id, app_id, title, content')
+        .eq('id', id)
+        .single()
+      if (fetchError || !article) throw new Error('Artigo não encontrado')
+
+      // Extrair metadata
+      const { extractMetadata } = await import('@/lib/metadata-extractor')
+      const metadata = await extractMetadata(article.app_id, article.title, article.content)
+
+      // Guardar na BD
+      const { error: updateError } = await supabaseAdmin
+        .from('blog_posts')
+        .update({
+          keywords: metadata.keywords?.length ? metadata.keywords : null,
+          meta_description: metadata.meta_description || null,
+          tags: metadata.tags?.length ? metadata.tags : null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+      if (updateError) throw updateError
+
+      return NextResponse.json({ ok: true, metadata })
+    }
+
     return NextResponse.json({ error: 'action inválida' }, { status: 400 })
 
   } catch (e: any) {
