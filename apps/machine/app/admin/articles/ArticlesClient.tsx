@@ -265,9 +265,19 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
             currentImageUrl={null}
             articleTitle={editTitle}
           />
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <button onClick={() => saveEdit(editingId)} disabled={saving === editingId} style={{ background: '#16a34a', border: 'none', borderRadius: '6px', color: '#fff', padding: '8px 16px', cursor: 'pointer', fontSize: '13px' }}>Guardar</button>
             <button onClick={() => setEditingId(null)} style={{ background: 'none', border: '1px solid #333', borderRadius: '6px', color: '#aaa', padding: '8px 16px', cursor: 'pointer', fontSize: '13px' }}>Cancelar</button>
+            {!articles.find(a => a.id === editingId)?.meta_description && (
+              <button
+                onClick={() => doAction(editingId, 'enrich_metadata')}
+                disabled={saving === editingId}
+                title="Gerar keywords, meta_description e tags via AI"
+                style={{ background: 'none', border: '1px solid #1d4ed8', borderRadius: '6px', color: '#60a5fa', padding: '8px 16px', cursor: 'pointer', fontSize: '13px' }}
+              >
+                ✨ Enriquecer SEO
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -327,18 +337,6 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
                   >
                     Editar
                   </button>
-
-                  {/* Enriquecer SEO — apenas sem meta_description */}
-                  {!article.meta_description && (
-                    <button
-                      onClick={() => doAction(article.id, 'enrich_metadata')}
-                      disabled={isSaving}
-                      title="Gerar keywords, meta_description e tags via AI"
-                      style={{ background: 'none', border: '1px solid #1d4ed8', borderRadius: '4px', color: '#60a5fa', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}
-                    >
-                      SEO
-                    </button>
-                  )}
 
                   {/* Ver no site — só published */}
                   {isPublished && domain && (
