@@ -7,8 +7,8 @@ import ArticleFilters from "@/components/ArticleFilters";
 import ArticleCard from "@/components/ArticleCard";
 
 export const metadata: Metadata = {
-  title: "Análises — ZYPERIA Crypto",
-  description: "Todos os artigos sobre Bitcoin, Ethereum, DeFi, e infraestrutura cripto.",
+  title: "Artigos — ZYPERIA Crypto",
+  description: "Todos os artigos sobre Bitcoin, Ethereum, DeFi e infraestrutura cripto.",
 };
 
 async function getArticles(
@@ -84,7 +84,7 @@ export default async function ArticlesPage(props: {
     <main className="min-h-screen pt-32 pb-20">
       <div className="max-w-4xl mx-auto px-4">
         {/* Kicker + Title */}
-        <span className="kicker mb-4">Análises</span>
+        <span className="kicker mb-4">Artigos</span>
         <h1 className="h-display text-4xl md:text-5xl mb-3">
           {categoria ? (
             <>
@@ -99,7 +99,7 @@ export default async function ArticlesPage(props: {
               Resultados para <span className="text-brand-gradient">"{q}"</span>
             </>
           ) : (
-            <>Todas as análises.</>
+            <>Todos os artigos.</>
           )}
         </h1>
 

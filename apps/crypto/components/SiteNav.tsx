@@ -17,10 +17,7 @@ export default function SiteNav() {
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-8">
           <Link href="/articles" className="text-sm text-[var(--text-secondary)] hover:text-white transition-colors">
-            Análises
-          </Link>
-          <Link href="/archive" className="text-sm text-[var(--text-secondary)] hover:text-white transition-colors">
-            Arquivo
+            Artigos
           </Link>
           <Link href="/about" className="text-sm text-[var(--text-secondary)] hover:text-white transition-colors">
             Sobre
@@ -46,10 +43,7 @@ export default function SiteNav() {
       {open && (
         <div className="md:hidden bg-[var(--surface-1)] border-t border-white/10 py-4 px-4 space-y-2">
           <Link href="/articles" className="block text-sm text-[var(--text-secondary)] hover:text-white py-2">
-            Análises
-          </Link>
-          <Link href="/archive" className="block text-sm text-[var(--text-secondary)] hover:text-white py-2">
-            Arquivo
+            Artigos
           </Link>
           <Link href="/about" className="block text-sm text-[var(--text-secondary)] hover:text-white py-2">
             Sobre

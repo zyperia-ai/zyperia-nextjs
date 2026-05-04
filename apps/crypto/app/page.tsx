@@ -43,23 +43,22 @@ export default function CryptoLandingPage() {
             {/* Text — right on desktop, bottom on mobile */}
             <div className="lg:col-span-7 order-2 lg:order-2 text-center lg:text-left">
               <span className="kicker mb-4">
-                Cripto · Sem Atalhos
+                Cripto · Sem Ruído
               </span>
               <p className="text-sm md:text-base text-[var(--text-muted)] mt-4 mb-4 h-mono uppercase tracking-wider">
-                Guias práticos e análise independente
+                Análise independente · Sem hype · Sem agenda
               </p>
               <h1 className="h-display text-4xl sm:text-5xl md:text-5xl lg:text-5xl xl:text-6xl mb-5">
                 Bitcoin, Ethereum, DeFi.{" "}
-                <span className="text-brand-gradient">Explicado para durar.</span>
+                <span className="text-brand-gradient">Sem predições falsas.</span>
               </h1>
               <p className="text-base md:text-lg text-[var(--text-secondary)] max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Guias práticos para investidores iniciantes a avançados. 12 anos de experiência
-                explicados em português claro. Sem hype, sem atalhos, sem vendas escondidas.
+                Análise independente e guias práticos sobre Bitcoin, Ethereum, DeFi e tudo o que importa saber — sem hype, sem agenda, em linguagem directa.
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                 <Link href="/articles" className="btn-primary">
-                  Explorar guias <ArrowRight size={18} />
+                  Ver artigos <ArrowRight size={18} />
                 </Link>
                 <Link href="#newsletter" className="btn-ghost">
                   Receber o resumo diário <Mail size={18} />
@@ -71,10 +70,10 @@ export default function CryptoLandingPage() {
           {/* Stats strip — below hero, full width */}
           <div className="mt-12 md:mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-white/5 rounded-xl overflow-hidden border border-white/10">
             {[
-              { label: "Anos em cripto", value: "12+" },
-              { label: "Activos cobertos", value: "80+" },
-              { label: "Fontes verificadas", value: "35+" },
               { label: "Publicação", value: "Diária" },
+              { label: "Acesso", value: "Gratuito" },
+              { label: "Patrocínios editoriais", value: "Zero" },
+              { label: "Predições de preço", value: "Nenhuma" },
             ].map((s) => (
               <div key={s.label} className="bg-[var(--surface-1)] px-4 py-5 md:px-6 md:py-6 text-center">
                 <div className="h-display text-2xl md:text-4xl text-brand-gradient">
@@ -155,12 +154,10 @@ export default function CryptoLandingPage() {
             <div className="lg:col-span-5">
               <span className="kicker mb-4">O nosso método</span>
               <h2 className="h-display text-3xl md:text-4xl mt-4 mb-6">
-                Escrito por quem já cometeu os erros.
+                Como trabalhamos.
               </h2>
               <p className="text-[var(--text-secondary)] leading-relaxed">
-                12 anos em cripto significa ter sobrevivido a exchanges falidas, hacks
-                de DeFi, e ciclos de bear market. Cada guia é escrito com esse contexto
-                — o que realmente protege, não o que soa bem numa thread do Twitter.
+                Cada artigo começa com uma pergunta real ou um tema que confunde quem quer entender o mercado. Verificamos factos contra fontes primárias — documentação oficial, dados on-chain, publicações regulatórias. Se não conseguimos confirmar, não publicamos.
               </p>
             </div>
             <div className="lg:col-span-7 space-y-px bg-white/5 rounded-xl overflow-hidden border border-white/10">
