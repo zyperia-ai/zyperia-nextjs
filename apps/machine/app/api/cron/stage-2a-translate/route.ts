@@ -5,6 +5,7 @@ export const maxDuration = 800
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import Anthropic from '@anthropic-ai/sdk'
+import { extractMetadata } from '@/lib/metadata-extractor'
 
 function getSupabase() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_KEY!)
@@ -219,6 +220,21 @@ export async function GET(request: Request) {
     const title = titleMatch ? titleMatch[1].trim() : topic
     const slug = generateSlug(title)
 
+    // Passo 3b: Extrair metadata (keywords, meta_description, tags)
+    console.log(`[Stage 2a] A extrair metadata...`)
+    let keywords: string[] = []
+    let meta_description = ''
+    let tags: string[] = []
+    try {
+      const metadata = await extractMetadata(appId, title, translated)
+      keywords = metadata.keywords ?? []
+      meta_description = metadata.meta_description ?? ''
+      tags = metadata.tags ?? []
+      console.log(`[Stage 2a] Metadata: ${keywords.length} keywords, ${tags.length} tags, meta ${meta_description.length} chars`)
+    } catch (e: any) {
+      console.warn(`[Stage 2a] Metadata extraction falhou (non-fatal): ${e.message}`)
+    }
+
     const { data: post, error: insertError } = await getSupabase()
       .from('blog_posts')
       .insert({
@@ -232,6 +248,9 @@ export async function GET(request: Request) {
         author_byline: BYLINE_BY_APP[appId] || 'Redacção ZYPERIA',
         reading_time_minutes: calculateReadingTime(translated),
         generation_approach: resolveGenerationApproach(contentType),
+        keywords: keywords.length > 0 ? keywords : null,
+        meta_description: meta_description || null,
+        tags: tags.length > 0 ? tags : null,
       })
       .select('id')
       .single()
