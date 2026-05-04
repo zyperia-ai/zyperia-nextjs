@@ -93,33 +93,41 @@ export default function ImageManager({ articleId, currentImageUrl, articleTitle,
     if (!uploadFile) return
     setLoading(true)
     setMessage('')
-
     try {
-      const reader = new FileReader()
-      reader.onload = async (e) => {
-        const base64Data = e.target?.result as string
+      const { createClient } = await import('@supabase/supabase-js')
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      )
 
-        const res = await fetch('/api/admin/image-action', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'upload',
-            articleId,
-            base64Data,
-            filename: uploadFile.name,
-          }),
-        })
+      const path = `article-images/${articleId}/${Date.now()}-${uploadFile.name}`
+      const { error: uploadError } = await supabase.storage
+        .from('images')
+        .upload(path, uploadFile, { contentType: uploadFile.type, upsert: true })
 
-        const data = await res.json()
-        if (!res.ok) throw new Error(data.error || 'Erro ao fazer upload')
+      if (uploadError) throw new Error(`Upload erro: ${uploadError.message}`)
 
-        setUploadFile(null)
-        setMessage('✅ Imagem enviada')
-        setTimeout(() => setMessage(''), 2000)
-      }
-      reader.readAsDataURL(uploadFile)
+      const { data: urlData } = supabase.storage.from('images').getPublicUrl(path)
+      const imageUrl = urlData.publicUrl
+
+      // Registar na BD via API
+      const res = await fetch('/api/admin/image-action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'set_url',
+          articleId,
+          imageUrl,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setUploadFile(null)
+      setMessage('✅ Imagem carregada')
+      setTimeout(() => setMessage(''), 3000)
     } catch (e: any) {
       setMessage(`Erro: ${e.message}`)
+    } finally {
       setLoading(false)
     }
   }
