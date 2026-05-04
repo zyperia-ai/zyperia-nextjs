@@ -275,11 +275,11 @@ export default function DashboardClient({
       )}
 
       {/* Metric cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '12px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '12px' }}>
         <a href="/admin/pending-review" style={{ textDecoration: 'none' }}>
           <div style={{ background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '16px', cursor: 'pointer' }}>
             <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '6px' }}>Por rever</div>
-            <div style={{ fontSize: '28px', fontWeight: 600, color: pendingCount > 0 ? '#fff' : '#444' }}>{pendingCount}</div>
+            <div style={{ fontSize: '28px', fontWeight: 600, color: pendingCount > 0 ? '#ef4444' : '#444' }}>{pendingCount}</div>
             <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>artigos a rever</div>
           </div>
         </a>
@@ -301,11 +301,6 @@ export default function DashboardClient({
             {bizToday > 0 && <span style={{ color: '#AEEA00' }}>{bizToday} biz</span>}
             {publishedToday.length === 0 && 'nenhum ainda'}
           </div>
-        </div>
-        <div style={{ background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '16px' }}>
-          <div style={{ fontSize: '12px', color: '#aaa', marginBottom: '6px' }}>Próximo batch</div>
-          <div style={{ fontSize: '18px', fontWeight: 600, color: '#fff' }}>Dom 02:00</div>
-          <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>{nextBatchInfo()}</div>
         </div>
       </div>
 
@@ -455,7 +450,7 @@ export default function DashboardClient({
             Fila do pipeline ({pipelineCount})
           </span>
           <span style={{ fontSize: '12px', color: '#888' }}>
-            aguarda Stage 1+2 (crons OFF)
+            próximo batch: Dom 02:00 UTC
           </span>
         </div>
         {pipelineItems.length === 0 ? (
@@ -495,20 +490,19 @@ export default function DashboardClient({
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(0, 1fr))', gap: '12px' }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '11px', color: '#aaa', marginBottom: '6px' }}>Crons</div>
-            <div style={{ display: 'inline-block', background: '#1a0a0a', color: '#ef4444', fontSize: '11px', padding: '3px 10px', borderRadius: '4px' }}>OFF</div>
+            <div style={{ display: 'inline-block', background: '#0a1a0a', color: '#4ade80', fontSize: '11px', padding: '3px 10px', borderRadius: '4px' }}>ON</div>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '11px', color: '#aaa', marginBottom: '6px' }}>Último batch</div>
-            <div style={{ fontSize: '12px', color: '#888' }}>—</div>
+            <div style={{ fontSize: '12px', color: '#888' }}>Dom 02:00 UTC</div>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '11px', color: '#aaa', marginBottom: '6px' }}>Modelo activo</div>
             <div style={{ fontSize: '12px', color: '#e5e5e5' }}>Haiku 4.5</div>
           </div>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '11px', color: '#aaa', marginBottom: '6px' }}>Custo mês</div>
-            <div style={{ fontSize: '12px', color: '#e5e5e5' }}>$0.00</div>
-            <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: '10px', color: '#60a5fa', textDecoration: 'none' }}>ver Anthropic →</a>
+            <div style={{ fontSize: '11px', color: '#aaa', marginBottom: '6px' }}>Custos LLM</div>
+            <a href="https://console.anthropic.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: '12px', color: '#60a5fa', textDecoration: 'none' }}>Anthropic Console →</a>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: '11px', color: '#aaa', marginBottom: '6px' }}>Próximo batch</div>
