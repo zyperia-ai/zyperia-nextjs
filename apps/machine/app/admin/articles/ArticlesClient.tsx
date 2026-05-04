@@ -268,16 +268,14 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <button onClick={() => saveEdit(editingId)} disabled={saving === editingId} style={{ background: '#16a34a', border: 'none', borderRadius: '6px', color: '#fff', padding: '8px 16px', cursor: 'pointer', fontSize: '13px' }}>Guardar</button>
             <button onClick={() => setEditingId(null)} style={{ background: 'none', border: '1px solid #333', borderRadius: '6px', color: '#aaa', padding: '8px 16px', cursor: 'pointer', fontSize: '13px' }}>Cancelar</button>
-            {!articles.find(a => a.id === editingId)?.meta_description && (
-              <button
-                onClick={() => doAction(editingId, 'enrich_metadata')}
-                disabled={saving === editingId}
-                title="Gerar keywords, meta_description e tags via AI"
-                style={{ background: 'none', border: '1px solid #1d4ed8', borderRadius: '6px', color: '#60a5fa', padding: '8px 16px', cursor: 'pointer', fontSize: '13px' }}
-              >
-                ✨ Enriquecer SEO
-              </button>
-            )}
+            <button
+              onClick={() => doAction(editingId, 'enrich_metadata')}
+              disabled={saving === editingId}
+              title="Gerar keywords, meta_description e tags via AI"
+              style={{ background: 'none', border: '1px solid #1d4ed8', borderRadius: '6px', color: '#60a5fa', padding: '8px 16px', cursor: 'pointer', fontSize: '13px' }}
+            >
+              ✨ SEO
+            </button>
           </div>
         </div>
       )}
