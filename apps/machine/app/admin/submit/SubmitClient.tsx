@@ -24,11 +24,31 @@ const TIPO_LABELS: Record<Tipo, string> = {
   '3': 'TIPO 3 — Evergreen',
 }
 
-const MODE_NOTES: Record<Mode, string> = {
-  'url': 'Cola o URL de um artigo em inglês. O sistema faz o download automático do conteúdo, traduz para português, aplica reformulação linguística, gera SEO (keywords, meta description, tags) e insere o artigo em Pending Review para a tua revisão.',
-  'text': 'Cola o texto original (em inglês ou português). O sistema traduz se necessário, aplica reformulação linguística, gera SEO automático e insere em Pending Review. Ideal para newsletters, transcrições ou artigos de outras fontes.',
-  'youtube': 'Cola o URL de um vídeo YouTube. O sistema extrai a transcrição automática, traduz para português, transforma em artigo editorial estruturado, gera SEO e insere em Pending Review.',
-  'direct': 'Cola o texto já escrito e revisto em português. Entra directamente em Pending Review sem passar pelo pipeline de tradução ou reformulação. SEO deve ser gerado manualmente — abre o artigo em Pending Review → botão ✨ SEO.',
+const MODE_NOTES: Record<Mode, { description: string; seo: string; image: string; affiliates: string }> = {
+  'url': {
+    description: 'Cola o URL de um artigo em inglês. O sistema faz o download automático do conteúdo, traduz para português e aplica reformulação linguística.',
+    seo: 'Automático',
+    image: 'Configurável em Pending Review',
+    affiliates: 'Configuráveis em Pending Review',
+  },
+  'text': {
+    description: 'Cola o texto original (em inglês ou português). O sistema traduz se necessário, aplica reformulação linguística e insere em Pending Review. Ideal para newsletters, transcrições ou artigos de outras fontes.',
+    seo: 'Automático',
+    image: 'Configurável em Pending Review',
+    affiliates: 'Configuráveis em Pending Review',
+  },
+  'youtube': {
+    description: 'Cola o URL de um vídeo YouTube. O sistema extrai a transcrição automática, traduz para português e transforma em artigo editorial estruturado.',
+    seo: 'Automático',
+    image: 'Configurável em Pending Review',
+    affiliates: 'Configuráveis em Pending Review',
+  },
+  'direct': {
+    description: 'Cola o texto já escrito e revisto em português. Entra directamente em Pending Review sem passar pelo pipeline de tradução ou reformulação.',
+    seo: 'Manual via ✨ SEO em Pending Review',
+    image: 'Configurável em Pending Review',
+    affiliates: 'Configuráveis em Pending Review',
+  },
 }
 
 export default function SubmitClient() {
@@ -233,12 +253,12 @@ export default function SubmitClient() {
 
       {/* Nota informativa */}
       <div style={{ marginBottom: '24px', background: '#111', border: '1px solid #222', borderRadius: '8px', padding: '12px 16px', fontSize: '13px', color: '#aaa' }}>
-        {MODE_NOTES[mode]}
-        {mode === 'direct' && (
-          <div style={{ marginTop: '8px', fontSize: '12px', color: '#888' }}>
-            Keywords, imagem e afiliados serão gerados automaticamente quando abrires o artigo em Pending Review.
-          </div>
-        )}
+        <div style={{ marginBottom: '10px' }}>{MODE_NOTES[mode].description}</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '12px', borderTop: '1px solid #222', paddingTop: '10px' }}>
+          <div><span style={{ color: '#666', minWidth: '80px', display: 'inline-block' }}>SEO:</span> {MODE_NOTES[mode].seo}</div>
+          <div><span style={{ color: '#666', minWidth: '80px', display: 'inline-block' }}>Imagem:</span> {MODE_NOTES[mode].image}</div>
+          <div><span style={{ color: '#666', minWidth: '80px', display: 'inline-block' }}>Afiliados:</span> {MODE_NOTES[mode].affiliates}</div>
+        </div>
       </div>
 
       {/* Submit */}
