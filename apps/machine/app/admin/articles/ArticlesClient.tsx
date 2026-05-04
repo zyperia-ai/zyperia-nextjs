@@ -105,6 +105,7 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
           : action === 'rejected' ? 'rejected'
           : action === 'unpublished' ? 'unpublished'
           : action === 'pending_review' ? 'pending_review'
+          : action === 'republish' ? 'published'
           : null
         if (newStatus) {
           setArticles(prev => prev.map(a => a.id === id ? { ...a, status: newStatus } : a))
@@ -351,7 +352,11 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
                   )}
 
                   {article.status === 'rejected' && (
-                    <button onClick={() => { if (confirm('Restaurar para pending review?')) doAction(article.id, 'approved', { revert: true }) }} disabled={isSaving} style={{ background: 'none', border: '1px solid #333', borderRadius: '4px', color: '#60a5fa', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>Restaurar</button>
+                    <button onClick={() => { if (confirm('Restaurar para pending review?')) doAction(article.id, 'pending_review') }} disabled={isSaving} style={{ background: 'none', border: '1px solid #333', borderRadius: '4px', color: '#60a5fa', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>Restaurar</button>
+                  )}
+
+                  {article.status === 'unpublished' && (
+                    <button onClick={() => { if (confirm('Republicar este artigo?')) doAction(article.id, 'republish') }} disabled={isSaving} style={{ background: '#166534', border: 'none', borderRadius: '4px', color: '#4ade80', padding: '4px 10px', cursor: 'pointer', fontSize: '12px' }}>Republicar</button>
                   )}
 
                   {/* Apagar — não disponível para published */}

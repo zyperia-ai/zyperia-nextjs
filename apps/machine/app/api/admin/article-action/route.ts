@@ -88,6 +88,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true })
     }
 
+    if (action === 'republish') {
+      const { error } = await supabaseAdmin
+        .from('blog_posts')
+        .update({
+          status: 'published',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+      if (error) throw error
+      return NextResponse.json({ ok: true })
+    }
+
     return NextResponse.json({ error: 'action inválida' }, { status: 400 })
 
   } catch (e: any) {
