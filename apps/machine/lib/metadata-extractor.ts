@@ -1,5 +1,4 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { ollamaComplete, ollamaHealthy } from './ollama-client'
 
 const KEYWORDS_BY_APP: Record<string, string[]> = {
   crypto: [
@@ -10,8 +9,7 @@ const KEYWORDS_BY_APP: Record<string, string[]> = {
   intelligence: [
     'OPENAI', 'ANTHROPIC', 'GOOGLE-AI', 'XAI', 'META-AI', 'DEEPSEEK',
     'LLM', 'AGENTS', 'RAG', 'MCP', 'MULTIMODAL',
-    'PRODUTIVIDADE', 'AUTOMACAO',
-    'ETICA-IA', 'REGULACAO-IA',
+    'PRODUTIVIDADE', 'AUTOMACAO', 'ETICA-IA', 'REGULACAO-IA',
   ],
   onlinebiz: [
     'SAAS', 'MICRO-SAAS', 'E-COMMERCE', 'AFFILIATE', 'AGENCY',
@@ -29,25 +27,43 @@ export interface ExtractedMetadata {
 
 function buildPrompt(appId: string, title: string, content: string): string {
   const allowed = KEYWORDS_BY_APP[appId] || []
-  const excerpt = content.slice(0, 3000)
+  const excerpt = content.slice(0, 4000)
 
-  return `És um editor SEO. Analisa o artigo abaixo e devolve APENAS um objecto JSON válido com 3 campos. Sem texto antes ou depois. Sem markdown. Sem code fences.
+  return `És um especialista em SEO para conteúdo editorial lusófono (Portugal, Brasil, Angola, Moçambique). O teu objectivo é maximizar a visibilidade orgânica deste artigo nos motores de pesquisa.
+
+Analisa o artigo e devolve APENAS um objecto JSON válido. Sem texto antes ou depois. Sem markdown. Sem code fences.
 
 ESQUEMA OBRIGATÓRIO:
 {
-  "keywords": ["CATEGORIA_1", "CATEGORIA_2"],
-  "meta_description": "string entre 140 e 160 caracteres",
-  "tags": ["tag-uma", "tag-duas", "tag-tres"]
+  "keywords": ["CATEGORIA_1", "CATEGORIA_2", "CATEGORIA_3"],
+  "meta_description": "string de exactamente 150-160 caracteres",
+  "tags": ["tag-1", "tag-2", "tag-3", "tag-4", "tag-5", "tag-6", "tag-7"]
 }
 
-REGRAS:
-1. keywords: escolhe 1 a 3 categorias EXCLUSIVAMENTE desta lista (não inventes outras): ${JSON.stringify(allowed)}
-2. meta_description: resumo factual em português, 140-160 caracteres, sem hype, sem clickbait
-3. tags: 3 a 7 tags livres em minúsculas com hífens (long-tail SEO, ex: "halving-2028", "wallets-hardware")
-4. Não repitas o título no meta_description
-5. Não uses palavras vagas ("interessante", "importante", "fascinante")
+REGRAS KEYWORDS (campo crítico para indexação):
+- Escolhe 2 a 3 categorias EXCLUSIVAMENTE desta lista: ${JSON.stringify(allowed)}
+- Prioriza as categorias mais específicas ao tema central do artigo
+- Nunca repitas categorias
+- Se o artigo aborda múltiplos temas, escolhe as categorias mais relevantes para o tema principal
 
-ARTIGO:
+REGRAS META DESCRIPTION (campo crítico para CTR):
+- EXACTAMENTE entre 150 e 160 caracteres — conta os caracteres
+- Inclui a keyword principal de forma natural na primeira metade da frase
+- Responde à intenção de pesquisa: o que o leitor vai aprender/descobrir?
+- Usa linguagem activa e directa — evita voz passiva
+- Inclui um elemento de urgência ou relevância quando justificado pelo conteúdo
+- Nunca repetes o título literalmente
+- Nunca usas: "Descubra", "Saiba mais", "Clique aqui", "Neste artigo"
+- Termina sempre com ponto final
+
+REGRAS TAGS (campo crítico para descoberta interna e long-tail SEO):
+- Exactamente 5 a 7 tags
+- Mistura obrigatória: 2-3 tags broad (tema geral) + 2-3 tags específicas (subtema/ângulo único) + 1-2 tags geográficas/temporais se relevante
+- Formato: minúsculas, hífens em vez de espaços, sem acentos, sem caracteres especiais
+- As tags específicas devem capturar o ângulo único do artigo — não apenas o tema geral
+- Exemplos de boa mistura para artigo sobre regulação cripto: "bitcoin", "regulacao-cripto", "africa-do-sul-bitcoin", "confisco-criptomoedas", "chaves-privadas-governo", "liberdade-financeira"
+
+ARTIGO PARA ANALISAR:
 TÍTULO: ${title}
 
 CONTEÚDO:
@@ -57,9 +73,7 @@ JSON:`
 }
 
 function parseJSON(raw: string): ExtractedMetadata | null {
-  // Strip code fences if model included them despite instruction
   const cleaned = raw.replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/```\s*$/, '').trim()
-  // Find first { and last }
   const start = cleaned.indexOf('{')
   const end = cleaned.lastIndexOf('}')
   if (start === -1 || end === -1) return null
@@ -80,8 +94,12 @@ function validate(meta: ExtractedMetadata, appId: string): ExtractedMetadata {
   const meta_description = meta.meta_description.slice(0, 160)
   const tags = meta.tags
     .filter(t => typeof t === 'string' && t.length > 0)
-    .map(t => t.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''))
-    .filter(t => t.length > 0)
+    .map(t => t.toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '')
+    )
+    .filter(t => t.length > 2)
     .slice(0, 7)
   return { keywords, meta_description, tags }
 }
@@ -93,43 +111,30 @@ export async function extractMetadata(
 ): Promise<ExtractedMetadata> {
   const prompt = buildPrompt(appId, title, content)
 
-  // Try Phi-4 (Ollama) first
+  // Haiku 4.5 — modelo locked
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
   try {
-    const healthy = await ollamaHealthy()
-    if (healthy) {
-      const result = await ollamaComplete({
-        userPrompt: prompt,
-        maxTokens: 600,
-        temperature: 0.3,
-      })
-      const parsed = parseJSON(result.text)
-      if (parsed) return validate(parsed, appId)
-      console.warn('[metadata-extractor] Ollama returned invalid JSON, falling back to Haiku')
-    }
+    const response = await anthropic.messages.create({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 800,
+      temperature: 0.2,
+      messages: [{ role: 'user', content: prompt }],
+    })
+    const text = response.content
+      .filter((b: any) => b.type === 'text')
+      .map((b: any) => b.text)
+      .join('')
+    const parsed = parseJSON(text)
+    if (parsed) return validate(parsed, appId)
+    console.warn('[metadata-extractor] JSON inválido, usando defaults')
   } catch (e) {
-    console.warn('[metadata-extractor] Ollama error:', (e as Error).message)
+    console.warn('[metadata-extractor] Haiku error:', (e as Error).message)
   }
 
-  // Fallback: Haiku 4.5
-  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
-  const response = await anthropic.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 600,
-    temperature: 0.3,
-    messages: [{ role: 'user', content: prompt }],
-  })
-  const text = response.content
-    .filter((b: any) => b.type === 'text')
-    .map((b: any) => b.text)
-    .join('')
-  const parsed = parseJSON(text)
-  if (!parsed) {
-    // Last resort: return safe defaults
-    return {
-      keywords: [],
-      meta_description: title.slice(0, 160),
-      tags: [],
-    }
+  // Defaults de segurança
+  return {
+    keywords: [],
+    meta_description: title.slice(0, 160),
+    tags: [],
   }
-  return validate(parsed, appId)
 }
