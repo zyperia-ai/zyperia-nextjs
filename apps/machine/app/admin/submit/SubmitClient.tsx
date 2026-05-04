@@ -25,10 +25,10 @@ const TIPO_LABELS: Record<Tipo, string> = {
 }
 
 const MODE_NOTES: Record<Mode, string> = {
-  'url': '🔗 O sistema vai fazer fetch do artigo e processá-lo via Stage 1+2. Aparece em Pending Review.',
-  'text': '📝 O texto será processado via Stage 1+2 (tradução, scramble). Aparece em Pending Review.',
-  'youtube': '▶️ O sistema vai extrair a transcrição do vídeo e processá-la via Stage 1+2. Aparece em Pending Review.',
-  'direct': '✍️ O texto entra directamente em Pending Review sem passar pelo pipeline. Usa quando o texto já está finalizado.',
+  'url': 'Cola o URL de um artigo em inglês. O sistema faz o download automático do conteúdo, traduz para português, aplica reformulação linguística, gera SEO (keywords, meta description, tags) e insere o artigo em Pending Review para a tua revisão.',
+  'text': 'Cola o texto original (em inglês ou português). O sistema traduz se necessário, aplica reformulação linguística, gera SEO automático e insere em Pending Review. Ideal para newsletters, transcrições ou artigos de outras fontes.',
+  'youtube': 'Cola o URL de um vídeo YouTube. O sistema extrai a transcrição automática, traduz para português, transforma em artigo editorial estruturado, gera SEO e insere em Pending Review.',
+  'direct': 'Cola o texto já escrito e revisto em português. Entra directamente em Pending Review sem passar pelo pipeline de tradução ou reformulação. SEO deve ser gerado manualmente — abre o artigo em Pending Review → botão ✨ SEO.',
 }
 
 export default function SubmitClient() {

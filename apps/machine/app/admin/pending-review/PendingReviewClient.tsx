@@ -38,6 +38,7 @@ export default function PendingReviewClient({ articles }: { articles: Article[] 
   const [content, setContent] = useState('')
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
+  const [seoResult, setSeoResult] = useState<{keywords?: string[], meta_description?: string, tags?: string[]} | null>(null)
 
   function openArticle(article: Article) {
     setSelected(article)
@@ -49,6 +50,7 @@ export default function PendingReviewClient({ articles }: { articles: Article[] 
     setSelected(null)
     setContent('')
     setMessage('')
+    setSeoResult(null)
   }
 
   async function handleAction(action: 'approved' | 'rejected') {
@@ -95,6 +97,28 @@ export default function PendingReviewClient({ articles }: { articles: Article[] 
       if (!res.ok) throw new Error(data.error || 'Erro desconhecido')
       closeArticle()
       window.location.reload()
+    } catch (e: any) {
+      setMessage(`Erro: ${e.message}`)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  async function handleEnrichSeo() {
+    if (!selected) return
+    setSaving(true)
+    setMessage('')
+    try {
+      const res = await fetch('/api/admin/article-action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: selected.id, action: 'enrich_metadata' }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erro')
+      if (data.metadata) setSeoResult(data.metadata)
+      setMessage('✅ SEO gerado')
+      setTimeout(() => setMessage(''), 3000)
     } catch (e: any) {
       setMessage(`Erro: ${e.message}`)
     } finally {
@@ -283,12 +307,52 @@ export default function PendingReviewClient({ articles }: { articles: Article[] 
             >
               Apagar
             </button>
+            <button
+              onClick={handleEnrichSeo}
+              disabled={saving}
+              style={{
+                background: 'none',
+                border: '1px solid #1d4ed8',
+                borderRadius: '6px',
+                color: '#60a5fa',
+                padding: '10px 20px',
+                cursor: saving ? 'not-allowed' : 'pointer',
+                fontSize: '14px',
+                opacity: saving ? 0.6 : 1,
+              }}
+            >
+              ✨ SEO
+            </button>
             {message && (
               <span style={{ fontSize: '14px', color: message.startsWith('✅') ? '#4ade80' : message.startsWith('❌') ? '#aaa' : '#f87171' }}>
                 {message}
               </span>
             )}
           </div>
+
+          {seoResult && (
+            <div style={{ marginTop: '16px', background: '#0a0a0a', border: '1px solid #1d4ed8', borderRadius: '6px', padding: '12px 16px' }}>
+              <div style={{ fontSize: '12px', color: '#60a5fa', marginBottom: '8px', fontWeight: 600 }}>✨ SEO gerado</div>
+              {seoResult.keywords && seoResult.keywords.length > 0 && (
+                <div style={{ marginBottom: '6px' }}>
+                  <span style={{ fontSize: '11px', color: '#888' }}>Keywords: </span>
+                  <span style={{ fontSize: '12px', color: '#e5e5e5' }}>{seoResult.keywords.join(', ')}</span>
+                </div>
+              )}
+              {seoResult.meta_description && (
+                <div style={{ marginBottom: '6px' }}>
+                  <span style={{ fontSize: '11px', color: '#888' }}>Meta: </span>
+                  <span style={{ fontSize: '12px', color: '#e5e5e5' }}>{seoResult.meta_description}</span>
+                </div>
+              )}
+              {seoResult.tags && seoResult.tags.length > 0 && (
+                <div>
+                  <span style={{ fontSize: '11px', color: '#888' }}>Tags: </span>
+                  <span style={{ fontSize: '12px', color: '#e5e5e5' }}>{seoResult.tags.join(', ')}</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
