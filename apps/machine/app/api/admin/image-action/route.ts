@@ -145,6 +145,47 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, imageUrl })
     }
 
+    if (action === 'register_upload') {
+      if (!articleId || !imageUrl) {
+        return NextResponse.json({ error: 'articleId e imageUrl obrigatórios' }, { status: 400 })
+      }
+
+      // Deactivate previous
+      await supabaseAdmin
+        .from('article_images')
+        .update({ is_active: false })
+        .eq('article_id', articleId)
+
+      // Insert new with image_type 'uploaded'
+      const { error: insertError } = await supabaseAdmin
+        .from('article_images')
+        .insert({
+          article_id: articleId,
+          image_url: imageUrl,
+          image_type: 'uploaded',
+          is_active: true,
+          created_at: new Date().toISOString(),
+        })
+
+      if (insertError) throw insertError
+
+      // Update blog_posts with multiple image URL fields
+      const { error: updateError } = await supabaseAdmin
+        .from('blog_posts')
+        .update({
+          featured_image_url: imageUrl,
+          og_image_url: imageUrl,
+          hero_image_url: imageUrl,
+          image_type: 'uploaded',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', articleId)
+
+      if (updateError) throw updateError
+
+      return NextResponse.json({ ok: true, image_url: imageUrl })
+    }
+
     if (action === 'upload') {
       if (!articleId || !base64Data || !filename) {
         return NextResponse.json({ error: 'articleId, base64Data e filename obrigatórios' }, { status: 400 })

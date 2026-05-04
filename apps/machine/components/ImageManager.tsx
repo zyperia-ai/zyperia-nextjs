@@ -115,7 +115,7 @@ export default function ImageManager({ articleId, currentImageUrl, articleTitle,
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action: 'set_url',
+          action: 'register_upload',
           articleId,
           imageUrl,
         }),
