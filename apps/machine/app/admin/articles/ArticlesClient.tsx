@@ -77,6 +77,7 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editContent, setEditContent] = useState('')
   const [editTitle, setEditTitle] = useState('')
+  const [seoResult, setSeoResult] = useState<{keywords?: string[], meta_description?: string, tags?: string[]} | null>(null)
 
   const filtered = useMemo(() => {
     return articles.filter(a => {
@@ -102,8 +103,9 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
       if (action === 'delete') {
         setArticles(prev => prev.filter(a => a.id !== id))
       } else if (action === 'enrich_metadata') {
-        if (data.metadata?.meta_description) {
+        if (data.metadata) {
           setArticles(prev => prev.map(a => a.id === id ? { ...a, meta_description: data.metadata.meta_description } : a))
+          setSeoResult(data.metadata)
         }
       } else {
         const newStatus = action === 'approved' ? 'approved'
@@ -267,7 +269,7 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
           />
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <button onClick={() => saveEdit(editingId)} disabled={saving === editingId} style={{ background: '#16a34a', border: 'none', borderRadius: '6px', color: '#fff', padding: '8px 16px', cursor: 'pointer', fontSize: '13px' }}>Guardar</button>
-            <button onClick={() => setEditingId(null)} style={{ background: 'none', border: '1px solid #333', borderRadius: '6px', color: '#aaa', padding: '8px 16px', cursor: 'pointer', fontSize: '13px' }}>Cancelar</button>
+            <button onClick={() => { setEditingId(null); setSeoResult(null) }} style={{ background: 'none', border: '1px solid #333', borderRadius: '6px', color: '#aaa', padding: '8px 16px', cursor: 'pointer', fontSize: '13px' }}>Cancelar</button>
             <button
               onClick={() => doAction(editingId, 'enrich_metadata')}
               disabled={saving === editingId}
@@ -277,6 +279,29 @@ export default function ArticlesClient({ articles: initial }: { articles: Articl
               ✨ SEO
             </button>
           </div>
+          {seoResult && (
+            <div style={{ marginTop: '12px', background: '#0a0a0a', border: '1px solid #1d4ed8', borderRadius: '6px', padding: '12px 16px' }}>
+              <div style={{ fontSize: '12px', color: '#60a5fa', marginBottom: '8px', fontWeight: 600 }}>✨ SEO gerado</div>
+              {seoResult.keywords && seoResult.keywords.length > 0 && (
+                <div style={{ marginBottom: '6px' }}>
+                  <span style={{ fontSize: '11px', color: '#888' }}>Keywords: </span>
+                  <span style={{ fontSize: '12px', color: '#e5e5e5' }}>{seoResult.keywords.join(', ')}</span>
+                </div>
+              )}
+              {seoResult.meta_description && (
+                <div style={{ marginBottom: '6px' }}>
+                  <span style={{ fontSize: '11px', color: '#888' }}>Meta: </span>
+                  <span style={{ fontSize: '12px', color: '#e5e5e5' }}>{seoResult.meta_description}</span>
+                </div>
+              )}
+              {seoResult.tags && seoResult.tags.length > 0 && (
+                <div>
+                  <span style={{ fontSize: '11px', color: '#888' }}>Tags: </span>
+                  <span style={{ fontSize: '12px', color: '#e5e5e5' }}>{seoResult.tags.join(', ')}</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
