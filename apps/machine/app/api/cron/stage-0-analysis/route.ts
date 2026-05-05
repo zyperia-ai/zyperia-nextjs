@@ -17,86 +17,39 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const appId = searchParams.get('app') || 'crypto'
 
-  console.log(`\n=== STAGE 0: TOPIC SELECTION (${appId}) ===`)
+  console.log(`\n=== STAGE 0: TOPIC AUDIT (${appId}) ===`)
   console.log(`Started at: ${new Date().toISOString()}`)
 
   try {
-    // Buscar tópicos disponíveis por prioridade — nunca usados primeiro
-    const { data: topics, error } = await getSupabase()
+    // Contar tópicos disponíveis
+    const { count: available } = await getSupabase()
       .from('content_topics')
-      .select('*')
+      .select('*', { count: 'exact', head: true })
       .eq('app_id', appId)
       .is('last_used_at', null)
-      .order('priority', { ascending: true })
-      .limit(7)
 
-    if (error) throw new Error(`Erro ao buscar tópicos: ${error.message}`)
+    // Contar tópicos já usados
+    const { count: used } = await getSupabase()
+      .from('content_topics')
+      .select('*', { count: 'exact', head: true })
+      .eq('app_id', appId)
+      .not('last_used_at', 'is', null)
 
-    if (!topics || topics.length === 0) {
-      // Fallback: buscar tópicos mais antigos (já usados há mais tempo)
-      const { data: oldTopics } = await getSupabase()
-        .from('content_topics')
-        .select('*')
-        .eq('app_id', appId)
-        .order('last_used_at', { ascending: true })
-        .limit(7)
-
-      if (!oldTopics || oldTopics.length === 0) {
-        console.log(`Sem tópicos disponíveis para ${appId}`)
-        return NextResponse.json({ success: true, reason: 'Sem tópicos disponíveis', inserted: 0 })
-      }
-
-      topics?.push(...(oldTopics || []))
+    // Se stock baixo (menos de 7 tópicos), logar aviso
+    if ((available ?? 0) < 7) {
+      console.log(`⚠️  Stock baixo para ${appId}: apenas ${available} tópicos disponíveis`)
+    } else {
+      console.log(`✓ Stock OK para ${appId}: ${available} disponíveis, ${used} já usados`)
     }
 
-    console.log(`Encontrados ${topics.length} tópicos para ${appId}`)
-
-    let inserted = 0
-    for (const topic of topics) {
-      // Verificar se já existe em content_research não processado
-      const { data: existing } = await getSupabase()
-        .from('content_research')
-        .select('id')
-        .eq('app_id', appId)
-        .eq('topic', topic.title)
-        .eq('processed', false)
-        .limit(1)
-        .single()
-
-      if (existing) {
-        console.log(`  Skip (já existe): "${topic.title}"`)
-        continue
-      }
-
-      // Inserir em content_research
-      const { error: insertError } = await getSupabase()
-        .from('content_research')
-        .insert({
-          app_id: appId,
-          topic: topic.title,
-          generation_approach: 'evergreen',
-          status: 'pending',
-          processed: false,
-          created_at: new Date().toISOString(),
-        })
-
-      if (insertError) {
-        console.error(`  ✗ Erro ao inserir "${topic.title}": ${insertError.message}`)
-        continue
-      }
-
-      // Marcar tópico como usado
-      await getSupabase()
-        .from('content_topics')
-        .update({ last_used_at: new Date().toISOString() })
-        .eq('id', topic.id)
-
-      console.log(`  ✓ Inserido: "${topic.title}"`)
-      inserted++
-    }
-
-    console.log(`\n=== STAGE 0 COMPLETE === (${inserted} tópicos inseridos)`)
-    return NextResponse.json({ success: true, app: appId, inserted, total_available: topics.length })
+    console.log(`=== STAGE 0 COMPLETE ===`)
+    return NextResponse.json({
+      success: true,
+      app: appId,
+      available,
+      used,
+      warning: (available ?? 0) < 7 ? 'stock_baixo' : null
+    })
 
   } catch (error: any) {
     console.error('Erro no Stage 0:', error.message)
