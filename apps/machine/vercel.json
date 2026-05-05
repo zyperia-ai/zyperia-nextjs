@@ -18,7 +18,6 @@
     { "path": "/api/cron/stage-2a-translate?app=crypto", "schedule": "0 3 * * 0" },
     { "path": "/api/cron/stage-2a-translate?app=intelligence", "schedule": "20 3 * * 0" },
     { "path": "/api/cron/stage-2a-translate?app=onlinebiz", "schedule": "40 3 * * 0" },
-    { "path": "/api/cron/stage-0-intelligence", "schedule": "0 */4 * * *" },
     { "path": "/api/cron/stage-6-publish", "schedule": "0 9 * * *" },
     { "path": "/api/cron/stage-6-publish", "schedule": "0 14 * * *" },
     { "path": "/api/cron/stage-6-publish", "schedule": "0 18 * * *" },
