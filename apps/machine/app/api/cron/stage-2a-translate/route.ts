@@ -181,7 +181,7 @@ export async function GET(request: Request) {
       .from('content_research')
       .select('*')
       .eq('app_id', appId)
-      .eq('processed', false)
+      .or('processed.is.null,processed.eq.false')
       .order('created_at', { ascending: true })
       .limit(1)
       .single()
