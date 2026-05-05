@@ -36,7 +36,24 @@ async function runStage1(appFilter?: string | null) {
 
     for (const app of apps || []) {
       if (appFilter && app.app_id !== appFilter) continue
-      console.log(`\nSelecting topics for: ${app.app_id} (${app.articles_per_day} articles)`);
+
+      // Verificar stock actual (pending_review + approved)
+      const { count: currentStock } = await getSupabase()
+        .from('blog_posts')
+        .select('*', { count: 'exact', head: true })
+        .eq('app_id', app.app_id)
+        .in('status', ['pending_review', 'approved'])
+
+      const weeklyTarget = 7
+      const stock = currentStock ?? 0
+
+      if (stock >= weeklyTarget) {
+        console.log(`[Stage 1] Stock OK para ${app.app_id}: ${stock}/${weeklyTarget} — skip`)
+        continue
+      }
+
+      const needed = weeklyTarget - stock
+      console.log(`[Stage 1] Stock ${app.app_id}: ${stock}/${weeklyTarget} — pesquisar ${Math.min(needed, app.articles_per_day)} artigos`)
 
       // BLOCO A — Processa submits manuais com source_content (PRIORIDADE 0)
       console.log(`[Stage 1] Checking for manual submissions in ${app.app_id}...`)
@@ -126,7 +143,8 @@ async function runStage1(appFilter?: string | null) {
       const others = (allTopics ?? []).filter(t => t.audience_level !== preferredAudience)
 
       // Combinar: preferidos primeiro, depois os restantes até ao limite
-      const topics = [...preferred, ...others].slice(0, app.articles_per_day)
+      const maxToResearch = Math.min(app.articles_per_day, needed)
+      const topics = [...preferred, ...others].slice(0, maxToResearch)
 
       if (!topics || topics.length === 0) {
         console.log(`⚠️  No topics available for ${app.app_id}`);
