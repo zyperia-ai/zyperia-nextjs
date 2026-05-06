@@ -22,30 +22,18 @@ export default function Home() {
 
       {/* HERO */}
       <section style={{ padding: '80px 32px 72px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-
-        {/* Logo destaque */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '48px' }}>
-          <img src="/logo.png" alt="ZYPERIA" style={{ height: '160px', width: 'auto', objectFit: 'contain' }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '48px', marginBottom: '48px' }}>
+          <img src="/logo.png" alt="ZYPERIA" style={{ height: '180px', width: 'auto', objectFit: 'contain', flexShrink: 0 }} />
+          <div>
+            <h1 style={{ fontFamily: 'var(--font-syne)', fontSize: '64px', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 0.95, color: '#fff', margin: '0 0 24px' }}>
+              Saber mais.<br />
+              <span style={{ background: 'linear-gradient(135deg, #E8E8E8 0%, #A0A0A0 100%)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>Decidir melhor.</span>
+            </h1>
+            <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.60)', maxWidth: '480px', lineHeight: 1.7, margin: 0 }}>
+              Cripto, inteligência artificial e negócios digitais — explicados com clareza, analisados com rigor, para quem quer agir com vantagem.
+            </p>
+          </div>
         </div>
-
-        {/* Kicker */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
-          <span style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#C8C8C8', background: 'rgba(200,200,200,0.08)', border: '1px solid rgba(200,200,200,0.18)', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '5px 14px', borderRadius: '99px' }}>
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#C8C8C8', display: 'inline-block' }}></span>
-            Rede de Publicações · Lusófona · Global
-          </span>
-        </div>
-
-        {/* Headline */}
-        <h1 style={{ fontFamily: 'var(--font-syne)', fontSize: '56px', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 0.95, color: '#fff', textAlign: 'center', margin: '0 auto 24px', maxWidth: '680px' }}>
-          Saber mais.<br />
-          <span style={{ background: 'linear-gradient(135deg, #E8E8E8 0%, #A0A0A0 100%)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>Decidir melhor.</span>
-        </h1>
-
-        {/* Sub */}
-        <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.60)', textAlign: 'center', maxWidth: '520px', margin: '0 auto 48px', lineHeight: 1.7 }}>
-          Cripto, inteligência artificial e negócios digitais — explicados com clareza, analisados com rigor, pensados para o mundo lusófono.
-        </p>
 
         {/* Métricas */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '64px', paddingTop: '40px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
@@ -53,7 +41,7 @@ export default function Home() {
             { num: '3', label: 'Publicações' },
             { num: 'PT', label: 'Língua' },
             { num: '24/7', label: 'Pipeline editorial' },
-            { num: '∞', label: 'Mercado lusófono' },
+            { num: '∞', label: 'Mercado Global' },
           ].map(({ num, label }) => (
             <div key={label} style={{ textAlign: 'center' }}>
               <div style={{ fontFamily: 'var(--font-syne)', fontSize: '32px', fontWeight: 800, letterSpacing: '-0.02em', color: '#fff' }}>{num}</div>
