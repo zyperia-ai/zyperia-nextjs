@@ -21,6 +21,7 @@
     "turbo": "^2.0.0"
   },
   "dependencies": {
+    "@next/third-parties": "^16.2.2",
     "@supabase/supabase-js": "^2.101.1"
   }
 }

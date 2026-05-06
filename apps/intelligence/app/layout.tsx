@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Syne, Inter, JetBrains_Mono } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
 import SiteNav from "@/components/SiteNav";
@@ -53,6 +54,7 @@ export default function RootLayout({
         <SiteNav />
         {children}
         <CookieBanner />
+        {process.env.NEXT_PUBLIC_GA_ID && <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />}
       </body>
     </html>
   );
