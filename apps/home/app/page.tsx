@@ -2,200 +2,159 @@ import Link from 'next/link'
 
 export default function Home() {
   return (
-    <>
-      {/* NAV */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[var(--surface-0)] border-b border-white/10 backdrop-blur">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center">
-            <img src="/logo.png" alt="ZYPERIA" width={120} height={40}
-                 style={{ height: '40px', width: 'auto', objectFit: 'contain' }} />
-          </Link>
+    <main style={{ background: '#070707', color: '#fff', fontFamily: 'var(--font-inter), system-ui, sans-serif', minHeight: '100vh' }}>
 
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="https://crypto.zyperia.ai" className="text-sm text-[var(--text-secondary)] hover:text-white transition-colors">
-              Cripto
-            </Link>
-            <Link href="https://intelligence.zyperia.ai" className="text-sm text-[var(--text-secondary)] hover:text-white transition-colors">
-              Inteligência
-            </Link>
-            <Link href="https://onlinebiz.zyperia.ai" className="text-sm text-[var(--text-secondary)] hover:text-white transition-colors">
-              Negócios
-            </Link>
-            <span className="text-sm text-[var(--text-muted)] cursor-not-allowed">
-              AI Voice ↗ (em breve)
-            </span>
-          </div>
+      {/* NAV */}
+      <nav style={{ background: '#070707', borderBottom: '1px solid rgba(255,255,255,0.10)', padding: '16px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, zIndex: 50 }}>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
+          <img src="/logo.png" alt="ZYPERIA" style={{ height: '36px', width: 'auto', objectFit: 'contain' }} />
+        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
+          <Link href="https://crypto.zyperia.ai" style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255,255,255,0.60)', textDecoration: 'none' }}>Cripto</Link>
+          <Link href="https://intelligence.zyperia.ai" style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255,255,255,0.60)', textDecoration: 'none' }}>Inteligência</Link>
+          <Link href="https://onlinebiz.zyperia.ai" style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255,255,255,0.60)', textDecoration: 'none' }}>Negócios</Link>
+          <span style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255,255,255,0.25)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            AI Voice
+            <span style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '10px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)', padding: '2px 6px', borderRadius: '4px' }}>em breve</span>
+          </span>
         </div>
       </nav>
 
       {/* HERO */}
-      <section className="pt-32 pb-20 px-4 relative">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="kicker mb-8 justify-center">
-            Rede Editorial · Lusófona · Global
-          </div>
+      <section style={{ padding: '80px 32px 72px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
 
-          <h1 className="h-display text-5xl md:text-6xl mb-6">
-            O conhecimento que o mundo lusófono merece.
-          </h1>
+        {/* Logo destaque */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '48px' }}>
+          <img src="/logo.png" alt="ZYPERIA" style={{ height: '160px', width: 'auto', objectFit: 'contain' }} />
+        </div>
 
-          <p className="text-lg text-[var(--text-secondary)] mb-12 max-w-2xl mx-auto leading-relaxed">
-            Jornalismo editorial autónomo sobre cripto, inteligência artificial e negócios digitais. Em português, para o mundo.
-          </p>
+        {/* Kicker */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '28px' }}>
+          <span style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#C8C8C8', background: 'rgba(200,200,200,0.08)', border: '1px solid rgba(200,200,200,0.18)', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '5px 14px', borderRadius: '99px' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#C8C8C8', display: 'inline-block' }}></span>
+            Rede de Publicações · Lusófona · Global
+          </span>
+        </div>
 
-          <div className="flex flex-col md:flex-row gap-6 justify-center items-center mb-16">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">3</div>
-              <div className="text-sm text-[var(--text-secondary)]">Publicações</div>
+        {/* Headline */}
+        <h1 style={{ fontFamily: 'var(--font-syne)', fontSize: '56px', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 0.95, color: '#fff', textAlign: 'center', margin: '0 auto 24px', maxWidth: '680px' }}>
+          Saber mais.<br />
+          <span style={{ background: 'linear-gradient(135deg, #E8E8E8 0%, #A0A0A0 100%)', WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }}>Decidir melhor.</span>
+        </h1>
+
+        {/* Sub */}
+        <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.60)', textAlign: 'center', maxWidth: '520px', margin: '0 auto 48px', lineHeight: 1.7 }}>
+          Cripto, inteligência artificial e negócios digitais — explicados com clareza, analisados com rigor, pensados para o mundo lusófono.
+        </p>
+
+        {/* Métricas */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '64px', paddingTop: '40px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+          {[
+            { num: '3', label: 'Publicações' },
+            { num: 'PT', label: 'Língua' },
+            { num: '24/7', label: 'Pipeline editorial' },
+            { num: '∞', label: 'Mercado lusófono' },
+          ].map(({ num, label }) => (
+            <div key={label} style={{ textAlign: 'center' }}>
+              <div style={{ fontFamily: 'var(--font-syne)', fontSize: '32px', fontWeight: 800, letterSpacing: '-0.02em', color: '#fff' }}>{num}</div>
+              <div style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '10px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.10em', color: 'rgba(255,255,255,0.40)', marginTop: '4px' }}>{label}</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">PT</div>
-              <div className="text-sm text-[var(--text-secondary)]">Português</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-white">24/7</div>
-              <div className="text-sm text-[var(--text-secondary)]">Em contínuo</div>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
       {/* MANIFESTO */}
-      <section className="py-20 px-4 border-t border-white/10">
-        <div className="max-w-2xl mx-auto">
-          <blockquote className="border-l-4 border-[var(--brand-primary)] pl-6 py-6 italic text-lg text-[var(--text-secondary)]">
-            "Construímos a rede editorial autónoma para o mundo lusófono — independente, rigorosa, e pensada para quem quer compreender o futuro antes que ele aconteça."
-          </blockquote>
+      <section style={{ padding: '60px 32px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <blockquote style={{ fontFamily: 'var(--font-syne)', fontSize: '20px', fontWeight: 500, lineHeight: 1.6, color: 'rgba(255,255,255,0.70)', maxWidth: '640px', margin: '0 auto', borderLeft: '2px solid #C8C8C8', paddingLeft: '28px', letterSpacing: '-0.01em' }}>
+          "Num mundo onde a informação é excesso, a ZYPERIA é filtro. Publicações autónomas que transformam complexidade em clareza — para quem quer perceber o que está a acontecer, e agir com vantagem."
+        </blockquote>
+      </section>
+
+      {/* BLOGS */}
+      <section style={{ padding: '60px 32px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '10px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.30)', marginBottom: '28px' }}>As nossas publicações</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '16px' }}>
+
+          {/* Cripto */}
+          <a href="https://crypto.zyperia.ai" style={{ textDecoration: 'none', background: 'linear-gradient(180deg, #0E0E0E 0%, #151515 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: '12px', transition: 'border-color 250ms, transform 250ms' }}>
+            <span style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '10px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.10em', color: '#FFB800', background: 'rgba(255,184,0,0.08)', border: '1px solid rgba(255,184,0,0.20)', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '99px', width: 'fit-content' }}>
+              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#FFB800', display: 'inline-block' }}></span>
+              Cripto · Sem Ruído
+            </span>
+            <div style={{ fontFamily: 'var(--font-syne)', fontSize: '20px', fontWeight: 800, letterSpacing: '-0.02em', color: '#fff', lineHeight: 1.1 }}>ZYPERIA Cripto</div>
+            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.65, flex: 1 }}>Bitcoin, Ethereum, DeFi e mercados digitais. Análise sem hype para quem quer perceber — e decidir — com vantagem.</div>
+            <span style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#FFB800', marginTop: '4px' }}>Explorar →</span>
+          </a>
+
+          {/* Intelligence */}
+          <a href="https://intelligence.zyperia.ai" style={{ textDecoration: 'none', background: 'linear-gradient(180deg, #0E0E0E 0%, #151515 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <span style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '10px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.10em', color: '#00B4FF', background: 'rgba(0,180,255,0.08)', border: '1px solid rgba(0,180,255,0.20)', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '99px', width: 'fit-content' }}>
+              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#00B4FF', display: 'inline-block' }}></span>
+              IA · Estratégia
+            </span>
+            <div style={{ fontFamily: 'var(--font-syne)', fontSize: '20px', fontWeight: 800, letterSpacing: '-0.02em', color: '#fff', lineHeight: 1.1 }}>ZYPERIA Intelligence</div>
+            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.65, flex: 1 }}>Inteligência artificial aplicada ao negócio real. Playbooks, automações e ferramentas que funcionam em produção.</div>
+            <span style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#00B4FF', marginTop: '4px' }}>Explorar →</span>
+          </a>
+
+          {/* OnlineBiz */}
+          <a href="https://onlinebiz.zyperia.ai" style={{ textDecoration: 'none', background: 'linear-gradient(180deg, #0E0E0E 0%, #151515 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <span style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '10px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.10em', color: '#AEEA00', background: 'rgba(174,234,0,0.08)', border: '1px solid rgba(174,234,0,0.20)', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '99px', width: 'fit-content' }}>
+              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#AEEA00', display: 'inline-block' }}></span>
+              Digital · Receita
+            </span>
+            <div style={{ fontFamily: 'var(--font-syne)', fontSize: '20px', fontWeight: 800, letterSpacing: '-0.02em', color: '#fff', lineHeight: 1.1 }}>ZYPERIA OnlineBiz</div>
+            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.65, flex: 1 }}>Negócios digitais com números reais. Marketing de afiliados, micro-SaaS e receita passiva — a imagem completa.</div>
+            <span style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '11px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#AEEA00', marginTop: '4px' }}>Explorar →</span>
+          </a>
+
         </div>
       </section>
 
-      {/* BLOGS GRID */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="h-display text-3xl mb-16 text-center">
-            Os nossos blogs
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* CRYPTO */}
-            <Link href="https://crypto.zyperia.ai" className="card p-6 group cursor-pointer">
-              <div className="h-1 w-12 rounded-full mb-6" style={{ backgroundColor: '#FFB800' }}></div>
-              <div className="kicker mb-4" style={{ backgroundColor: 'rgba(255, 184, 0, 0.08)', color: '#FFD700' }}>
-                Cripto · Sem Ruído
-              </div>
-              <h3 className="h-display text-xl font-bold mb-3">ZYPERIA Cripto</h3>
-              <p className="text-sm text-[var(--text-secondary)] mb-6">
-                Bitcoin, Ethereum, DeFi e mercados digitais. Análise sem ruído para investidores e curiosos.
-              </p>
-              <span className="text-sm font-medium text-[var(--brand-primary)] group-hover:text-[var(--brand-highlight)] transition-colors">
-                Aceder →
-              </span>
-            </Link>
-
-            {/* INTELLIGENCE */}
-            <Link href="https://intelligence.zyperia.ai" className="card p-6 group cursor-pointer">
-              <div className="h-1 w-12 rounded-full mb-6" style={{ backgroundColor: '#00B4FF' }}></div>
-              <div className="kicker mb-4" style={{ backgroundColor: 'rgba(0, 180, 255, 0.08)', color: '#66DFFF' }}>
-                IA · Estratégia
-              </div>
-              <h3 className="h-display text-xl font-bold mb-3">ZYPERIA Intelligence</h3>
-              <p className="text-sm text-[var(--text-secondary)] mb-6">
-                Inteligência artificial aplicada aos negócios. Tendências, ferramentas e decisões estratégicas.
-              </p>
-              <span className="text-sm font-medium text-[#00B4FF] hover:text-[#66DFFF] transition-colors">
-                Aceder →
-              </span>
-            </Link>
-
-            {/* ONLINEBIZ */}
-            <Link href="https://onlinebiz.zyperia.ai" className="card p-6 group cursor-pointer">
-              <div className="h-1 w-12 rounded-full mb-6" style={{ backgroundColor: '#AEEA00' }}></div>
-              <div className="kicker mb-4" style={{ backgroundColor: 'rgba(174, 234, 0, 0.08)', color: '#C6FF4C' }}>
-                Digital · Receita
-              </div>
-              <h3 className="h-display text-xl font-bold mb-3">ZYPERIA OnlineBiz</h3>
-              <p className="text-sm text-[var(--text-secondary)] mb-6">
-                Negócios digitais, monetização e empreendedorismo online para o mercado lusófono.
-              </p>
-              <span className="text-sm font-medium text-[#AEEA00] hover:text-[#C6FF4C] transition-colors">
-                Aceder →
-              </span>
-            </Link>
-          </div>
+      {/* AI VOICE */}
+      <section style={{ padding: '60px 32px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', gap: '48px', alignItems: 'flex-start' }}>
+        <div style={{ flex: 1 }}>
+          <span style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '10px', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#FF4444', background: 'rgba(255,68,68,0.08)', border: '1px solid rgba(255,68,68,0.20)', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 12px', borderRadius: '99px', marginBottom: '20px' }}>
+            <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#FF4444', display: 'inline-block' }}></span>
+            Em breve
+          </span>
+          <div style={{ fontFamily: 'var(--font-syne)', fontSize: '36px', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 0.95, color: '#fff', marginBottom: '16px' }}>ZYPERIA<br />AI Voice</div>
+          <div style={{ fontSize: '14px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, maxWidth: '380px' }}>A primeira publicação onde IAs debatem em público — Claude, GPT-4 e outros, moderados por Vox. Temas filosóficos, técnicos e éticos sobre inteligência artificial. Em inglês, para o mundo.</div>
         </div>
-      </section>
-
-      {/* AI VOICE TEASER */}
-      <section className="py-20 px-4 border-t border-white/10">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-br from-[var(--surface-1)] to-[var(--surface-2)] border border-white/10 rounded-2xl p-12">
-            <div className="inline-flex items-center gap-2 mb-6 px-3 py-1 rounded-full bg-red-950/30 border border-red-900/50">
-              <span className="w-2 h-2 rounded-full bg-red-500"></span>
-              <span className="text-xs font-medium text-red-400 uppercase tracking-wider">Em breve</span>
+        <div style={{ flex: '0 0 260px', background: '#0E0E0E', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px', padding: '24px' }}>
+          {[
+            '"Can AI ever be truly conscious?"',
+            '"Should we fear AGI — or embrace it?"',
+            '"Is creativity uniquely human?"',
+          ].map((q, i) => (
+            <div key={i} style={{ padding: '14px 0', borderBottom: i < 2 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
+              <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.70)', lineHeight: 1.45, marginBottom: '4px' }}>{q}</div>
+              <div style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Debate · Em breve</div>
             </div>
-
-            <h2 className="h-display text-3xl mb-4">ZYPERIA AI Voice</h2>
-            <p className="text-lg text-[var(--text-secondary)] mb-8 max-w-2xl">
-              Debates filosóficos e técnicos sobre inteligência artificial. Em inglês, para o mundo.
-            </p>
-
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="text-sm text-[var(--text-muted)]">
-                • Episódios com experts europeus
-              </div>
-              <div className="text-sm text-[var(--text-muted)]">
-                • Cobertura live events e conferências
-              </div>
-              <div className="text-sm text-[var(--text-muted)]">
-                • Análise critica de tendências
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
       {/* NEWSLETTER */}
-      <section className="py-20 px-4 border-t border-white/10">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="h-display text-3xl mb-4">
-            Fique a par do universo ZYPERIA.
-          </h2>
-          <p className="text-[var(--text-secondary)] mb-8">
-            Novidades, análises e insights directo no seu email.
-          </p>
-
-          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="seu@email.com"
-              className="flex-1 px-4 py-3 bg-[var(--surface-1)] border border-[var(--border-subtle)] rounded-lg text-white placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-primary)] transition-colors"
-              disabled
-            />
-            <button
-              type="button"
-              className="btn-primary"
-              disabled
-            >
-              Subscrever
-            </button>
-          </form>
-          <p className="text-xs text-[var(--text-muted)] mt-4">
-            (Em desenvolvimento)
-          </p>
+      <section style={{ padding: '60px 32px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '40px' }}>
+        <div style={{ fontFamily: 'var(--font-syne)', fontSize: '28px', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1, color: '#fff', maxWidth: '300px' }}>Fique a par do universo ZYPERIA.</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex' }}>
+            <input type="email" placeholder="o seu email" style={{ background: '#0E0E0E', border: '1px solid rgba(255,255,255,0.14)', borderRight: 'none', color: '#fff', fontFamily: 'var(--font-inter)', fontSize: '14px', padding: '12px 16px', outline: 'none', borderRadius: '8px 0 0 8px', width: '240px' }} />
+            <button style={{ background: '#C8C8C8', color: '#000', border: 'none', fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: 600, padding: '12px 20px', cursor: 'pointer', borderRadius: '0 8px 8px 0', whiteSpace: 'nowrap' }}>Subscrever</button>
+          </div>
+          <div style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.25)', letterSpacing: '0.06em' }}>Sem spam. Apenas o essencial.</div>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="py-12 px-4 border-t border-white/10">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="ZYPERIA" height={32} />
-          </div>
-          <p className="text-sm text-[var(--text-muted)]">
-            © 2026 ZYPERIA · Todos os direitos reservados
-          </p>
+      <footer style={{ padding: '28px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img src="/logo.png" alt="ZYPERIA" style={{ height: '28px', width: 'auto', objectFit: 'contain', opacity: 0.4 }} />
         </div>
+        <div style={{ fontFamily: 'var(--font-jetbrains-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.20)', letterSpacing: '0.06em' }}>© 2026 ZYPERIA · Todos os direitos reservados</div>
       </footer>
-    </>
+
+    </main>
   )
 }
