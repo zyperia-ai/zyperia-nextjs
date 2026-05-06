@@ -6,8 +6,9 @@ export default function Home() {
       {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-[var(--surface-0)] border-b border-white/10 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="h-display text-lg font-bold text-white">
-            <img src="/logo.png" alt="ZYPERIA" height={40} />
+          <Link href="/" className="flex items-center">
+            <img src="/logo.png" alt="ZYPERIA" width={120} height={40}
+                 style={{ height: '40px', width: 'auto', objectFit: 'contain' }} />
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
