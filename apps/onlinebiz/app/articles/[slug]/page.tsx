@@ -79,11 +79,17 @@ export async function generateMetadata(
       type: 'article',
       publishedTime: article.published_at,
       authors: article.author_byline ? [article.author_byline] : undefined,
+      images: (article as any).og_image_url
+        ? [{ url: (article as any).og_image_url, width: 1200, height: 630, alt: article.title }]
+        : [{ url: 'https://onlinebiz.zyperia.ai/og-image.png', width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
       title: article.title,
       description: description.slice(0, 160),
+      images: (article as any).og_image_url
+        ? [(article as any).og_image_url]
+        : ['https://onlinebiz.zyperia.ai/og-image.png'],
     },
   }
 }
