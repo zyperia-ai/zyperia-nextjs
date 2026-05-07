@@ -119,6 +119,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           __html: JSON.stringify(generateArticleStructuredData({
             title: article.title,
             description: (article as any).meta_description || article.excerpt || '',
+            slug: article.slug,
             image: (article as any).og_image_url || 'https://intelligence.zyperia.ai/og-image.png',
             publishedAt: article.published_at,
             author: article.author_byline,
