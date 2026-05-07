@@ -6,6 +6,7 @@ import ArticleCard from '@/components/ArticleCard'
 import ArticleContent from '@/components/ArticleContent'
 import ShareArticle from '@/components/ShareArticle'
 import { createClient } from '@supabase/supabase-js'
+import { generateArticleStructuredData, generateBreadcrumbStructuredData } from '@/app/lib/seo'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -112,6 +113,24 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   return (
     <main className="min-h-screen pt-24 pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(generateArticleStructuredData({
+            title: article.title,
+            description: (article as any).meta_description || article.excerpt || '',
+            image: (article as any).og_image_url || 'https://crypto.zyperia.ai/og-image.png',
+            publishedAt: article.published_at,
+            author: article.author_byline,
+          }))
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(generateBreadcrumbStructuredData(article.title, article.slug))
+        }}
+      />
       <div className="max-w-3xl mx-auto px-4">
         {/* Back link */}
         <Link href="/articles" className="btn-ghost text-sm mb-8 inline-flex items-center gap-2">
