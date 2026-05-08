@@ -6,6 +6,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { generateWithClaude } from '../lib/ai-router';
+import { execSync } from 'child_process';
 
 const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_KEY || '';
@@ -305,6 +306,17 @@ async function generateArticle(
         ai_model_used: 'phi4',
         cost_usd: 0.0, // Phi-4 via Ollama is free
       });
+
+      // Internal linking (não bloqueante se falhar)
+      try {
+        execSync(
+          `npx ts-node apps/scripts/internal-linking-v2.ts --mode=new --slug=${articleData.slug}`,
+          { stdio: 'inherit' }
+        )
+      } catch (error) {
+        console.error('Internal linking falhou (não crítico):', error)
+        // Não bloquear o pipeline se o linking falhar
+      }
     }
   } catch (error) {
     const duration = Math.round((Date.now() - startTime) / 1000);
