@@ -7,15 +7,23 @@ const GENERATION_APPROACH: Record<string, string> = {
 }
 
 function generateSlug(title: string): string {
-  return title
+  const raw = title
     .toLowerCase()
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9\s-]/g, '')
     .trim()
     .replace(/\s+/g, '-')
-    .slice(0, 100)
-    + '-' + Date.now().toString(36)
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+
+  if (raw.length <= 100) return raw || `artigo-${Date.now()}`
+
+  // Truncate at word boundary within 100 chars
+  const truncated = raw.slice(0, 100)
+  const lastDash = truncated.lastIndexOf('-')
+  const safe = lastDash > 60 ? truncated.slice(0, lastDash) : truncated
+  return safe || `artigo-${Date.now()}`
 }
 
 function estimateReadingTime(content: string): number {
