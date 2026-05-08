@@ -1,11 +1,47 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@supabase/supabase-js'
-import { generateEmbedding, textForEmbedding } from '../lib/embeddings'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as dotenv from 'dotenv'
 
 dotenv.config({ path: path.join(process.cwd(), '.env.local') })
+
+// Embedding functions (inlined to avoid import issues)
+async function generateEmbedding(text: string): Promise<number[]> {
+  const voyageKey = process.env.VOYAGE_API_KEY
+
+  if (!voyageKey) {
+    throw new Error('VOYAGE_API_KEY não configurada no .env.local')
+  }
+
+  const response = await fetch('https://api.voyageai.com/v1/embeddings', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${voyageKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'voyage-4-lite',
+      input: text.slice(0, 8000),
+    }),
+  })
+
+  if (!response.ok) {
+    const error = await response.text()
+    throw new Error(`Voyage AI error: ${error}`)
+  }
+
+  const data = await response.json() as any
+  return data.data[0].embedding
+}
+
+function textForEmbedding(article: {
+  title: string
+  excerpt?: string | null
+  content: string
+}): string {
+  return `${article.title}\n\n${article.excerpt || ''}\n\n${article.content.slice(0, 2000)}`
+}
 
 const supabaseUrl = process.env.SUPABASE_URL || ''
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
