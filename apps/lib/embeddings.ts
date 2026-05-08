@@ -22,8 +22,13 @@ export async function generateEmbedding(text: string): Promise<number[]> {
     throw new Error(`Voyage AI error: ${error}`)
   }
 
-  const data = await response.json()
-  return data.data[0].embedding
+  const data = await response.json() as any
+  const embedding = data.data[0].embedding
+
+  // Respeitar rate limit de 3 RPM (~20s entre chamadas, usando 25s por segurança)
+  await new Promise(resolve => setTimeout(resolve, 25000))
+
+  return embedding
 }
 
 export function textForEmbedding(article: {

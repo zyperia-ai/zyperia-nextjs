@@ -8,8 +8,9 @@
 -- 1️⃣ Activar pgvector (se não existir)
 CREATE EXTENSION IF NOT EXISTS vector;
 
--- 2️⃣ Adicionar coluna embedding na tabela blog_posts
-ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS content_embedding vector(512);
+-- 2️⃣ Adicionar coluna embedding na tabela blog_posts (Voyage API retorna 1024, não 512)
+ALTER TABLE blog_posts DROP COLUMN IF EXISTS content_embedding;
+ALTER TABLE blog_posts ADD COLUMN content_embedding vector(1024);
 
 -- 3️⃣ Criar tabela de registo de links internos
 CREATE TABLE IF NOT EXISTS article_internal_links (
@@ -23,7 +24,7 @@ CREATE TABLE IF NOT EXISTS article_internal_links (
 
 -- 4️⃣ Criar função de similaridade para buscar artigos relacionados
 CREATE OR REPLACE FUNCTION match_articles(
-  query_embedding vector(512),
+  query_embedding vector(1024),
   match_blog_id text,
   exclude_article_id uuid,
   match_count int DEFAULT 10

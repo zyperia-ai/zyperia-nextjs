@@ -6,7 +6,7 @@ import * as dotenv from 'dotenv'
 
 dotenv.config({ path: path.join(process.cwd(), '.env.local') })
 
-// Embedding functions (inlined to avoid import issues)
+// Embedding functions (inlined from apps/lib/embeddings.ts)
 async function generateEmbedding(text: string): Promise<number[]> {
   const voyageKey = process.env.VOYAGE_API_KEY
 
@@ -32,7 +32,12 @@ async function generateEmbedding(text: string): Promise<number[]> {
   }
 
   const data = await response.json() as any
-  return data.data[0].embedding
+  const embedding = data.data[0].embedding
+
+  // Respeitar rate limit de 3 RPM (~20s entre chamadas, usando 25s por segurança)
+  await new Promise(resolve => setTimeout(resolve, 25000))
+
+  return embedding
 }
 
 function textForEmbedding(article: {
