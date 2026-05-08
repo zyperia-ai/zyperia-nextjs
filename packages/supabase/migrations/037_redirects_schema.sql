@@ -23,6 +23,6 @@ ALTER TABLE redirects ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Enable public read on active redirects" ON redirects
   FOR SELECT USING (active = TRUE);
 
--- Admin write policy (future: restrict to authenticated users)
-CREATE POLICY "Enable admin updates on redirects" ON redirects
-  FOR UPDATE, INSERT, DELETE USING (TRUE);
+-- Allow all operations (future: restrict to authenticated users)
+CREATE POLICY "Allow all operations" ON redirects
+  FOR ALL USING (TRUE) WITH CHECK (TRUE);
