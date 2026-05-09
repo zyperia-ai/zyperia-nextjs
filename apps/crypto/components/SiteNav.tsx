@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
+import NewsletterForm from '@/components/NewsletterForm'
 
 export default function SiteNav() {
   const [open, setOpen] = useState(false)
@@ -15,7 +16,7 @@ export default function SiteNav() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-6">
           <Link href="/articles" className="text-sm text-[var(--text-secondary)] hover:text-white transition-colors">
             Artigos
           </Link>
@@ -25,9 +26,7 @@ export default function SiteNav() {
           <Link href="/contact" className="text-sm text-[var(--text-secondary)] hover:text-white transition-colors">
             Contacto
           </Link>
-          <a href="#newsletter" className="btn-primary text-sm py-2 px-4">
-            Subscrever
-          </a>
+          <NewsletterForm source="crypto" variant="nav" />
         </div>
 
         {/* Mobile nav button */}
@@ -51,9 +50,9 @@ export default function SiteNav() {
           <Link href="/contact" className="block text-sm text-[var(--text-secondary)] hover:text-white py-2">
             Contacto
           </Link>
-          <a href="#newsletter" className="block btn-primary text-sm py-2 text-center">
-            Subscrever
-          </a>
+          <div className="py-2">
+            <NewsletterForm source="crypto" variant="nav" />
+          </div>
         </div>
       )}
     </nav>

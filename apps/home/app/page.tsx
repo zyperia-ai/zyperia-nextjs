@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Mail } from "lucide-react";
+import NewsletterForm from "@/components/NewsletterForm";
 
 export default function ZyperiaHome() {
   return (
@@ -260,28 +261,8 @@ export default function ZyperiaHome() {
 
       {/* =========== NEWSLETTER =========== */}
       <section id="newsletter" className="relative py-16 md:py-24 border-t border-white/5">
-        <div className="max-w-3xl mx-auto px-6 text-center">
-          <span className="kicker mb-4">Newsletter</span>
-          <h2 className="h-display text-3xl md:text-4xl mt-4 mb-5">
-            Fique a par do universo ZYPERIA.
-          </h2>
-          <p className="text-[var(--text-secondary)] text-lg mb-10 max-w-xl mx-auto">
-            O essencial em cripto, IA e negócios digitais — directo no seu email. Sem spam, sem hype.
-          </p>
-          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <input
-              type="email"
-              required
-              placeholder="o seu email"
-              className="flex-1 px-4 py-3 rounded-lg bg-[var(--surface-1)] border border-white/10 text-white placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--brand-primary)] transition-colors"
-            />
-            <button type="submit" className="btn-primary whitespace-nowrap">
-              Subscrever grátis
-            </button>
-          </form>
-          <p className="text-xs text-[var(--text-muted)] mt-6 h-mono">
-            Sem spam · Cancelas quando quiseres
-          </p>
+        <div className="max-w-3xl mx-auto px-6">
+          <NewsletterForm source="home" variant="inline" />
         </div>
       </section>
 

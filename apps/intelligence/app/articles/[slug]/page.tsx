@@ -5,6 +5,7 @@ import { Metadata } from 'next'
 import ArticleCard from '@/components/ArticleCard'
 import ArticleContent from '@/components/ArticleContent'
 import ShareArticle from '@/components/ShareArticle'
+import NewsletterForm from '@/components/NewsletterForm'
 import { createClient } from '@supabase/supabase-js'
 import { generateArticleStructuredData, generateBreadcrumbStructuredData } from '@/app/lib/seo'
 
@@ -241,6 +242,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             />
           </div>
         </article>
+
+        {/* Newsletter signup */}
+        <NewsletterForm source="intelligence" variant="inline" />
 
         {/* Related articles */}
         {relatedArticles.length > 0 && (
