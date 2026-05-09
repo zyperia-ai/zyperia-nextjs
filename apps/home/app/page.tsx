@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Mail } from "lucide-react";
-import NewsletterForm from "@/components/NewsletterForm";
+import { NewsletterForm } from "@zyperia/shared-ui";
 
 export default function ZyperiaHome() {
   return (

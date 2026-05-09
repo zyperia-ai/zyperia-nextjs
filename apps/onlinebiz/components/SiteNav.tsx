@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import { useState } from 'react'
-import NewsletterForm from '@/components/NewsletterForm'
+import { NewsletterForm } from '@zyperia/shared-ui'
 
 export default function SiteNav() {
   const [open, setOpen] = useState(false)

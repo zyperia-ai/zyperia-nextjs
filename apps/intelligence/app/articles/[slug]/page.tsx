@@ -5,7 +5,7 @@ import { Metadata } from 'next'
 import ArticleCard from '@/components/ArticleCard'
 import ArticleContent from '@/components/ArticleContent'
 import ShareArticle from '@/components/ShareArticle'
-import NewsletterForm from '@/components/NewsletterForm'
+import { NewsletterForm } from '@zyperia/shared-ui'
 import { createClient } from '@supabase/supabase-js'
 import { generateArticleStructuredData, generateBreadcrumbStructuredData } from '@/app/lib/seo'
 
