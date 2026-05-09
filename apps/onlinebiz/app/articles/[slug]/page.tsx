@@ -155,7 +155,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 </span>
               </>
             )}
-            {article.views !== undefined && (
+            {article.views > 0 && (
               <>
                 <span className="hidden md:inline text-[var(--text-muted)]">·</span>
                 <span className="text-sm text-[var(--text-secondary)]">
