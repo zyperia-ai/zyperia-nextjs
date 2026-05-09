@@ -12,6 +12,15 @@
       "dependsOn": ["^build"],
       "outputs": [".next/**", "dist/**"]
     },
+    "@zyperia/shared-ui#build": {
+      "outputs": []
+    },
+    "@zyperia/shared-lib#build": {
+      "outputs": []
+    },
+    "@zyperia/shared-config#build": {
+      "outputs": []
+    },
     "dev": {
       "cache": false,
       "persistent": true
