@@ -21,7 +21,8 @@
     "paths": {
       "@/*": [
         "./*"
-      ]
+      ],
+      "@zyperia/*": ["../../packages/*"]
     },
     "allowJs": true,
     "isolatedModules": true,
