@@ -555,4 +555,19 @@ async function main() {
   }
 }
 
-main()
+// Exportar função para uso directo em endpoints
+export async function processNewArticleForLinking(slug: string): Promise<{ success: boolean; error?: any }> {
+  try {
+    console.log(`🚀 Processando internal linking para: ${slug}`)
+    await processNewMode(slug)
+    return { success: true }
+  } catch (error) {
+    console.error('❌ Erro ao processar linking:', error)
+    return { success: false, error }
+  }
+}
+
+// CLI entry point
+if (require.main === module) {
+  main()
+}

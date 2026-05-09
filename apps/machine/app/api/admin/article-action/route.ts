@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { processNewArticleForLinking } from '@/apps/scripts/internal-linking-v2'
 
 export async function POST(req: NextRequest) {
   try {
@@ -89,6 +90,19 @@ export async function POST(req: NextRequest) {
     }
 
     if (action === 'republish') {
+      // Buscar slug do artigo antes do update
+      const { data: article, error: fetchError } = await supabaseAdmin
+        .from('blog_posts')
+        .select('slug')
+        .eq('id', id)
+        .single()
+
+      if (fetchError || !article) {
+        throw new Error('Artigo não encontrado')
+      }
+
+      const slug = article.slug
+
       const { error } = await supabaseAdmin
         .from('blog_posts')
         .update({
@@ -97,6 +111,17 @@ export async function POST(req: NextRequest) {
         })
         .eq('id', id)
       if (error) throw error
+
+      // Disparar internal linking (não bloqueia publicação se falhar)
+      try {
+        console.log(`📍 Disparando internal linking para: ${slug}`)
+        const linkResult = await processNewArticleForLinking(slug)
+        console.log(`✅ Internal linking resultado:`, linkResult)
+      } catch (linkError) {
+        console.error('⚠️ Internal linking falhou (não crítico):', linkError)
+        // Não bloquear a publicação
+      }
+
       return NextResponse.json({ ok: true })
     }
 
