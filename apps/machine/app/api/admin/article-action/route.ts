@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { processNewArticleForLinking } from '@/apps/scripts/internal-linking-v2'
 
 export async function POST(req: NextRequest) {
   try {
@@ -115,6 +114,7 @@ export async function POST(req: NextRequest) {
       // Disparar internal linking (não bloqueia publicação se falhar)
       try {
         console.log(`📍 Disparando internal linking para: ${slug}`)
+        const { processNewArticleForLinking } = await import('../../../../../scripts/internal-linking-v2')
         const linkResult = await processNewArticleForLinking(slug)
         console.log(`✅ Internal linking resultado:`, linkResult)
       } catch (linkError) {
