@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { supabaseAdmin } = await import('../../../lib/supabase-admin')
+    const { supabaseAdmin } = await import('../../../../lib/supabase-admin')
 
     // Verificar se email já existe
     const { data: existing, error: checkError } = await supabaseAdmin
