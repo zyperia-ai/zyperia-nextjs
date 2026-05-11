@@ -1,0 +1,5 @@
+{
+  "buildCommand": "cd ../.. && npx turbo run build --filter=home",
+  "outputDirectory": "apps/home/.next",
+  "installCommand": "cd ../.. && npm install"
+}
