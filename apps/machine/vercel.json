@@ -1,4 +1,8 @@
 {
+  "buildCommand": "cd ../.. && npx turbo run build --filter=@zyperia/machine",
+  "outputDirectory": "apps/machine/.next",
+  "installCommand": "cd ../.. && npm install",
+  "ignoreCommand": "git diff HEAD^ HEAD --quiet -- apps/machine",
   "crons": [
     { "path": "/api/cron/stage-1-research?app=crypto", "schedule": "0 22 * * 6" },
     { "path": "/api/cron/stage-1-research?app=intelligence", "schedule": "20 22 * * 6" },
