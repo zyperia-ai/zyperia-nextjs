@@ -1,5 +1,6 @@
 {
-  "buildCommand": "cd ../.. && npx turbo run build --filter=home",
+  "buildCommand": "cd ../.. && npx turbo run build --filter=@zyperia/home",
   "outputDirectory": "apps/home/.next",
-  "installCommand": "cd ../.. && npm install"
+  "installCommand": "cd ../.. && npm install",
+  "ignoreCommand": "git diff HEAD^ HEAD --quiet -- apps/home"
 }
