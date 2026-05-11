@@ -1,8 +1,8 @@
 {
   "name": "zyperia",
   "version": "1.0.0",
+  "packageManager": "npm@10.9.2",
   "private": true,
-  "packageManager": "npm@11.11.0",
   "scripts": {
     "dev": "turbo run dev --parallel",
     "build": "turbo run build",
